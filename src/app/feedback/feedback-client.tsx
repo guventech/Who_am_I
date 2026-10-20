@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { getModelVersion } from "@/content/client-content";
-import { copyEn } from "@/content/copy.en";
+import { copyEn } from "@/copy/en";
 import { CORE_TRAIT_IDS, type TraitId } from "@/engine/types";
 import {
   getConsentSnapshot,
@@ -18,11 +18,8 @@ import {
   subscribeSession,
 } from "@/session/session-store";
 import { createClientStorage } from "@/storage/client";
-import type { TraitFeedback } from "@/storage/types";
 
 const model = getModelVersion();
-
-type TraitDraft = Partial<TraitFeedback> & { traitId: TraitId };
 
 export function FeedbackClient() {
   const session = useSyncExternalStore(
@@ -35,12 +32,8 @@ export function FeedbackClient() {
     getConsentSnapshot,
     getServerConsentSnapshot,
   );
-  const [overallFit, setOverallFit] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
-  const [traits, setTraits] = useState<Record<TraitId, TraitDraft>>(() =>
-    Object.fromEntries(
-      CORE_TRAIT_IDS.map((id) => [id, { traitId: id }]),
-    ) as Record<TraitId, TraitDraft>,
-  );
+  const [fits, setFits] = useState<Partial<Record<TraitId, number>>>({});
+  const [share, setShare] = useState<"" | "yes" | "maybe" | "no">("");
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">(
     "idle",
   );
@@ -50,30 +43,27 @@ export function FeedbackClient() {
     consented &&
     session?.storageSaved &&
     session.sessionCode &&
-    overallFit !== null &&
     status !== "saving";
 
   return (
-    <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
+    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={model.bankStatus} />
-      <main className="mx-auto flex w-full max-w-lg flex-col gap-6 px-6 py-12">
-        <Link
-          href="/result"
-          className="text-sm font-medium text-slate-600 underline-offset-4 hover:underline"
-        >
-          ← {copyEn.resultHeading}
+      <main className="mx-auto flex w-full max-w-[720px] flex-col gap-6 px-5 py-12">
+        <Link href="/result" className="text-[15px]" style={{ color: "var(--accent)" }}>
+          {copyEn.feedbackBack}
         </Link>
-        <h1 className="font-serif text-3xl text-slate-900">
+        <h1 className="text-[32px]" style={{ color: "var(--ink)" }}>
           {copyEn.feedbackHeading}
         </h1>
-        <p className="text-sm text-slate-600">{copyEn.feedbackIntro}</p>
+        <p style={{ color: "var(--muted)" }}>{copyEn.feedbackIntro}</p>
 
-        {!consented || !session?.storageSaved || !session.sessionCode ? (
-          <p className="text-sm text-slate-700">
-            {!consented
-              ? copyEn.feedbackNeedConsent
-              : copyEn.feedbackNeedCode}
-          </p>
+        {!canSubmit && status !== "done" ? (
+          <div className="flex flex-col gap-3">
+            <p>{copyEn.feedbackNeedSaved}</p>
+            <Link href="/" className="btn-primary">
+              {copyEn.takeAgain}
+            </Link>
+          </div>
         ) : status === "done" ? (
           <p role="status">{copyEn.feedbackThanks}</p>
         ) : (
@@ -81,23 +71,27 @@ export function FeedbackClient() {
             className="flex flex-col gap-6"
             onSubmit={(e) => {
               e.preventDefault();
-              if (!session?.sessionCode || overallFit === null) return;
+              if (!session?.sessionCode) return;
               setStatus("saving");
-              const ratedTraits = CORE_TRAIT_IDS.filter(
-                (id) => traits[id]?.fit != null && traits[id]?.off != null,
-              ).map((id) => ({
-                traitId: id,
-                fit: traits[id]!.fit as 1 | 2 | 3 | 4 | 5,
-                off: traits[id]!.off as TraitFeedback["off"],
-              }));
+              const traits = CORE_TRAIT_IDS.filter((id) => fits[id] != null).map(
+                (id) => ({
+                  traitId: id,
+                  fit: (fits[id]! as 1 | 2 | 3 | 4 | 5),
+                  off: "about_right" as const,
+                }),
+              );
               const adapter = createClientStorage({
                 consentStore: true,
                 ageConfirmed: true,
               });
               void adapter
                 .saveFeedback(session.sessionCode, {
-                  overallFit,
-                  traits: ratedTraits,
+                  overallFit: (share === "yes"
+                    ? 5
+                    : share === "maybe"
+                      ? 3
+                      : 1) as 1 | 2 | 3 | 4 | 5,
+                  traits,
                   insightThumbs: session.shownInsightIds.map((entryId) => ({
                     entryId,
                     up: true,
@@ -107,107 +101,82 @@ export function FeedbackClient() {
                 .catch(() => setStatus("error"));
             }}
           >
-            <label className="flex flex-col gap-2 text-sm text-slate-800">
-              {copyEn.feedbackOverall}
-              <select
-                className="h-10 rounded-md border border-slate-300 bg-white px-2"
-                value={overallFit ?? ""}
-                data-testid="feedback-overall"
-                onChange={(e) => {
-                  const v = e.target.value;
-                  setOverallFit(v === "" ? null : (Number(v) as 1 | 2 | 3 | 4 | 5));
-                }}
-              >
-                <option value="">{copyEn.feedbackChooseOverall}</option>
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-
             {CORE_TRAIT_IDS.map((id) => {
-              const meta = model.traits.find((t) => t.id === id);
-              const row = traits[id]!;
+              const meta = copyEn.traits[id];
               return (
                 <fieldset
                   key={id}
-                  className="flex flex-col gap-2 border-t border-slate-200 pt-4"
+                  className="flex flex-col gap-2 border-t pt-4"
+                  style={{ borderColor: "var(--line)" }}
                 >
-                  <legend className="font-medium text-slate-900">
-                    {meta?.name ?? id}
+                  <legend className="font-medium">
+                    {meta.title} ({meta.science})
                   </legend>
-                  <label className="text-sm text-slate-700">
-                    {copyEn.feedbackTraitFit}
-                    <select
-                      className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-2"
-                      value={row.fit ?? ""}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        setTraits((prev) => ({
-                          ...prev,
-                          [id]: {
-                            ...row,
-                            fit:
-                              v === ""
-                                ? undefined
-                                : (Number(v) as 1 | 2 | 3 | 4 | 5),
-                          },
-                        }));
-                      }}
-                    >
-                      <option value="">{copyEn.feedbackChooseOverall}</option>
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="text-sm text-slate-700">
-                    {copyEn.feedbackTraitOff}
-                    <select
-                      className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-2"
-                      value={row.off ?? ""}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        setTraits((prev) => ({
-                          ...prev,
-                          [id]: {
-                            ...row,
-                            off:
-                              v === ""
-                                ? undefined
-                                : (v as TraitFeedback["off"]),
-                          },
-                        }));
-                      }}
-                    >
-                      <option value="">{copyEn.feedbackChooseOverall}</option>
-                      <option value="too_high">{copyEn.feedbackTooHigh}</option>
-                      <option value="about_right">
-                        {copyEn.feedbackAboutRight}
-                      </option>
-                      <option value="too_low">{copyEn.feedbackTooLow}</option>
-                    </select>
-                  </label>
+                  <p className="text-sm" style={{ color: "var(--muted)" }}>
+                    {copyEn.feedbackThisFits}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {copyEn.feedbackFitLabels.map((label, i) => {
+                      // Map 4 labels onto fit 1-5 (schema); use 1,2,3,5
+                      const fitVal = ([1, 2, 3, 5] as const)[i]!;
+                      return (
+                        <button
+                          key={label}
+                          type="button"
+                          className="min-h-12 rounded-[10px] border-2 px-3 py-2 text-sm font-medium"
+                          style={{
+                            borderColor:
+                              fits[id] === fitVal ? "var(--accent)" : "var(--line)",
+                            background: fits[id] === fitVal ? "#eef2ff" : "#fff",
+                          }}
+                          onClick={() =>
+                            setFits((prev) => ({ ...prev, [id]: fitVal }))
+                          }
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </fieldset>
               );
             })}
 
+            <fieldset className="flex flex-col gap-2">
+              <legend className="font-medium">{copyEn.feedbackShare}</legend>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    ["yes", copyEn.feedbackShareYes],
+                    ["maybe", copyEn.feedbackShareMaybe],
+                    ["no", copyEn.feedbackShareNo],
+                  ] as const
+                ).map(([key, label]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    className="min-h-12 rounded-[10px] border-2 px-3 py-2 text-sm font-medium"
+                    style={{
+                      borderColor: share === key ? "var(--accent)" : "var(--line)",
+                      background: share === key ? "#eef2ff" : "#fff",
+                    }}
+                    onClick={() => setShare(key)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+
             <button
               type="submit"
-              disabled={!canSubmit}
-              data-testid="feedback-submit"
-              className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-medium text-white disabled:opacity-60"
+              className="btn-primary"
+              disabled={!canSubmit || share === ""}
             >
               {copyEn.feedbackSubmit}
             </button>
             {status === "error" ? (
-              <p role="alert" className="text-sm text-slate-800">
-                {copyEn.storageFailed}
-              </p>
+              <p role="alert">{copyEn.storageFailed}</p>
             ) : null}
           </form>
         )}

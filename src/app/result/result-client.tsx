@@ -3,24 +3,17 @@
 import Link from "next/link";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { CopyInsightsButton } from "@/components/CopyInsightsButton";
-import { InsightBlocks } from "@/components/InsightBlocks";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
-import { TraitSlider } from "@/components/TraitSlider";
-import { isGoDeeperAvailable } from "@/config/go-deeper";
-import { ENABLE_LLM_REWORD } from "@/config/flags";
+import { TraitCard } from "@/components/TraitCard";
+import { getModelVersion } from "@/content/client-content";
+import { copyEn } from "@/copy/en";
+import { CORE_TRAIT_IDS, type TraitId } from "@/engine/types";
 import {
-  getDeeperModelVersion,
-  getItemBank,
-  getItemTextEn,
-  getModelVersion,
-} from "@/content/client-content";
-import { copyEn } from "@/content/copy.en";
-import { CORE_TRAIT_IDS } from "@/engine/types";
-import { getInsightLibrary } from "@/insights/client-library";
-import { formatInsightsAsText } from "@/insights/format-copy";
-import { selectInsights } from "@/insights/select";
-import { accuracySentenceFromClaims } from "@/lib/accuracy-copy";
+  formatResultsPlainText,
+  selectInsightsV1,
+} from "@/insights/select-v1";
 import { coarseDeviceClass } from "@/lib/device-class";
+import { formatScoreNumber, isLessCertain, scoreToPhrase } from "@/lib/score-phrase";
 import {
   getConsentSnapshot,
   getServerConsentSnapshot,
@@ -36,11 +29,6 @@ import {
 import { createClientStorage } from "@/storage/client";
 
 const coreModel = getModelVersion();
-const deeperModel = getDeeperModelVersion();
-const bank = getItemBank();
-const textEn = getItemTextEn();
-const goDeeperOn = isGoDeeperAvailable(bank, textEn);
-const insightLibrary = getInsightLibrary();
 
 export function ResultClient() {
   const session = useSyncExternalStore(
@@ -61,7 +49,7 @@ export function ResultClient() {
     if (current.storageSaved || current.storageError) return;
     if (saveStarted.current) return;
 
-    const insights = selectInsights(current.scored.traits, insightLibrary);
+    const insights = selectInsightsV1(current.scored.traits);
     const c = getConsentSnapshot();
 
     if (!hasStorageConsent(c)) {
@@ -78,12 +66,10 @@ export function ResultClient() {
       consentStore: c.store,
       ageConfirmed: c.ageConfirmed,
     });
-
     void (async () => {
       try {
-        const { sessionCode } = await adapter.saveCompletion({
-          modelVersionId:
-            current.round === "deeper" ? deeperModel.id : coreModel.id,
+        const result = await adapter.saveCompletion({
+          modelVersionId: coreModel.id,
           responses: current.answered,
           clientScores: current.scored!.traits.map((t) => ({
             traitId: t.traitId,
@@ -102,8 +88,8 @@ export function ResultClient() {
         saveSession({
           ...current,
           shownInsightIds: insights.shownEntryIds,
-          sessionCode,
           storageSaved: true,
+          sessionCode: result.sessionCode,
           storageError: null,
         });
       } catch (err) {
@@ -118,173 +104,215 @@ export function ResultClient() {
   }, [session?.completed, consent.store, consent.ageConfirmed]);
 
   const missing = !session?.completed || !session.scored;
-  const activeModel =
-    session?.round === "deeper" ? deeperModel : coreModel;
-  const insightTraits = session?.scored
-    ? session.scored.traits.filter((t) =>
-        (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
-      )
-    : [];
-  const insights = selectInsights(insightTraits, insightLibrary);
-  const accuracy = accuracySentenceFromClaims(
-    activeModel.config.ACCURACY_CLAIMS,
-  );
-  const traitsById = new Map(activeModel.traits.map((t) => [t.id, t]));
-  const copyText = formatInsightsAsText(insights);
   const consented = hasStorageConsent(consent);
-  const canGoDeeper =
-    goDeeperOn &&
-    !!session &&
-    session.round === "core" &&
-    session.completed;
 
   return (
-    <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
-      <PrototypeBanner bankStatus={activeModel.bankStatus} />
-      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-8 px-6 py-12">
+    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+      <PrototypeBanner bankStatus={coreModel.bankStatus} />
+      <main className="mx-auto w-full max-w-[720px] flex-1 px-5 py-8 pb-16">
         {missing ? (
-          <div className="flex flex-1 flex-col justify-center gap-4">
-            <p className="text-lg text-slate-700">{copyEn.missingResult}</p>
-            <Link
-              href="/"
-              className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-            >
-              {copyEn.startAgain}
+          <div className="flex flex-col gap-4 py-16">
+            <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>
+            <Link href="/" className="btn-primary">
+              {copyEn.takeAgain}
             </Link>
           </div>
         ) : (
-          <>
-        <header className="flex flex-col gap-3">
-          <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase">
-            {copyEn.brand}
-          </p>
-          <h1 className="font-serif text-3xl tracking-tight text-slate-900">
-            {copyEn.resultHeading}
-          </h1>
-          <p className="text-sm leading-relaxed text-slate-600">
-            {copyEn.disclaimer}
-          </p>
-          <p className="text-sm text-slate-600">{copyEn.positionWording}</p>
-          {session!.scored!.flags.any ? (
-            <p role="status" className="text-sm text-slate-700">
-              {copyEn.flagNote}
-            </p>
-          ) : null}
-          {accuracy ? (
-            <p className="text-sm text-slate-700">{accuracy}</p>
-          ) : null}
-          {consented && !session!.storageSaved && !session!.storageError ? (
-            <p className="text-sm text-slate-600">{copyEn.storageSaving}</p>
-          ) : null}
-          {session!.storageSaved && session!.sessionCode ? (
-            <div
-              className="rounded-md border border-slate-300 bg-white/70 px-3 py-2 text-sm text-slate-800"
-              data-testid="session-code"
-            >
-              <p className="font-medium">{copyEn.sessionCodeStored}</p>
-              <p className="mt-1 font-mono text-base tracking-wider">
-                {session!.sessionCode}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">
-                {copyEn.sessionCodeLabel}
-              </p>
-            </div>
-          ) : null}
-          {session!.storageError ? (
-            <p role="alert" className="text-sm text-slate-800">
-              {copyEn.storageFailed}
-            </p>
-          ) : null}
-          {!consented ? (
-            <p className="text-sm text-slate-600">{copyEn.storageSkipped}</p>
-          ) : null}
-        </header>
-
-        <section
-          className="flex flex-col gap-8"
-          aria-label={
-            session!.round === "deeper"
-              ? copyEn.yourSlidersDeeper
-              : copyEn.yourSliders
-          }
-        >
-          <h2 className="font-serif text-2xl text-slate-900">
-            {session!.round === "deeper"
-              ? copyEn.yourSlidersDeeper
-              : copyEn.yourSliders}
-          </h2>
-          {session!.scored!.traits.map((score) => {
-            const trait = traitsById.get(score.traitId);
-            if (!trait) return null;
-            return (
-              <TraitSlider
-                key={score.traitId}
-                trait={trait}
-                score={score}
-                tradeOff={insights.tradeOffsByTrait[score.traitId]}
-              />
-            );
-          })}
-        </section>
-
-        <InsightBlocks insights={insights} />
-
-        <nav className="flex flex-col gap-3 border-t border-slate-300/70 pt-6">
-          <CopyInsightsButton text={copyText} />
-          {ENABLE_LLM_REWORD ? (
-            <button type="button" disabled className="text-sm text-slate-500">
-              {copyEn.llmRewordStub}
-            </button>
-          ) : null}
-          {consented && session!.storageSaved ? (
-            <Link
-              href="/feedback"
-              className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-            >
-              {copyEn.feedbackLink}
-            </Link>
-          ) : null}
-          <Link
-            href="/how-accurate"
-            className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-          >
-            {copyEn.howAccurateLink}
-          </Link>
-          <Link
-            href="/privacy"
-            className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-          >
-            {copyEn.privacyLink}
-          </Link>
-          {session!.storageSaved ? (
-            <Link
-              href="/privacy#delete"
-              className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-            >
-              {copyEn.deleteData}
-            </Link>
-          ) : null}
-          {canGoDeeper ? (
-            <Link
-              href="/deeper"
-              className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800"
-              data-testid="go-deeper"
-            >
-              {copyEn.goDeeper}
-            </Link>
-          ) : session!.round === "core" ? (
-            <p className="text-sm text-slate-500">{copyEn.goDeeperDisabled}</p>
-          ) : null}
-          <Link
-            href="/"
-            className="inline-flex h-11 items-center justify-center rounded-md border border-slate-400 bg-white/70 px-4 text-sm font-medium text-slate-900 hover:bg-white"
-          >
-            {copyEn.startAgain}
-          </Link>
-        </nav>
-          </>
+          <ResultBody
+            session={session!}
+            consented={consented}
+          />
         )}
       </main>
     </div>
+  );
+}
+
+function ResultBody({
+  session,
+  consented,
+}: {
+  session: NonNullable<ReturnType<typeof getSessionSnapshot>>;
+  consented: boolean;
+}) {
+  const scored = session.scored!;
+  const coreTraits = scored.traits.filter((t) =>
+    (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
+  );
+  const insights = selectInsightsV1(coreTraits);
+
+  const traitLines = coreTraits.map((score) => {
+    const id = score.traitId as TraitId;
+    const meta = copyEn.traits[id as keyof typeof copyEn.traits];
+    return {
+      title: meta?.title ?? id,
+      phrase: meta
+        ? scoreToPhrase(score.slider, meta.left, meta.right)
+        : "",
+      num: formatScoreNumber(score.slider),
+      lessCertain: isLessCertain(score.retakeLow, score.retakeHigh),
+    };
+  });
+  const copyText = formatResultsPlainText(traitLines, insights);
+
+  const saveLine = session.storageSaved
+    ? copyEn.savedYes
+    : consented && !session.storageError
+      ? copyEn.storageSaving
+      : copyEn.savedNot;
+
+  return (
+    <>
+      <h1 className="text-[32px] leading-tight" style={{ color: "var(--ink)" }}>
+        {copyEn.resultHeading}
+      </h1>
+      <p className="mt-2" style={{ color: "var(--muted)" }}>
+        {copyEn.resultLead}
+      </p>
+      <p className="mt-2 text-sm" style={{ color: "var(--muted)" }}>
+        {saveLine}
+      </p>
+      {session.storageSaved && session.sessionCode ? (
+        <div
+          className="mt-3 rounded-xl border p-3 text-sm"
+          style={{ borderColor: "var(--line)", background: "var(--card)" }}
+          data-testid="session-code"
+        >
+          <p className="font-medium">{copyEn.sessionCodeStored}</p>
+          <p className="mt-1 font-mono text-base tracking-wider">
+            {session.sessionCode}
+          </p>
+          <p className="mt-1 text-xs" style={{ color: "var(--muted)" }}>
+            {copyEn.sessionCodeLabel}
+          </p>
+        </div>
+      ) : null}
+      {session.storageError ? (
+        <p role="alert" className="mt-2 text-sm">
+          {copyEn.storageFailed}
+        </p>
+      ) : null}
+      {scored.flags.any ? (
+        <p role="status" className="mt-2 text-sm" style={{ color: "var(--muted)" }}>
+          {copyEn.flagNote}
+        </p>
+      ) : null}
+
+      <h2 className="mt-10 text-[22px]" style={{ color: "var(--ink)" }}>
+        {copyEn.yourFiveTraits}
+      </h2>
+      <div
+        className="mt-3 flex flex-wrap items-center gap-4 text-sm"
+        style={{ color: "var(--muted)" }}
+      >
+        <span className="inline-flex items-center gap-2">
+          <span
+            className="inline-block h-2.5 w-[22px] rounded"
+            style={{ background: "var(--band)" }}
+          />
+          {copyEn.retakeLegend}
+        </span>
+        <span>{copyEn.middleLegend}</span>
+      </div>
+
+      <div className="mt-3 flex flex-col gap-3">
+        {coreTraits.map((score) => (
+          <TraitCard
+            key={score.traitId}
+            traitId={score.traitId as TraitId}
+            score={score}
+          />
+        ))}
+      </div>
+
+      <h2 className="mt-10 text-[22px]" style={{ color: "var(--ink)" }}>
+        {copyEn.whatThisMeans}
+      </h2>
+      <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
+        {copyEn.insightsNote}
+      </p>
+
+      <h3 className="mt-5 text-lg font-semibold">{copyEn.yourStrengths}</h3>
+      <div className="mt-2 flex flex-col gap-3">
+        {insights.strengths.map((s) => (
+          <div
+            key={s.entryId + s.strength}
+            className="rounded-xl border p-5"
+            style={{ background: "var(--card)", borderColor: "var(--line)" }}
+          >
+            <h3 className="text-lg font-semibold" style={{ color: "var(--accent)" }}>
+              {s.strength}
+              {s.soft ? (
+                <span className="ml-1 text-[13px] font-medium" style={{ color: "var(--less)" }}>
+                  {copyEn.lessCertain}
+                </span>
+              ) : null}
+            </h3>
+            <dl className="mt-2">
+              <dt
+                className="mt-2 text-[13px] font-bold uppercase tracking-wide"
+                style={{ color: "var(--muted)" }}
+              >
+                {copyEn.interviewLabel}
+              </dt>
+              <dd className="mt-1">{s.interview}</dd>
+              <dt
+                className="mt-2 text-[13px] font-bold uppercase tracking-wide"
+                style={{ color: "var(--muted)" }}
+              >
+                {copyEn.cvLabel}
+              </dt>
+              <dd className="mt-1">{s.cv}</dd>
+            </dl>
+          </div>
+        ))}
+      </div>
+
+      {insights.watchOuts.length > 0 ? (
+        <>
+          <h3 className="mt-7 text-lg font-semibold">{copyEn.watchOutFor}</h3>
+          <div className="mt-2 flex flex-col gap-3">
+            {insights.watchOuts.map((w) => (
+              <div
+                key={w.entryId + w.watchOut}
+                className="rounded-xl border p-5"
+                style={{ background: "var(--card)", borderColor: "var(--line)" }}
+              >
+                <h3 className="text-lg font-semibold" style={{ color: "var(--warn)" }}>
+                  {w.watchOut}
+                </h3>
+                <p className="mt-3 font-semibold">{copyEn.tryThis}</p>
+                <ul className="mt-2 list-disc space-y-1 pl-5">
+                  {w.tips.map((tip) => (
+                    <li key={tip}>{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        <CopyInsightsButton text={copyText} />
+        <Link href="/" className="btn-secondary">
+          {copyEn.takeAgain}
+        </Link>
+        {session.storageSaved ? (
+          <Link href="/feedback" className="btn-secondary">
+            {copyEn.tellUsFits}
+          </Link>
+        ) : null}
+      </div>
+
+      <footer className="mt-7 flex flex-wrap gap-4 text-[15px]">
+        <Link href="/how-accurate" style={{ color: "var(--accent)" }}>
+          {copyEn.howAccurateLink}
+        </Link>
+        <Link href="/privacy" style={{ color: "var(--accent)" }}>
+          {copyEn.privacyLink}
+        </Link>
+      </footer>
+    </>
   );
 }

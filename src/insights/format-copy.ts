@@ -34,7 +34,7 @@ export function formatInsightsAsText(selected: SelectedInsights): string {
   lines.push("");
 
   if (selected.fallback) {
-    lines.push("Your sketch is still broad — Go deeper is recommended when available.");
+    lines.push("Your results are still broad. More questions can help when available.");
     lines.push("");
   }
 

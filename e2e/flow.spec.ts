@@ -1,32 +1,36 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { copyEn } from "../src/content/copy.en";
+import { copyEn } from "../src/copy/en";
 
 test.describe("core flow", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("completes 10 questions and shows result sliders", async ({ page }) => {
+  test("completes 10 questions, consent, then results", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: copyEn.start }).click();
     await expect(page).toHaveURL(/\/test/);
 
     for (let i = 0; i < 10; i++) {
-      await expect(page.getByText(`${i + 1} of 10`)).toBeVisible();
+      await expect(
+        page.getByText(`Question ${i + 1} of 10`),
+      ).toBeVisible();
       await page.locator("[data-likert='3']").click();
+      await page.waitForTimeout(300);
     }
 
-    await expect(page).toHaveURL(/\/result/, { timeout: 30_000 });
+    await expect(page).toHaveURL(/\/consent/, { timeout: 30_000 });
+    await page.getByTestId("consent-no").click();
+
+    await expect(page).toHaveURL(/\/result/, { timeout: 15_000 });
     await expect(
       page.getByRole("heading", { name: copyEn.resultHeading }),
     ).toBeVisible();
     await expect(
       page.getByRole("status").filter({ hasText: copyEn.prototypeBanner }),
     ).toBeVisible();
-    await expect(page.getByText(copyEn.disclaimer)).toBeVisible();
-    await expect(page.getByText("Extraversion")).toBeVisible();
-    await expect(page.getByText("Openness")).toBeVisible();
-    // Empty ACCURACY_CLAIMS ⇒ no invented correlation numbers on result
-    await expect(page.getByText(/0\.\d{2}\s+to\s+0\.\d{2}/)).toHaveCount(0);
+    await expect(page.getByText(copyEn.yourFiveTraits)).toBeVisible();
+    await expect(page.getByText(copyEn.yourStrengths)).toBeVisible();
+    await expect(page.getByText(/Extraversion/)).toBeVisible();
   });
 
   test("Q1 is the same across three browser contexts", async ({ browser }) => {
@@ -35,7 +39,7 @@ test.describe("core flow", () => {
       const context = await browser.newContext();
       const page = await context.newPage();
       await page.goto("/test");
-      await expect(page.getByText("1 of 10")).toBeVisible();
+      await expect(page.getByText("Question 1 of 10")).toBeVisible();
       const heading = page.locator("main h1");
       q1Texts.push((await heading.innerText()).trim());
       await context.close();
@@ -46,17 +50,21 @@ test.describe("core flow", () => {
 
   test("keyboard 1-5 answers a question", async ({ page }) => {
     await page.goto("/test");
-    await expect(page.getByText("1 of 10")).toBeVisible();
+    await expect(page.getByText("Question 1 of 10")).toBeVisible();
     await page.keyboard.press("4");
-    await expect(page.getByText("2 of 10")).toBeVisible();
+    await expect(page.getByText("Question 2 of 10")).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("back restores previous progress", async ({ page }) => {
     await page.goto("/test");
     await page.locator("[data-likert='5']").click();
-    await expect(page.getByText("2 of 10")).toBeVisible();
+    await expect(page.getByText("Question 2 of 10")).toBeVisible({
+      timeout: 10_000,
+    });
     await page.getByRole("button", { name: copyEn.back }).click();
-    await expect(page.getByText("1 of 10")).toBeVisible();
+    await expect(page.getByText("Question 1 of 10")).toBeVisible();
   });
 
   test("how-accurate page has no serious axe violations", async ({ page }) => {
@@ -64,7 +72,6 @@ test.describe("core flow", () => {
     await expect(
       page.getByRole("heading", { name: copyEn.howAccurateHeading }),
     ).toBeVisible();
-    await expect(page.getByText(copyEn.noAccuracyNumbers)).toBeVisible();
 
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])

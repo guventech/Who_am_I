@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville, Source_Sans_3 } from "next/font/google";
 import { getModelVersion } from "@/content/client-content";
-import { copyEn } from "@/content/copy.en";
+import { copyEn } from "@/copy/en";
 import "./globals.css";
 
 const display = Libre_Baskerville({

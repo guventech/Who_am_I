@@ -1,17 +1,18 @@
 import { expect, test } from "@playwright/test";
-import { copyEn } from "../src/content/copy.en";
+import { copyEn } from "../src/copy/en";
 
 async function answerTen(page: import("@playwright/test").Page) {
   for (let i = 0; i < 10; i++) {
-    await expect(page.getByText(`${i + 1} of 10`)).toBeVisible();
+    await expect(page.getByText(`Question ${i + 1} of 10`)).toBeVisible();
     await page.locator("[data-likert='3']").click();
+    await page.waitForTimeout(300);
   }
 }
 
 test.describe("consent and storage", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("consent-off makes zero storage network calls", async ({ page }) => {
+  test("consent No makes zero storage network calls", async ({ page }) => {
     const storageCalls: string[] = [];
     await page.route("**/api/storage/**", (route) => {
       storageCalls.push(route.request().url());
@@ -21,14 +22,14 @@ test.describe("consent and storage", () => {
     await page.goto("/");
     await page.getByRole("button", { name: copyEn.start }).click();
     await answerTen(page);
-    await expect(page).toHaveURL(/\/result/, { timeout: 30_000 });
-    await expect(page.getByText(copyEn.storageSkipped)).toBeVisible();
+    await expect(page).toHaveURL(/\/consent/, { timeout: 30_000 });
+    await page.getByTestId("consent-no").click();
+    await expect(page).toHaveURL(/\/result/, { timeout: 15_000 });
+    await expect(page.getByText(copyEn.savedNot)).toBeVisible();
     expect(storageCalls).toEqual([]);
   });
 
-  test("consent-on + completion sends one complete payload and supports delete", async ({
-    page,
-  }) => {
+  test("consent Yes + age saves and supports delete", async ({ page }) => {
     const storageCalls: string[] = [];
     await page.route("**/api/storage/**", async (route) => {
       storageCalls.push(route.request().url());
@@ -36,12 +37,23 @@ test.describe("consent and storage", () => {
     });
 
     await page.goto("/");
-    await page.getByTestId("consent-store").check();
-    await page.getByTestId("consent-age").check();
     await page.getByRole("button", { name: copyEn.start }).click();
     await answerTen(page);
-    await expect(page).toHaveURL(/\/result/, { timeout: 30_000 });
+    await expect(page).toHaveURL(/\/consent/, { timeout: 30_000 });
 
+    const yes = page.getByTestId("consent-yes");
+    if ((await yes.count()) === 0) {
+      // Production without Convex: only No is available.
+      test.skip();
+      return;
+    }
+
+    await expect(yes).toBeDisabled();
+    await page.getByTestId("consent-age").check();
+    await expect(yes).toBeEnabled();
+    await yes.click();
+
+    await expect(page).toHaveURL(/\/result/, { timeout: 15_000 });
     await expect(page.getByTestId("session-code")).toBeVisible({
       timeout: 15_000,
     });

@@ -162,6 +162,7 @@ export function DeeperClient() {
         <LikertQuestion
           questionText={questionText}
           progressLabel={copyEn.progress(asked + 1, total)}
+          progressPct={((asked + 1) / total) * 100}
           onAnswer={handleAnswer}
           onBack={handleBack}
           canBack={asked > 0}
