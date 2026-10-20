@@ -36,9 +36,22 @@ export function subscribeSession(listener: () => void): () => void {
   return () => listeners.delete(listener);
 }
 
+function normalizeSession(raw: TestSession): TestSession {
+  return {
+    ...createSession(raw.seed),
+    ...raw,
+    sessionCode: raw.sessionCode ?? null,
+    storageSaved: raw.storageSaved ?? false,
+    storageError: raw.storageError ?? null,
+    shownInsightIds: raw.shownInsightIds ?? [],
+    startDay: raw.startDay ?? new Date().toISOString().slice(0, 10),
+  };
+}
+
 export function getSessionSnapshot(): TestSession | null {
   if (memory) return memory;
-  memory = readStorage();
+  const loaded = readStorage();
+  memory = loaded ? normalizeSession(loaded) : null;
   return memory;
 }
 

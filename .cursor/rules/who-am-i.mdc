@@ -12,7 +12,7 @@ alwaysApply: true
 - **Phase gate:** After each phase, stop until the owner replies `continue`. Do not skip ahead.
 - **Default selector:** fixed 10-item form until real data justifies adaptive.
 - **Colours / LLM reword / free text:** flags off (`ENABLE_COLOURS`, `ENABLE_LLM_REWORD`, `ENABLE_FREE_TEXT` = false).
-- Phases 0–3 are done. Next is Phase 4 (consent, storage, feedback) when the owner says continue.
+- Phases 0–4 are done. Next is Phase 5 (go deeper) when the owner says continue.
 
 ## Hard rules
 

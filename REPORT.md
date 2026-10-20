@@ -8,7 +8,7 @@ These override older chat history and Spec v1.0 if they conflict:
 |---|---|
 | Language | **English only** — no Dutch, no `next-intl`, no language switch |
 | Authority | `WHO_AM_I_CURSOR_BRIEF.md` wins over `WHO_AM_I_SPEC.md` |
-| Phase status | 0–3 done; next = 4 consent/storage on `continue` |
+| Phase status | 0–4 done; next = 5 go-deeper on `continue` |
 | Selector default | Fixed 10 until real data justifies adaptive |
 | Briefs on GitHub | `WHO_AM_I_*.md` gitignored (local only) |
 
@@ -107,4 +107,26 @@ Also mirrored in [`.cursor/rules/who-am-i.mdc`](.cursor/rules/who-am-i.mdc) (`al
 ### Open
 - All 41 entries still draft (0 reviewed)
 - Content quality / HR review (§14)
-- Consent + storage (Phase 4)
+
+## Phase 4 — Consent, storage, feedback
+
+**Status:** done
+
+### Built
+- `ConsentBox` on home (store opt-in + age 16+ + optional retake-later); default client-only
+- `StorageAdapter`: `NoopAdapter`, `HttpStorageAdapter` (client post-consent), `MemoryAdapter` (server/local), `ConvexAdapter` stub for Convex client
+- API routes `/api/storage/{complete,delete,feedback,retention}` with server re-score + coarse rate limit (no IPs)
+- Session code (hash stored); shown once on result after consented save
+- Feedback page (fit + too high/right/low); Privacy draft page + delete-by-code
+- Convex schema + sessions/retention/crons under `convex/` (excluded from app `tsc` until `npx convex dev`)
+- E2E: consent-off ⇒ zero `/api/storage` calls; consent-on ⇒ one `/complete` + delete works
+
+### Decisions
+- Until `CONVEX_URL` is configured, server uses in-memory store so local/e2e work offline from Convex cloud
+- Client never talks to Convex directly — only same-origin `/api/storage` after consent
+- EU region confirmation remains a human ops task (§14)
+
+### Open
+- Run `npx convex dev` and confirm EU region before production
+- Wire `ConvexAdapter` into `getServerStorage()` when URL is set
+- Legal review of privacy draft

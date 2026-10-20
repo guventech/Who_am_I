@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConsentBox } from "@/components/ConsentBox";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { StartButton } from "@/components/StartButton";
 import { getModelVersion } from "@/content/client-content";
@@ -24,6 +25,8 @@ export default function Home() {
           <p className="text-base text-slate-600">{copyEn.honesty}</p>
         </div>
 
+        <ConsentBox />
+
         <div className="flex flex-col gap-3">
           <StartButton />
           <Link
@@ -31,6 +34,12 @@ export default function Home() {
             className="text-sm font-medium text-slate-700 underline-offset-4 hover:underline"
           >
             {copyEn.howAccurateLink}
+          </Link>
+          <Link
+            href="/privacy"
+            className="text-sm font-medium text-slate-700 underline-offset-4 hover:underline"
+          >
+            {copyEn.privacyLink}
           </Link>
           <p className="text-sm text-slate-500">{copyEn.homeToTest}</p>
         </div>

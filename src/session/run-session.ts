@@ -13,6 +13,12 @@ import type {
 export type TestSession = SessionState & {
   completed: boolean;
   scored: ScoredSession | null;
+  /** Set after a consented save; plaintext shown once. */
+  sessionCode: string | null;
+  storageSaved: boolean;
+  storageError: string | null;
+  shownInsightIds: string[];
+  startDay: string;
 };
 
 export function createSession(seed = Date.now()): TestSession {
@@ -22,6 +28,11 @@ export function createSession(seed = Date.now()): TestSession {
     usedItemIds: [],
     completed: false,
     scored: null,
+    sessionCode: null,
+    storageSaved: false,
+    storageError: null,
+    shownInsightIds: [],
+    startDay: new Date().toISOString().slice(0, 10),
   };
 }
 
@@ -57,6 +68,9 @@ export function answerCurrent(
     usedItemIds: [...session.usedItemIds, itemId],
     completed: false,
     scored: null,
+    sessionCode: null,
+    storageSaved: false,
+    storageError: null,
   };
 }
 
@@ -70,6 +84,9 @@ export function backOne(session: TestSession): TestSession {
     usedItemIds: answered.map((a) => a.itemId),
     completed: false,
     scored: null,
+    sessionCode: null,
+    storageSaved: false,
+    storageError: null,
   };
 }
 
