@@ -29,9 +29,12 @@ export function ConsentClient({ storageEnabled }: Props) {
 
   if (!session?.completed || !session.scored) {
     return (
-      <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+      <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
         <PrototypeBanner bankStatus={model.bankStatus} />
-        <main className="page flex flex-1 flex-col justify-center gap-4 py-12">
+        <main
+          data-testid="content-column"
+          className="page flex flex-1 flex-col justify-center gap-4 py-12"
+        >
           <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>
           <button
             type="button"
@@ -57,9 +60,9 @@ export function ConsentClient({ storageEnabled }: Props) {
   }
 
   return (
-    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+    <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={model.bankStatus} />
-      <main className="page flex flex-col gap-6 py-12">
+      <main data-testid="content-column" className="page flex flex-col gap-6 py-12">
         <h1 className="text-[32px]" style={{ color: "var(--ink)" }}>
           {copyEn.consentHeading}
         </h1>

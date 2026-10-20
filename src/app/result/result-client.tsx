@@ -107,9 +107,9 @@ export function ResultClient() {
   const consented = hasStorageConsent(consent);
 
   return (
-    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+    <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={coreModel.bankStatus} />
-      <main className="page flex-1 py-8 pb-16">
+      <main data-testid="content-column" className="page flex-1 py-8 pb-16">
         {missing ? (
           <div className="flex flex-col gap-4 py-16">
             <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>
@@ -280,6 +280,11 @@ function ResultBody({
               >
                 <h3 className="text-lg font-semibold" style={{ color: "var(--warn)" }}>
                   {w.watchOut}
+                  {w.soft ? (
+                    <span className="ml-1 text-[13px] font-medium" style={{ color: "var(--less)" }}>
+                      {copyEn.lessCertain}
+                    </span>
+                  ) : null}
                 </h3>
                 <p className="mt-3 font-semibold">{copyEn.tryThis}</p>
                 <ul className="mt-2 list-disc space-y-1 pl-5">

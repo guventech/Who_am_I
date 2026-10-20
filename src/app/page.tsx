@@ -10,9 +10,12 @@ export default function Home() {
   const storageEnabled = isStorageEnabled();
 
   return (
-    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+    <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={model.bankStatus} />
-      <main className="page flex flex-1 flex-col justify-center gap-6 py-12">
+      <main
+        data-testid="content-column"
+        className="page flex flex-1 flex-col justify-center gap-6 py-12"
+      >
         <h1
           className="text-[32px] leading-tight tracking-tight sm:text-4xl"
           style={{ color: "var(--ink)" }}

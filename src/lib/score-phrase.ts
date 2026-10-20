@@ -1,5 +1,10 @@
-/** Config: retake-range width above this marks a trait "less certain". */
-export const LESS_CERTAIN_RANGE_WIDTH = 1.0;
+/**
+ * Config: retake-range width above this marks a trait "less certain".
+ * Set above the typical fixed-form retake width (sim mean about 1.17,
+ * median about 1.28) so a normal answer pattern tags a minority of traits.
+ * Fast answers widen ranges (FLAG_BAND_FACTOR) and tag more, but not every trait.
+ */
+export const LESS_CERTAIN_RANGE_WIDTH = 1.4;
 
 export function isLessCertain(rangeLow: number, rangeHigh: number): boolean {
   return rangeHigh - rangeLow > LESS_CERTAIN_RANGE_WIDTH;

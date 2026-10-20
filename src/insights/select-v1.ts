@@ -20,6 +20,8 @@ export type SelectedWatchOutV1 = {
   entryId: string;
   watchOut: string;
   tips: string[];
+  /** True when the line is the hand-written soft form. */
+  soft: boolean;
 };
 
 export type SelectedInsightsV1 = {
@@ -47,7 +49,9 @@ type Ranked = {
  * - level: low s < -0.4, mid -0.4..0.4, high > 0.4
  * - rank by |s|
  * - up to 3 strengths (soft form + tag when less certain)
- * - up to 2 watch-outs, never from less-certain traits
+ * - up to 2 watch-outs from traits that are not less certain
+ * - if that set is empty, one watch-out from the strongest trait,
+ *   in soft wording when that trait is less certain
  * - mid entries only when fewer than 2 traits are low/high
  */
 export function selectInsightsV1(traits: TraitScore[]): SelectedInsightsV1 {
@@ -97,7 +101,22 @@ export function selectInsightsV1(traits: TraitScore[]): SelectedInsightsV1 {
       entryId: r.entry.id,
       watchOut: r.entry.watchOut,
       tips: r.entry.tips,
+      soft: false,
     });
+  }
+
+  if (watchOuts.length === 0) {
+    const source = (pool.length > 0 ? pool : ranked)[0];
+    if (source) {
+      watchOuts.push({
+        entryId: source.entry.id,
+        watchOut: source.lessCertain
+          ? source.entry.watchOutSoft
+          : source.entry.watchOut,
+        tips: source.entry.tips,
+        soft: source.lessCertain,
+      });
+    }
   }
 
   const shownEntryIds = [
@@ -145,7 +164,8 @@ export function formatResultsPlainText(
   if (insights.watchOuts.length) {
     lines.push("Watch out for");
     for (const w of insights.watchOuts) {
-      lines.push(`- ${w.watchOut}`);
+      const soft = w.soft ? " (less certain)" : "";
+      lines.push(`- ${w.watchOut}${soft}`);
       for (const tip of w.tips) lines.push(`  • ${tip}`);
     }
   }
