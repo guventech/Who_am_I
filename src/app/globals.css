@@ -73,11 +73,16 @@ body {
 }
 
 .page {
-  width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 0 20px;
+  /* Definite width. A flex column item with only max-width can shrink to
+     its content; min(100%, 720px) stays ~720px on a 1280px desktop and
+     full width on a phone. Padding sits inside the 720px. */
   box-sizing: border-box;
+  width: min(100%, 720px);
+  min-width: min(100%, 720px);
+  max-width: 720px;
+  margin-inline: auto;
+  padding-inline: 20px;
+  align-self: center;
 }
 
 .loading-status {

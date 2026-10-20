@@ -169,9 +169,9 @@ export function TestClient({ storageEnabled }: Props) {
   const n = session.answered.length + 1;
 
   return (
-    <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+    <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={model.bankStatus} />
-      <main className="page flex-1 py-10">
+      <main data-testid="content-column" className="page flex-1 py-10">
         <LikertQuestion
           questionKey={itemId}
           questionText={questionText}
