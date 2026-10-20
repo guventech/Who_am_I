@@ -1,0 +1,16 @@
+---
+description: Hard rules for the Who Am I? personality sketch app
+alwaysApply: true
+---
+
+# Who Am I? — project rules
+
+- **Engine purity:** `src/engine/` is pure TypeScript — no React/DOM imports. Deterministic given a seed.
+- **No invented psychometrics:** Item parameters in-repo are DEV PLACEHOLDERS until calibrated ones are supplied. Never invent loadings, thresholds, norms, or accuracy numbers.
+- **UI numbers from config only:** Never claim accuracy, reliability, or correlation in the UI unless the value is read from the model-version config (`ACCURACY_CLAIMS`, etc.). Empty claims ⇒ omit numbers.
+- **Prototype banner:** While `bankStatus` is `dev-uncalibrated`, show "Prototype - scores not calibrated".
+- **No storage before consent:** Zero network calls to the storage backend until the user explicitly consents. Default path is client-only.
+- **Drafts never ship:** LLM-drafted or unreviewed user-facing content must carry `reviewStatus: "draft"` and must not be included in production builds unless `ALLOW_DRAFT_CONTENT=true`.
+- **Immutable item ids:** Changing item text requires a new id; retire the old id. Never mutate text under an existing id.
+- **English only (v1):** Do not add Dutch or other locales unless the owner explicitly reopens that scope.
+- **Out of scope:** accounts, facets, PDF export, colours (flag stub only), LLM reword API (stub only).
