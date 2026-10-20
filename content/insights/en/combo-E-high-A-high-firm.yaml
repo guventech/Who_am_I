@@ -1,0 +1,24 @@
+id: combo-E-high-A-high-firm
+key: E:high+A:high
+variant: firm
+reviewStatus: draft
+version: 1
+strengths:
+  - title: Connector
+    interviewLine: Describe a moment that showed bringing people in and keeping goodwill.
+    cvLine: Combined bringing people in and keeping goodwill to deliver [result].
+    teamLine: I often bring a connector style to group work.
+watchOuts:
+  - can come across as conflict-avoidant when a hard call was needed
+improve:
+  - area: Warmth with a spine
+    actions:
+      - This week, ask one teammate where your connector style landed well — and
+        where it overshot.
+      - Before your next high-stakes conversation, write one sentence on the
+        outcome you want and one on the relationship you want to protect.
+      - Block 20 minutes after that conversation to note what you would keep or
+        change.
+workWithOthers: You thrive when people feel included. Name tensions early so
+  harmony does not hide a real disagreement.
+tradeOff: Connection builds trust; over-smoothing can delay needed decisions.

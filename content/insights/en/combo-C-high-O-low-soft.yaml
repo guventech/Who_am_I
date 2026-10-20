@@ -1,0 +1,27 @@
+id: combo-C-high-O-low-soft
+key: C:high+O:low
+variant: soft
+reviewStatus: draft
+version: 1
+strengths:
+  - title: Reliable executor (less certain)
+    interviewLine: "If this fits: describe a moment that showed structure and
+      practical follow-through."
+    cvLine: May combine structure and practical follow-through to deliver [result].
+    teamLine: I may bring a reliable executor style when the work needs it.
+watchOuts:
+  - can come across as rigid when a novel approach would have helped (if this
+    pattern fits you)
+improve:
+  - area: Structure that still learns
+    actions:
+      - This week, if it fits, ask one teammate where your reliable executor
+        style landed well.
+      - Before your next high-stakes conversation, write one sentence on the
+        outcome you want and one on the relationship you want to protect.
+      - Block 20 minutes after that conversation to note what you would keep or
+        change.
+workWithOthers: You deliver when plans are clear. Leave one slot in the plan for
+  a better idea from someone more exploratory. Check whether this fits before
+  leaning on it.
+tradeOff: Reliability ships work; closed plans can miss a better route.

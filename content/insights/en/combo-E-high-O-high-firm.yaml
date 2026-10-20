@@ -1,0 +1,24 @@
+id: combo-E-high-O-high-firm
+key: E:high+O:high
+variant: firm
+reviewStatus: draft
+version: 1
+strengths:
+  - title: Energetic explorer
+    interviewLine: Describe a moment that showed enthusiasm for new people and new ideas.
+    cvLine: Combined enthusiasm for new people and new ideas to deliver [result].
+    teamLine: I often bring a energetic explorer style to group work.
+watchOuts:
+  - can come across as restless when depth or follow-through was needed
+improve:
+  - area: Exploration with depth
+    actions:
+      - This week, ask one teammate where your energetic explorer style landed
+        well — and where it overshot.
+      - Before your next high-stakes conversation, write one sentence on the
+        outcome you want and one on the relationship you want to protect.
+      - Block 20 minutes after that conversation to note what you would keep or
+        change.
+workWithOthers: You energise new starts. Pick one thread to stay with for two
+  weeks before opening another.
+tradeOff: Spark creates motion; without depth, results stay thin.

@@ -1,0 +1,25 @@
+id: ES-high-firm
+key: ES:high
+variant: firm
+reviewStatus: draft
+version: 1
+strengths:
+  - title: "Emotional Stability: calm strength"
+    interviewLine: Tell me about a time when being calm clearly helped the outcome.
+    cvLine: Brought a calm approach to [context], supporting [result].
+    teamLine: I tend to show up as calm in day-to-day work.
+watchOuts:
+  - can come across as too calm when the situation needs the opposite pole
+improve:
+  - area: Balancing calm energy
+    actions:
+      - This week, pick one meeting and decide in advance whether a calm or
+        opposite-pole move serves the goal.
+      - 'Ask a trusted colleague: "When does my emotional stability style help
+        you, and when does it get in the way?"'
+      - Schedule a 15-minute practice of the opposite pole (quiet focus /
+        outreach / structure / openness) midweek.
+workWithOthers: You often prefer a calm style. Name that preference early, and
+  ask opposite-pole colleagues what they need to work well with you.
+tradeOff: Leaning calm helps in some rooms and costs recovery or coverage in
+  others; the trade-off is real.

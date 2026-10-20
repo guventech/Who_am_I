@@ -1,0 +1,25 @@
+id: E-low-firm
+key: E:low
+variant: firm
+reviewStatus: draft
+version: 1
+strengths:
+  - title: "Extraversion: reserved strength"
+    interviewLine: Tell me about a time when being reserved clearly helped the outcome.
+    cvLine: Brought a reserved approach to [context], supporting [result].
+    teamLine: I tend to show up as reserved in day-to-day work.
+watchOuts:
+  - can come across as too reserved when the situation needs the opposite pole
+improve:
+  - area: Balancing reserved energy
+    actions:
+      - This week, pick one meeting and decide in advance whether a reserved or
+        opposite-pole move serves the goal.
+      - 'Ask a trusted colleague: "When does my extraversion style help you, and
+        when does it get in the way?"'
+      - Schedule a 15-minute practice of the opposite pole (quiet focus /
+        outreach / structure / openness) midweek.
+workWithOthers: You often prefer a reserved style. Name that preference early,
+  and ask opposite-pole colleagues what they need to work well with you.
+tradeOff: Leaning reserved helps in some rooms and costs recovery or coverage in
+  others; the trade-off is real.

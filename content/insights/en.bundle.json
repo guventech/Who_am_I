@@ -1,0 +1,1211 @@
+{
+  "entries": [
+    {
+      "id": "E-low-firm",
+      "key": "E:low",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Extraversion: reserved strength",
+          "interviewLine": "Tell me about a time when being reserved clearly helped the outcome.",
+          "cvLine": "Brought a reserved approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as reserved in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too reserved when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing reserved energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a reserved or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my extraversion style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a reserved style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning reserved helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "E-low-soft",
+      "key": "E:low",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Extraversion: reserved strength",
+          "interviewLine": "If this fits you: tell a story where being reserved helped a real outcome.",
+          "cvLine": "May bring a reserved approach to [context], supporting [result].",
+          "teamLine": "I may show up as reserved depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier extraversion style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing reserved energy",
+          "actions": [
+            "Once this week, notice when a reserved response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my extraversion style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a reserved way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A reserved lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "E-mid-firm",
+      "key": "E:mid",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Extraversion: situational flexibility",
+          "interviewLine": "Tell me about a time when being flexible with social energy clearly helped the outcome.",
+          "cvLine": "Brought a flexible with social energy approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as flexible with social energy in day-to-day work."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a flexible with social energy or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my extraversion style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a flexible with social energy style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning flexible with social energy helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "E-mid-soft",
+      "key": "E:mid",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Extraversion: situational flexibility",
+          "interviewLine": "If this fits you: tell a story where being flexible with social energy helped a real outcome.",
+          "cvLine": "May bring a flexible with social energy approach to [context], supporting [result].",
+          "teamLine": "I may show up as flexible with social energy depending on the situation."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "Once this week, notice when a flexible with social energy response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my extraversion style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a flexible with social energy way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A flexible with social energy lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "E-high-firm",
+      "key": "E:high",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Extraversion: outgoing strength",
+          "interviewLine": "Tell me about a time when being outgoing clearly helped the outcome.",
+          "cvLine": "Brought a outgoing approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as outgoing in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too outgoing when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing outgoing energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a outgoing or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my extraversion style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a outgoing style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning outgoing helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "E-high-soft",
+      "key": "E:high",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Extraversion: outgoing strength",
+          "interviewLine": "If this fits you: tell a story where being outgoing helped a real outcome.",
+          "cvLine": "May bring a outgoing approach to [context], supporting [result].",
+          "teamLine": "I may show up as outgoing depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier extraversion style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing outgoing energy",
+          "actions": [
+            "Once this week, notice when a outgoing response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my extraversion style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a outgoing way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A outgoing lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "A-low-firm",
+      "key": "A:low",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Agreeableness: direct strength",
+          "interviewLine": "Tell me about a time when being direct clearly helped the outcome.",
+          "cvLine": "Brought a direct approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as direct in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too direct when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing direct energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a direct or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my agreeableness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a direct style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning direct helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "A-low-soft",
+      "key": "A:low",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Agreeableness: direct strength",
+          "interviewLine": "If this fits you: tell a story where being direct helped a real outcome.",
+          "cvLine": "May bring a direct approach to [context], supporting [result].",
+          "teamLine": "I may show up as direct depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier agreeableness style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing direct energy",
+          "actions": [
+            "Once this week, notice when a direct response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my agreeableness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a direct way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A direct lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "A-mid-firm",
+      "key": "A:mid",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Agreeableness: situational flexibility",
+          "interviewLine": "Tell me about a time when being balanced between candour and harmony clearly helped the outcome.",
+          "cvLine": "Brought a balanced between candour and harmony approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as balanced between candour and harmony in day-to-day work."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a balanced between candour and harmony or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my agreeableness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a balanced between candour and harmony style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning balanced between candour and harmony helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "A-mid-soft",
+      "key": "A:mid",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Agreeableness: situational flexibility",
+          "interviewLine": "If this fits you: tell a story where being balanced between candour and harmony helped a real outcome.",
+          "cvLine": "May bring a balanced between candour and harmony approach to [context], supporting [result].",
+          "teamLine": "I may show up as balanced between candour and harmony depending on the situation."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "Once this week, notice when a balanced between candour and harmony response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my agreeableness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a balanced between candour and harmony way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A balanced between candour and harmony lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "A-high-firm",
+      "key": "A:high",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Agreeableness: accommodating strength",
+          "interviewLine": "Tell me about a time when being accommodating clearly helped the outcome.",
+          "cvLine": "Brought a accommodating approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as accommodating in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too accommodating when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing accommodating energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a accommodating or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my agreeableness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a accommodating style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning accommodating helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "A-high-soft",
+      "key": "A:high",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Agreeableness: accommodating strength",
+          "interviewLine": "If this fits you: tell a story where being accommodating helped a real outcome.",
+          "cvLine": "May bring a accommodating approach to [context], supporting [result].",
+          "teamLine": "I may show up as accommodating depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier agreeableness style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing accommodating energy",
+          "actions": [
+            "Once this week, notice when a accommodating response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my agreeableness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a accommodating way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A accommodating lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "C-low-firm",
+      "key": "C:low",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Conscientiousness: flexible strength",
+          "interviewLine": "Tell me about a time when being flexible clearly helped the outcome.",
+          "cvLine": "Brought a flexible approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as flexible in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too flexible when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing flexible energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a flexible or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my conscientiousness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a flexible style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning flexible helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "C-low-soft",
+      "key": "C:low",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Conscientiousness: flexible strength",
+          "interviewLine": "If this fits you: tell a story where being flexible helped a real outcome.",
+          "cvLine": "May bring a flexible approach to [context], supporting [result].",
+          "teamLine": "I may show up as flexible depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier conscientiousness style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing flexible energy",
+          "actions": [
+            "Once this week, notice when a flexible response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my conscientiousness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a flexible way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A flexible lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "C-mid-firm",
+      "key": "C:mid",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Conscientiousness: situational flexibility",
+          "interviewLine": "Tell me about a time when being able to switch between structure and spontaneity clearly helped the outcome.",
+          "cvLine": "Brought a able to switch between structure and spontaneity approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as able to switch between structure and spontaneity in day-to-day work."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a able to switch between structure and spontaneity or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my conscientiousness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a able to switch between structure and spontaneity style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning able to switch between structure and spontaneity helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "C-mid-soft",
+      "key": "C:mid",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Conscientiousness: situational flexibility",
+          "interviewLine": "If this fits you: tell a story where being able to switch between structure and spontaneity helped a real outcome.",
+          "cvLine": "May bring a able to switch between structure and spontaneity approach to [context], supporting [result].",
+          "teamLine": "I may show up as able to switch between structure and spontaneity depending on the situation."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "Once this week, notice when a able to switch between structure and spontaneity response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my conscientiousness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a able to switch between structure and spontaneity way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A able to switch between structure and spontaneity lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "C-high-firm",
+      "key": "C:high",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Conscientiousness: organised strength",
+          "interviewLine": "Tell me about a time when being organised clearly helped the outcome.",
+          "cvLine": "Brought a organised approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as organised in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too organised when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing organised energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a organised or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my conscientiousness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a organised style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning organised helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "C-high-soft",
+      "key": "C:high",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Conscientiousness: organised strength",
+          "interviewLine": "If this fits you: tell a story where being organised helped a real outcome.",
+          "cvLine": "May bring a organised approach to [context], supporting [result].",
+          "teamLine": "I may show up as organised depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier conscientiousness style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing organised energy",
+          "actions": [
+            "Once this week, notice when a organised response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my conscientiousness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a organised way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A organised lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "ES-low-firm",
+      "key": "ES:low",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Emotional Stability: sensitive strength",
+          "interviewLine": "Tell me about a time when being sensitive clearly helped the outcome.",
+          "cvLine": "Brought a sensitive approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as sensitive in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too sensitive when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing sensitive energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a sensitive or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my emotional stability style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a sensitive style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning sensitive helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "ES-low-soft",
+      "key": "ES:low",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Emotional Stability: sensitive strength",
+          "interviewLine": "If this fits you: tell a story where being sensitive helped a real outcome.",
+          "cvLine": "May bring a sensitive approach to [context], supporting [result].",
+          "teamLine": "I may show up as sensitive depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier emotional stability style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing sensitive energy",
+          "actions": [
+            "Once this week, notice when a sensitive response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my emotional stability style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a sensitive way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A sensitive lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "ES-mid-firm",
+      "key": "ES:mid",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Emotional Stability: situational flexibility",
+          "interviewLine": "Tell me about a time when being responsive without being stuck at either pole clearly helped the outcome.",
+          "cvLine": "Brought a responsive without being stuck at either pole approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as responsive without being stuck at either pole in day-to-day work."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a responsive without being stuck at either pole or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my emotional stability style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a responsive without being stuck at either pole style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning responsive without being stuck at either pole helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "ES-mid-soft",
+      "key": "ES:mid",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Emotional Stability: situational flexibility",
+          "interviewLine": "If this fits you: tell a story where being responsive without being stuck at either pole helped a real outcome.",
+          "cvLine": "May bring a responsive without being stuck at either pole approach to [context], supporting [result].",
+          "teamLine": "I may show up as responsive without being stuck at either pole depending on the situation."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "Once this week, notice when a responsive without being stuck at either pole response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my emotional stability style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a responsive without being stuck at either pole way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A responsive without being stuck at either pole lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "ES-high-firm",
+      "key": "ES:high",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Emotional Stability: calm strength",
+          "interviewLine": "Tell me about a time when being calm clearly helped the outcome.",
+          "cvLine": "Brought a calm approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as calm in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too calm when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing calm energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a calm or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my emotional stability style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a calm style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning calm helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "ES-high-soft",
+      "key": "ES:high",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Emotional Stability: calm strength",
+          "interviewLine": "If this fits you: tell a story where being calm helped a real outcome.",
+          "cvLine": "May bring a calm approach to [context], supporting [result].",
+          "teamLine": "I may show up as calm depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier emotional stability style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing calm energy",
+          "actions": [
+            "Once this week, notice when a calm response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my emotional stability style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a calm way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A calm lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "O-low-firm",
+      "key": "O:low",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Openness: practical strength",
+          "interviewLine": "Tell me about a time when being practical clearly helped the outcome.",
+          "cvLine": "Brought a practical approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as practical in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too practical when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing practical energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a practical or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my openness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a practical style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning practical helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "O-low-soft",
+      "key": "O:low",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Openness: practical strength",
+          "interviewLine": "If this fits you: tell a story where being practical helped a real outcome.",
+          "cvLine": "May bring a practical approach to [context], supporting [result].",
+          "teamLine": "I may show up as practical depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier openness style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing practical energy",
+          "actions": [
+            "Once this week, notice when a practical response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my openness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a practical way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A practical lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "O-mid-firm",
+      "key": "O:mid",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Openness: situational flexibility",
+          "interviewLine": "Tell me about a time when being open when it helps, grounded when it matters clearly helped the outcome.",
+          "cvLine": "Brought a open when it helps, grounded when it matters approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as open when it helps, grounded when it matters in day-to-day work."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a open when it helps, grounded when it matters or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my openness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a open when it helps, grounded when it matters style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning open when it helps, grounded when it matters helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "O-mid-soft",
+      "key": "O:mid",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Openness: situational flexibility",
+          "interviewLine": "If this fits you: tell a story where being open when it helps, grounded when it matters helped a real outcome.",
+          "cvLine": "May bring a open when it helps, grounded when it matters approach to [context], supporting [result].",
+          "teamLine": "I may show up as open when it helps, grounded when it matters depending on the situation."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Choosing a pole on purpose",
+          "actions": [
+            "Once this week, notice when a open when it helps, grounded when it matters response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my openness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a open when it helps, grounded when it matters way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A open when it helps, grounded when it matters lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "O-high-firm",
+      "key": "O:high",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Openness: curious strength",
+          "interviewLine": "Tell me about a time when being curious clearly helped the outcome.",
+          "cvLine": "Brought a curious approach to [context], supporting [result].",
+          "teamLine": "I tend to show up as curious in day-to-day work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as too curious when the situation needs the opposite pole"
+      ],
+      "improve": [
+        {
+          "area": "Balancing curious energy",
+          "actions": [
+            "This week, pick one meeting and decide in advance whether a curious or opposite-pole move serves the goal.",
+            "Ask a trusted colleague: \"When does my openness style help you, and when does it get in the way?\"",
+            "Schedule a 15-minute practice of the opposite pole (quiet focus / outreach / structure / openness) midweek."
+          ]
+        }
+      ],
+      "workWithOthers": "You often prefer a curious style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.",
+      "tradeOff": "Leaning curious helps in some rooms and costs recovery or coverage in others; the trade-off is real."
+    },
+    {
+      "id": "O-high-soft",
+      "key": "O:high",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Openness: curious strength",
+          "interviewLine": "If this fits you: tell a story where being curious helped a real outcome.",
+          "cvLine": "May bring a curious approach to [context], supporting [result].",
+          "teamLine": "I may show up as curious depending on the situation."
+        }
+      ],
+      "watchOuts": [
+        "can come across as uneven when others expect a steadier openness style (if this fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Balancing curious energy",
+          "actions": [
+            "Once this week, notice when a curious response helped — jot one line after the meeting.",
+            "Ask a trusted colleague: \"When does my openness style help you, and when does it get in the way?\"",
+            "If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed."
+          ]
+        }
+      ],
+      "workWithOthers": "You may prefer working in a curious way (if this fits you). Say what you need early, and invite people at the opposite pole to name what helps them.",
+      "tradeOff": "A curious lean can help in some contexts and cost energy in others — check which applies today."
+    },
+    {
+      "id": "combo-E-high-A-low-firm",
+      "key": "E:high+A:low",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Persuasive challenger",
+          "interviewLine": "Describe a moment that showed outgoing energy plus candid challenge.",
+          "cvLine": "Combined outgoing energy plus candid challenge to deliver [result].",
+          "teamLine": "I often bring a persuasive challenger style to group work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as forceful when others needed more warmth first"
+      ],
+      "improve": [
+        {
+          "area": "Challenge with care",
+          "actions": [
+            "This week, ask one teammate where your persuasive challenger style landed well — and where it overshot.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You like open debate. Pair a clear point with one question that invites the other person's view.",
+      "tradeOff": "Candour wins clarity; without pacing, it can cool the room."
+    },
+    {
+      "id": "combo-E-high-A-low-soft",
+      "key": "E:high+A:low",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Persuasive challenger (less certain)",
+          "interviewLine": "If this fits: describe a moment that showed outgoing energy plus candid challenge.",
+          "cvLine": "May combine outgoing energy plus candid challenge to deliver [result].",
+          "teamLine": "I may bring a persuasive challenger style when the work needs it."
+        }
+      ],
+      "watchOuts": [
+        "can come across as forceful when others needed more warmth first (if this pattern fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Challenge with care",
+          "actions": [
+            "This week, if it fits, ask one teammate where your persuasive challenger style landed well.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You like open debate. Pair a clear point with one question that invites the other person's view. Check whether this fits before leaning on it.",
+      "tradeOff": "Candour wins clarity; without pacing, it can cool the room."
+    },
+    {
+      "id": "combo-E-high-A-high-firm",
+      "key": "E:high+A:high",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Connector",
+          "interviewLine": "Describe a moment that showed bringing people in and keeping goodwill.",
+          "cvLine": "Combined bringing people in and keeping goodwill to deliver [result].",
+          "teamLine": "I often bring a connector style to group work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as conflict-avoidant when a hard call was needed"
+      ],
+      "improve": [
+        {
+          "area": "Warmth with a spine",
+          "actions": [
+            "This week, ask one teammate where your connector style landed well — and where it overshot.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You thrive when people feel included. Name tensions early so harmony does not hide a real disagreement.",
+      "tradeOff": "Connection builds trust; over-smoothing can delay needed decisions."
+    },
+    {
+      "id": "combo-E-high-A-high-soft",
+      "key": "E:high+A:high",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Connector (less certain)",
+          "interviewLine": "If this fits: describe a moment that showed bringing people in and keeping goodwill.",
+          "cvLine": "May combine bringing people in and keeping goodwill to deliver [result].",
+          "teamLine": "I may bring a connector style when the work needs it."
+        }
+      ],
+      "watchOuts": [
+        "can come across as conflict-avoidant when a hard call was needed (if this pattern fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Warmth with a spine",
+          "actions": [
+            "This week, if it fits, ask one teammate where your connector style landed well.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You thrive when people feel included. Name tensions early so harmony does not hide a real disagreement. Check whether this fits before leaning on it.",
+      "tradeOff": "Connection builds trust; over-smoothing can delay needed decisions."
+    },
+    {
+      "id": "combo-C-high-O-low-firm",
+      "key": "C:high+O:low",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Reliable executor",
+          "interviewLine": "Describe a moment that showed structure and practical follow-through.",
+          "cvLine": "Combined structure and practical follow-through to deliver [result].",
+          "teamLine": "I often bring a reliable executor style to group work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as rigid when a novel approach would have helped"
+      ],
+      "improve": [
+        {
+          "area": "Structure that still learns",
+          "actions": [
+            "This week, ask one teammate where your reliable executor style landed well — and where it overshot.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You deliver when plans are clear. Leave one slot in the plan for a better idea from someone more exploratory.",
+      "tradeOff": "Reliability ships work; closed plans can miss a better route."
+    },
+    {
+      "id": "combo-C-high-O-low-soft",
+      "key": "C:high+O:low",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Reliable executor (less certain)",
+          "interviewLine": "If this fits: describe a moment that showed structure and practical follow-through.",
+          "cvLine": "May combine structure and practical follow-through to deliver [result].",
+          "teamLine": "I may bring a reliable executor style when the work needs it."
+        }
+      ],
+      "watchOuts": [
+        "can come across as rigid when a novel approach would have helped (if this pattern fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Structure that still learns",
+          "actions": [
+            "This week, if it fits, ask one teammate where your reliable executor style landed well.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You deliver when plans are clear. Leave one slot in the plan for a better idea from someone more exploratory. Check whether this fits before leaning on it.",
+      "tradeOff": "Reliability ships work; closed plans can miss a better route."
+    },
+    {
+      "id": "combo-O-high-C-low-firm",
+      "key": "O:high+C:low",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Idea generator",
+          "interviewLine": "Describe a moment that showed fresh options without premature lock-in.",
+          "cvLine": "Combined fresh options without premature lock-in to deliver [result].",
+          "teamLine": "I often bring a idea generator style to group work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as scattered when others needed a finish line"
+      ],
+      "improve": [
+        {
+          "area": "Ideas that land",
+          "actions": [
+            "This week, ask one teammate where your idea generator style landed well — and where it overshot.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You open possibilities. Pair each new idea with an owner and a next tiny step.",
+      "tradeOff": "Exploration finds options; without closure, momentum leaks."
+    },
+    {
+      "id": "combo-O-high-C-low-soft",
+      "key": "O:high+C:low",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Idea generator (less certain)",
+          "interviewLine": "If this fits: describe a moment that showed fresh options without premature lock-in.",
+          "cvLine": "May combine fresh options without premature lock-in to deliver [result].",
+          "teamLine": "I may bring a idea generator style when the work needs it."
+        }
+      ],
+      "watchOuts": [
+        "can come across as scattered when others needed a finish line (if this pattern fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Ideas that land",
+          "actions": [
+            "This week, if it fits, ask one teammate where your idea generator style landed well.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You open possibilities. Pair each new idea with an owner and a next tiny step. Check whether this fits before leaning on it.",
+      "tradeOff": "Exploration finds options; without closure, momentum leaks."
+    },
+    {
+      "id": "combo-E-high-O-high-firm",
+      "key": "E:high+O:high",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Energetic explorer",
+          "interviewLine": "Describe a moment that showed enthusiasm for new people and new ideas.",
+          "cvLine": "Combined enthusiasm for new people and new ideas to deliver [result].",
+          "teamLine": "I often bring a energetic explorer style to group work."
+        }
+      ],
+      "watchOuts": [
+        "can come across as restless when depth or follow-through was needed"
+      ],
+      "improve": [
+        {
+          "area": "Exploration with depth",
+          "actions": [
+            "This week, ask one teammate where your energetic explorer style landed well — and where it overshot.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You energise new starts. Pick one thread to stay with for two weeks before opening another.",
+      "tradeOff": "Spark creates motion; without depth, results stay thin."
+    },
+    {
+      "id": "combo-E-high-O-high-soft",
+      "key": "E:high+O:high",
+      "variant": "soft",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Energetic explorer (less certain)",
+          "interviewLine": "If this fits: describe a moment that showed enthusiasm for new people and new ideas.",
+          "cvLine": "May combine enthusiasm for new people and new ideas to deliver [result].",
+          "teamLine": "I may bring a energetic explorer style when the work needs it."
+        }
+      ],
+      "watchOuts": [
+        "can come across as restless when depth or follow-through was needed (if this pattern fits you)"
+      ],
+      "improve": [
+        {
+          "area": "Exploration with depth",
+          "actions": [
+            "This week, if it fits, ask one teammate where your energetic explorer style landed well.",
+            "Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.",
+            "Block 20 minutes after that conversation to note what you would keep or change."
+          ]
+        }
+      ],
+      "workWithOthers": "You energise new starts. Pick one thread to stay with for two weeks before opening another. Check whether this fits before leaning on it.",
+      "tradeOff": "Spark creates motion; without depth, results stay thin."
+    },
+    {
+      "id": "fallback-mid",
+      "key": "fallback:mid",
+      "variant": "firm",
+      "reviewStatus": "draft",
+      "version": 1,
+      "strengths": [
+        {
+          "title": "Flexible sketch — go deeper to sharpen",
+          "interviewLine": "Your answers did not settle clear poles yet. Use stories from recent weeks rather than a fixed label.",
+          "cvLine": "Adaptable across situations — refine specifics after a deeper pass.",
+          "teamLine": "I am still mapping what stays steady for me; I can share preferences as they become clearer."
+        }
+      ],
+      "watchOuts": [],
+      "improve": [
+        {
+          "area": "Sharpen the sketch",
+          "actions": [
+            "When Go deeper is available, continue for a tighter read on each trait.",
+            "Meanwhile, note two situations this week where your style clearly helped — and one where it did not."
+          ]
+        }
+      ],
+      "workWithOthers": "Without a clear pole yet, ask teammates what they need from you and share what helps you focus.",
+      "tradeOff": "A short sketch stays broad on purpose; depth costs more questions but narrows the ranges."
+    }
+  ]
+}

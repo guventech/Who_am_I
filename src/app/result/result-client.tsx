@@ -2,10 +2,16 @@
 
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
+import { CopyInsightsButton } from "@/components/CopyInsightsButton";
+import { InsightBlocks } from "@/components/InsightBlocks";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { TraitSlider } from "@/components/TraitSlider";
+import { ENABLE_LLM_REWORD } from "@/config/flags";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/content/copy.en";
+import { getInsightLibrary } from "@/insights/client-library";
+import { formatInsightsAsText } from "@/insights/format-copy";
+import { selectInsights } from "@/insights/select";
 import { accuracySentenceFromClaims } from "@/lib/accuracy-copy";
 import {
   getServerSessionSnapshot,
@@ -14,6 +20,7 @@ import {
 } from "@/session/session-store";
 
 const model = getModelVersion();
+const insightLibrary = getInsightLibrary();
 
 export function ResultClient() {
   const session = useSyncExternalStore(
@@ -41,6 +48,8 @@ export function ResultClient() {
 
   const accuracy = accuracySentenceFromClaims(model.config.ACCURACY_CLAIMS);
   const traitsById = new Map(model.traits.map((t) => [t.id, t]));
+  const insights = selectInsights(session.scored.traits, insightLibrary);
+  const copyText = formatInsightsAsText(insights);
 
   return (
     <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
@@ -72,12 +81,29 @@ export function ResultClient() {
             const trait = traitsById.get(score.traitId);
             if (!trait) return null;
             return (
-              <TraitSlider key={score.traitId} trait={trait} score={score} />
+              <TraitSlider
+                key={score.traitId}
+                trait={trait}
+                score={score}
+                tradeOff={insights.tradeOffsByTrait[score.traitId]}
+              />
             );
           })}
         </section>
 
+        <InsightBlocks insights={insights} />
+
         <nav className="flex flex-col gap-3 border-t border-slate-300/70 pt-6">
+          <CopyInsightsButton text={copyText} />
+          {ENABLE_LLM_REWORD ? (
+            <button
+              type="button"
+              disabled
+              className="text-sm text-slate-500"
+            >
+              {copyEn.llmRewordStub}
+            </button>
+          ) : null}
           <Link
             href="/how-accurate"
             className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"

@@ -8,6 +8,8 @@ import {
 type Props = {
   trait: TraitMeta;
   score: TraitScore;
+  /** Honest trade-off sentence from the selected insight entry. */
+  tradeOff?: string;
 };
 
 const WIDTH = 320;
@@ -20,7 +22,7 @@ function xOf(slider: number): number {
   return PAD + t * (WIDTH - PAD * 2);
 }
 
-export function TraitSlider({ trait, score }: Props) {
+export function TraitSlider({ trait, score, tradeOff }: Props) {
   const unclear = score.confidence === "unclear";
   const lowX = xOf(Math.max(-1, Math.min(1, score.retakeLow)));
   const highX = xOf(Math.max(-1, Math.min(1, score.retakeHigh)));
@@ -151,6 +153,12 @@ export function TraitSlider({ trait, score }: Props) {
 
       <p className="text-sm leading-relaxed text-slate-700">
         {levelBlurb(score.level, score.confidence, trait)}
+        {tradeOff && score.confidence !== "unclear" ? (
+          <>
+            {" "}
+            {tradeOff}
+          </>
+        ) : null}
       </p>
     </section>
   );

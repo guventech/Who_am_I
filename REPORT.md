@@ -8,7 +8,7 @@ These override older chat history and Spec v1.0 if they conflict:
 |---|---|
 | Language | **English only** — no Dutch, no `next-intl`, no language switch |
 | Authority | `WHO_AM_I_CURSOR_BRIEF.md` wins over `WHO_AM_I_SPEC.md` |
-| Phase status | 0–2 done; next = 3 insights on `continue` |
+| Phase status | 0–3 done; next = 4 consent/storage on `continue` |
 | Selector default | Fixed 10 until real data justifies adaptive |
 | Briefs on GitHub | `WHO_AM_I_*.md` gitignored (local only) |
 
@@ -84,6 +84,27 @@ Also mirrored in [`.cursor/rules/who-am-i.mdc`](.cursor/rules/who-am-i.mdc) (`al
 - Start is a button that seeds a fresh session before navigation (not a bare link)
 
 ### Open
-- Insights blocks (Phase 3)
 - Consent + Convex storage (Phase 4)
 - Axe on result after answering still optional (home/how-accurate covered; result has dynamic scores)
+
+## Phase 3 — Insights
+
+**Status:** done
+
+### Built
+- Insight schema (Zod) + EN draft library: 15 trait keys × firm/soft, 5 combos × firm/soft, fallback mid (41 YAML files + `en.bundle.json`)
+- `selectInsights` (§9.3): top-3 confident traits, combos, caps 3/3/3, soft marker, zero-confident fallback
+- `filterInsightLibrary` excludes drafts unless `ALLOW_DRAFT_CONTENT`
+- Result UI: `InsightBlocks`, trade-off on sliders, **Copy my insights as text**
+- `pnpm content:report` lists all drafts; `pnpm generate-insight-drafts` regenerates
+- §9.4 + content + format-copy unit tests
+
+### Decisions
+- Draft copy generated from structured templates (still `reviewStatus: "draft"`) — human review required (§14)
+- LLM reword button remains hidden (`ENABLE_LLM_REWORD=false`)
+- Browser loads `en.bundle.json`; YAML under `content/insights/en/` is source of truth for the report script
+
+### Open
+- All 41 entries still draft (0 reviewed)
+- Content quality / HR review (§14)
+- Consent + storage (Phase 4)

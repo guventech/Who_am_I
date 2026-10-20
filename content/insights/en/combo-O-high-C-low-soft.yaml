@@ -1,0 +1,26 @@
+id: combo-O-high-C-low-soft
+key: O:high+C:low
+variant: soft
+reviewStatus: draft
+version: 1
+strengths:
+  - title: Idea generator (less certain)
+    interviewLine: "If this fits: describe a moment that showed fresh options
+      without premature lock-in."
+    cvLine: May combine fresh options without premature lock-in to deliver [result].
+    teamLine: I may bring a idea generator style when the work needs it.
+watchOuts:
+  - can come across as scattered when others needed a finish line (if this
+    pattern fits you)
+improve:
+  - area: Ideas that land
+    actions:
+      - This week, if it fits, ask one teammate where your idea generator style
+        landed well.
+      - Before your next high-stakes conversation, write one sentence on the
+        outcome you want and one on the relationship you want to protect.
+      - Block 20 minutes after that conversation to note what you would keep or
+        change.
+workWithOthers: You open possibilities. Pair each new idea with an owner and a
+  next tiny step. Check whether this fits before leaning on it.
+tradeOff: Exploration finds options; without closure, momentum leaks.

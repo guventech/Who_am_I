@@ -1,0 +1,26 @@
+id: A-high-firm
+key: A:high
+variant: firm
+reviewStatus: draft
+version: 1
+strengths:
+  - title: "Agreeableness: accommodating strength"
+    interviewLine: Tell me about a time when being accommodating clearly helped the outcome.
+    cvLine: Brought a accommodating approach to [context], supporting [result].
+    teamLine: I tend to show up as accommodating in day-to-day work.
+watchOuts:
+  - can come across as too accommodating when the situation needs the opposite
+    pole
+improve:
+  - area: Balancing accommodating energy
+    actions:
+      - This week, pick one meeting and decide in advance whether a
+        accommodating or opposite-pole move serves the goal.
+      - 'Ask a trusted colleague: "When does my agreeableness style help you,
+        and when does it get in the way?"'
+      - Schedule a 15-minute practice of the opposite pole (quiet focus /
+        outreach / structure / openness) midweek.
+workWithOthers: You often prefer a accommodating style. Name that preference
+  early, and ask opposite-pole colleagues what they need to work well with you.
+tradeOff: Leaning accommodating helps in some rooms and costs recovery or
+  coverage in others; the trade-off is real.

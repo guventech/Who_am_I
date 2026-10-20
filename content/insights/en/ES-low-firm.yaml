@@ -1,0 +1,25 @@
+id: ES-low-firm
+key: ES:low
+variant: firm
+reviewStatus: draft
+version: 1
+strengths:
+  - title: "Emotional Stability: sensitive strength"
+    interviewLine: Tell me about a time when being sensitive clearly helped the outcome.
+    cvLine: Brought a sensitive approach to [context], supporting [result].
+    teamLine: I tend to show up as sensitive in day-to-day work.
+watchOuts:
+  - can come across as too sensitive when the situation needs the opposite pole
+improve:
+  - area: Balancing sensitive energy
+    actions:
+      - This week, pick one meeting and decide in advance whether a sensitive or
+        opposite-pole move serves the goal.
+      - 'Ask a trusted colleague: "When does my emotional stability style help
+        you, and when does it get in the way?"'
+      - Schedule a 15-minute practice of the opposite pole (quiet focus /
+        outreach / structure / openness) midweek.
+workWithOthers: You often prefer a sensitive style. Name that preference early,
+  and ask opposite-pole colleagues what they need to work well with you.
+tradeOff: Leaning sensitive helps in some rooms and costs recovery or coverage
+  in others; the trade-off is real.

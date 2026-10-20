@@ -1,0 +1,27 @@
+id: A-low-soft
+key: A:low
+variant: soft
+reviewStatus: draft
+version: 1
+strengths:
+  - title: "Agreeableness: direct strength"
+    interviewLine: "If this fits you: tell a story where being direct helped a real outcome."
+    cvLine: May bring a direct approach to [context], supporting [result].
+    teamLine: I may show up as direct depending on the situation.
+watchOuts:
+  - can come across as uneven when others expect a steadier agreeableness style
+    (if this fits you)
+improve:
+  - area: Balancing direct energy
+    actions:
+      - Once this week, notice when a direct response helped — jot one line
+        after the meeting.
+      - 'Ask a trusted colleague: "When does my agreeableness style help you,
+        and when does it get in the way?"'
+      - If it fits, try one small opposite-pole behaviour for 15 minutes and
+        note what changed.
+workWithOthers: You may prefer working in a direct way (if this fits you). Say
+  what you need early, and invite people at the opposite pole to name what helps
+  them.
+tradeOff: A direct lean can help in some contexts and cost energy in others —
+  check which applies today.

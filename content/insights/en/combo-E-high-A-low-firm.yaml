@@ -1,0 +1,24 @@
+id: combo-E-high-A-low-firm
+key: E:high+A:low
+variant: firm
+reviewStatus: draft
+version: 1
+strengths:
+  - title: Persuasive challenger
+    interviewLine: Describe a moment that showed outgoing energy plus candid challenge.
+    cvLine: Combined outgoing energy plus candid challenge to deliver [result].
+    teamLine: I often bring a persuasive challenger style to group work.
+watchOuts:
+  - can come across as forceful when others needed more warmth first
+improve:
+  - area: Challenge with care
+    actions:
+      - This week, ask one teammate where your persuasive challenger style
+        landed well — and where it overshot.
+      - Before your next high-stakes conversation, write one sentence on the
+        outcome you want and one on the relationship you want to protect.
+      - Block 20 minutes after that conversation to note what you would keep or
+        change.
+workWithOthers: You like open debate. Pair a clear point with one question that
+  invites the other person's view.
+tradeOff: Candour wins clarity; without pacing, it can cool the room.

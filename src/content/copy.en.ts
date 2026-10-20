@@ -43,4 +43,17 @@ export const copyEn = {
   missingResult: "No completed sketch on this device yet.",
   startAgain: "Start again",
   yourSliders: "Five traits",
+  insightsHeading: "Personal insights",
+  insightsExamplesNote:
+    "Use lines only if they are backed by your real examples.",
+  insightsStrengths: "Strengths to shine with",
+  insightsWatchOuts: "Watch-outs",
+  insightsImprove: "Things to improve",
+  insightsWorkWith: "Working best with others",
+  insightsGoDeeper:
+    "Your answers don't settle clear poles yet. Go deeper when that round is available to sharpen this sketch.",
+  softMarker: "◌ less certain",
+  copyInsights: "Copy my insights as text",
+  copyInsightsDone: "Copied",
+  llmRewordStub: "Reword with AI (coming later)",
 } as const;
