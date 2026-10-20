@@ -162,7 +162,9 @@
     "P_LEVEL_FIRM": 0.7,
     "LEVEL_CUT": 0.4,
     "DEEPER_SD_TARGET": 0.35,
+    "DEEPER_BUDGET_MAX": 20,
     "FLAG_BAND_FACTOR": 1.25,
+    "GRID_NODES_PER_DIM": 11,
     "ACCURACY_CLAIMS": {
       "corrWithLongTest": null,
       "retest": null

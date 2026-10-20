@@ -3,7 +3,7 @@ import { filterInsightLibrary } from "@/insights/filter-drafts";
 import { loadInsightLibraryFromYaml } from "@/insights/load";
 import { selectInsights } from "@/insights/select";
 import type { TraitScore } from "@/engine/types";
-import { TRAIT_IDS } from "@/engine/types";
+import { CORE_TRAIT_IDS } from "@/engine/types";
 
 describe("insight EN draft library", () => {
   const library = loadInsightLibraryFromYaml();
@@ -42,7 +42,7 @@ describe("insight EN draft library", () => {
   });
 
   it("fallback selection works on the real library", () => {
-    const unclear: TraitScore[] = TRAIT_IDS.map((traitId) => ({
+    const unclear: TraitScore[] = CORE_TRAIT_IDS.map((traitId) => ({
       traitId,
       theta: 0,
       sd: 1,

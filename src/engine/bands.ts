@@ -6,7 +6,7 @@ import type {
   TraitLevel,
   TraitScore,
 } from "./types";
-import { TRAIT_IDS } from "./types";
+import { CORE_TRAIT_IDS } from "./types";
 import type { PosteriorSummary } from "./types";
 
 /** Map theta to slider [-1,1] vs norm sample. */
@@ -86,9 +86,10 @@ export function traitScoresFromPosterior(
   normSd: number[],
   cfg: ModelConfig,
   flagWiden: boolean,
+  traitIds: readonly TraitId[] = CORE_TRAIT_IDS,
 ): TraitScore[] {
   const bandFactor = flagWiden ? cfg.FLAG_BAND_FACTOR : 1;
-  return TRAIT_IDS.map((traitId: TraitId, i) => {
+  return traitIds.map((traitId: TraitId, i) => {
     const theta = posterior.mean[i]!;
     const sd = posterior.sd[i]!;
     const mu = normMean[i]!;

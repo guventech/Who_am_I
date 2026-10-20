@@ -26,7 +26,13 @@ export const copyEn = {
   flagNote:
     "Some answers came very quickly, so your ranges are widened.",
   resultHeading: "Your sketch",
-  goDeeperSoon: "Go deeper (coming later)",
+  goDeeper: "Go deeper",
+  goDeeperDisabled:
+    "Go deeper is unavailable until a licensed Honesty-Humility item set is supplied.",
+  goDeeperHeading: "Go deeper",
+  goDeeperIntro:
+    "A few more questions to narrow your ranges and add Honesty-Humility.",
+  yourSlidersDeeper: "Traits (including Honesty-Humility)",
   howAccurateHeading: "How accurate is this?",
   howAccurateIntro:
     "Short tests like this can sketch tendencies, but they are not a full measurement. Ranges on your result show uncertainty — where a retake will usually land.",

@@ -1,5 +1,5 @@
 import type { Item, ItemBank, ModelVersion, SessionState, TraitId } from "./types";
-import { TRAIT_IDS } from "./types";
+import { CORE_TRAIT_IDS } from "./types";
 
 export function activeCoreItems(bank: ItemBank): Item[] {
   return bank.items.filter(
@@ -22,6 +22,16 @@ export function candidateItems(
   return [...core, ...candidates];
 }
 
+/** Unused core actives + deeper-pool items (candidate or active). */
+export function deeperCandidateItems(bank: ItemBank): Item[] {
+  return bank.items.filter(
+    (i) =>
+      (i.pool === "core" && i.status === "active") ||
+      (i.pool === "deeper" &&
+        (i.status === "active" || i.status === "candidate")),
+  );
+}
+
 export function usedSet(state: SessionState): Set<string> {
   return new Set(state.usedItemIds);
 }
@@ -29,14 +39,17 @@ export function usedSet(state: SessionState): Set<string> {
 export function primaryCounts(
   answeredIds: string[],
   byId: Map<string, Item>,
+  traitIds: readonly TraitId[] = CORE_TRAIT_IDS,
 ): Record<TraitId, number> {
-  const counts = Object.fromEntries(TRAIT_IDS.map((t) => [t, 0])) as Record<
+  const counts = Object.fromEntries(traitIds.map((t) => [t, 0])) as Record<
     TraitId,
     number
   >;
   for (const id of answeredIds) {
     const item = byId.get(id);
-    if (item) counts[item.primaryTrait]! += 1;
+    if (item && item.primaryTrait in counts) {
+      counts[item.primaryTrait]! += 1;
+    }
   }
   return counts;
 }
@@ -54,6 +67,12 @@ export function lastPrimaries(
   return out;
 }
 
+export type FeasibleOptions = {
+  /** Core form coverage rule (each Big Five by Q7). Off for go-deeper. */
+  enforceCoverage?: boolean;
+  coverageTraits?: readonly TraitId[];
+};
+
 /**
  * Soft constraints for next item at position `answeredCount` (0-based next index).
  * By Q7 (index 6 answered → picking 7th): each trait >= 1 primary.
@@ -63,6 +82,7 @@ export function filterFeasible(
   state: SessionState,
   byId: Map<string, Item>,
   budget = 10,
+  opts: FeasibleOptions = {},
 ): Item[] {
   const used = usedSet(state);
   const answeredIds = state.answered.map((a) => a.itemId);
@@ -76,10 +96,13 @@ export function filterFeasible(
     if (filtered.length > 0) pool = filtered;
   }
 
-  // Coverage: ensure each trait appears by Q7
-  if (nextIndex < 7) {
-    const counts = primaryCounts(answeredIds, byId);
-    const missing = TRAIT_IDS.filter((t) => counts[t] === 0);
+  const enforceCoverage = opts.enforceCoverage !== false;
+  const coverageTraits = opts.coverageTraits ?? CORE_TRAIT_IDS;
+
+  // Coverage: ensure each core trait appears by Q7
+  if (enforceCoverage && nextIndex < 7) {
+    const counts = primaryCounts(answeredIds, byId, coverageTraits);
+    const missing = coverageTraits.filter((t) => counts[t] === 0);
     const remainingSlots = budget - nextIndex;
     if (missing.length > 0 && remainingSlots <= missing.length) {
       const must = pool.filter((i) => missing.includes(i.primaryTrait));

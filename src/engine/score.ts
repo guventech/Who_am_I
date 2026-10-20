@@ -8,6 +8,7 @@ import type {
   QualityFlags,
   TraitScore,
 } from "./types";
+import { modelTraitIds } from "./types";
 
 export type ScoredSession = {
   traits: TraitScore[];
@@ -27,6 +28,7 @@ export function scoreSession(
     model.normSd,
     model.config,
     flags.any,
+    modelTraitIds(model),
   );
   return { traits, flags };
 }

@@ -1,10 +1,10 @@
-import { informationWeight, loadingVector } from "./grm";
+import { aOptimalGain } from "./select-gain";
 import {
   candidateItems,
+  deeperCandidateItems,
   filterFeasible,
 } from "./select-constraints";
 import type {
-  Item,
   ItemBank,
   ItemId,
   ItemSelector,
@@ -13,40 +13,31 @@ import type {
   Rng,
   SessionState,
 } from "./types";
+import { modelTraitIds } from "./types";
 
-function matVec5(M: number[], v: number[]): number[] {
-  const out = [0, 0, 0, 0, 0];
-  for (let i = 0; i < 5; i++) {
-    let s = 0;
-    for (let j = 0; j < 5; j++) s += M[i * 5 + j]! * v[j]!;
-    out[i] = s;
-  }
-  return out;
-}
-
-function dot5(a: number[], b: number[]): number {
-  return (
-    a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]! + a[3]! * b[3]! + a[4]! * b[4]!
-  );
-}
-
-/** A-optimal gain: (w a'S²a) / (1 + w a'Sa). */
-export function aOptimalGain(
-  item: Item,
-  S: number[],
-  theta: number[],
-): number {
-  const a = loadingVector(item);
-  const w = informationWeight(item, theta);
-  const Sa = matVec5(S, a);
-  const aSa = dot5(a, Sa);
-  const S2a = matVec5(S, Sa);
-  const aS2a = dot5(a, S2a);
-  return (w * aS2a) / (1 + w * aSa);
-}
+export type AdaptiveSelectorOptions = {
+  /** Total answered items at which selection stops (core = 10). */
+  budget: number;
+  /** When true, pick from deeper pool + unused core (go-deeper round). */
+  deeperRound: boolean;
+  /**
+   * For deeper rounds: number of answers already present before this round
+   * (usually 10). Budget counts only new items when set with deeperRound.
+   */
+  deeperStartCount?: number;
+};
 
 export class AdaptiveSelector implements ItemSelector {
   private posterior: PosteriorSummary | null = null;
+  private readonly opts: AdaptiveSelectorOptions;
+
+  constructor(opts: Partial<AdaptiveSelectorOptions> = {}) {
+    this.opts = {
+      budget: opts.budget ?? 10,
+      deeperRound: opts.deeperRound ?? false,
+      deeperStartCount: opts.deeperStartCount,
+    };
+  }
 
   /** Call after each answer with updated posterior (or null for prior). */
   setPosterior(summary: PosteriorSummary | null): void {
@@ -59,24 +50,44 @@ export class AdaptiveSelector implements ItemSelector {
     cfg: ModelVersion,
     rng: Rng,
   ): ItemId | null {
-    if (state.answered.length >= 10) return null;
+    const start = this.opts.deeperRound
+      ? (this.opts.deeperStartCount ?? 0)
+      : 0;
+    const deeperAsked = state.answered.length - start;
+    if (this.opts.deeperRound) {
+      if (deeperAsked >= this.opts.budget) return null;
+    } else if (state.answered.length >= this.opts.budget) {
+      return null;
+    }
 
     const byId = new Map(bank.items.map((i) => [i.id, i]));
-    // Exploration share <= 10% of sessions when calibrated
     const explore = cfg.bankStatus === "calibrated" && rng.next() < 0.1;
-    const pool = candidateItems(bank, cfg, explore);
-    const feasible = filterFeasible(pool, state, byId, 10);
+    const pool = this.opts.deeperRound
+      ? deeperCandidateItems(bank)
+      : candidateItems(bank, cfg, explore);
+    const feasible = filterFeasible(
+      pool,
+      state,
+      byId,
+      this.opts.deeperRound ? state.answered.length + this.opts.budget : 10,
+      { enforceCoverage: !this.opts.deeperRound },
+    );
     if (feasible.length === 0) return null;
 
+    const traitOrder = modelTraitIds(cfg);
     const S = this.posterior?.cov ?? cfg.priorCov;
-    const theta = this.posterior?.mean ?? [0, 0, 0, 0, 0];
+    const theta =
+      this.posterior?.mean ?? traitOrder.map(() => 0);
 
     const ranked = feasible
-      .map((item) => ({ item, gain: aOptimalGain(item, S, theta) }))
+      .map((item) => ({
+        item,
+        gain: aOptimalGain(item, S, theta, traitOrder),
+      }))
       .sort((a, b) => b.gain - a.gain);
 
-    // Q1 deterministic: top item at prior
-    if (state.answered.length === 0) {
+    // First pick in a core session is deterministic; deeper continues from posterior.
+    if (!this.opts.deeperRound && state.answered.length === 0) {
       return ranked[0]!.item.id;
     }
 

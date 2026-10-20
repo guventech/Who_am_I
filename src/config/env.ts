@@ -18,12 +18,15 @@ const envSchema = z.object({
     .default("development"),
   ALLOW_UNCALIBRATED: boolFromEnv,
   ALLOW_DRAFT_CONTENT: boolFromEnv,
+  /** Explicit production opt-in for go-deeper (also requires licensed H-H items). */
+  ENABLE_GO_DEEPER: boolFromEnv,
 });
 
 export type AppEnv = {
   NODE_ENV: "development" | "test" | "production";
   ALLOW_UNCALIBRATED: boolean;
   ALLOW_DRAFT_CONTENT: boolean;
+  ENABLE_GO_DEEPER: boolean;
 };
 
 function defaultAllowInNonProduction(nodeEnv: AppEnv["NODE_ENV"]): boolean {
@@ -41,6 +44,7 @@ export function parseEnv(
     NODE_ENV: raw.NODE_ENV,
     ALLOW_UNCALIBRATED: raw.ALLOW_UNCALIBRATED,
     ALLOW_DRAFT_CONTENT: raw.ALLOW_DRAFT_CONTENT,
+    ENABLE_GO_DEEPER: raw.ENABLE_GO_DEEPER,
   });
 
   const allowDefault = defaultAllowInNonProduction(parsed.NODE_ENV);
@@ -49,6 +53,8 @@ export function parseEnv(
     NODE_ENV: parsed.NODE_ENV,
     ALLOW_UNCALIBRATED: parsed.ALLOW_UNCALIBRATED ?? allowDefault,
     ALLOW_DRAFT_CONTENT: parsed.ALLOW_DRAFT_CONTENT ?? allowDefault,
+    // Dev/test: mechanism on by default. Production: off until licensed H-H + flag.
+    ENABLE_GO_DEEPER: parsed.ENABLE_GO_DEEPER ?? allowDefault,
   };
 }
 

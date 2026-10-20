@@ -16,7 +16,11 @@ import {
   scoreResponses,
   updateRunningPosterior,
 } from "../src/engine/grid";
-import { loadItemBank, loadModelVersion } from "../src/engine/load-content";
+import {
+  loadDeeperModelVersion,
+  loadItemBank,
+  loadModelVersion,
+} from "../src/engine/load-content";
 import { cholesky, createRng, matVec, pearson } from "../src/engine/math";
 import { AdaptiveSelector } from "../src/engine/select-adaptive";
 import { shuffleFixedForm } from "../src/engine/select-fixed";
@@ -31,7 +35,12 @@ import type {
   TraitId,
   TraitScore,
 } from "../src/engine/types";
-import { TRAIT_IDS } from "../src/engine/types";
+import { CORE_TRAIT_IDS } from "../src/engine/types";
+import {
+  runDeeperRound,
+  syntheticDeeperRespond,
+} from "../src/engine/deeper";
+import { scoreSession } from "../src/engine/score";
 
 const N = Number(process.env.SIM_N ?? 40);
 const SEED = Number(process.env.SIM_SEED ?? 42);
@@ -114,14 +123,13 @@ function naiveEstimate(
   theta: number[],
   rng: ReturnType<typeof createRng>,
 ): number[] {
-  const byTrait = Object.fromEntries(TRAIT_IDS.map((t) => [t, [] as Item[]])) as Record<
-    TraitId,
-    Item[]
-  >;
+  const byTrait = Object.fromEntries(
+    CORE_TRAIT_IDS.map((t) => [t, [] as Item[]]),
+  ) as Record<TraitId, Item[]>;
   for (const item of activeCoreItems(bank)) {
     byTrait[item.primaryTrait]!.push(item);
   }
-  return TRAIT_IDS.map((t) => {
+  return CORE_TRAIT_IDS.map((t) => {
     const picks = byTrait[t]!.slice(0, 2);
     let sum = 0;
     for (const item of picks) {
@@ -142,13 +150,13 @@ function collectFromCached(
 ): MethodStats {
   const corr = {} as Record<TraitId, number>;
   for (let d = 0; d < 5; d++) {
-    const t = TRAIT_IDS[d]!;
+    const t = CORE_TRAIT_IDS[d]!;
     corr[t] = pearson(
       trueThetas.map((th) => th[d]!),
       estimates.map((e) => e[d]!),
     );
   }
-  const meanCorr = TRAIT_IDS.reduce((s, t) => s + corr[t]!, 0) / 5;
+  const meanCorr = CORE_TRAIT_IDS.reduce((s, t) => s + corr[t]!, 0) / 5;
 
   let credHit = 0;
   let retakeHit = 0;
@@ -269,7 +277,7 @@ function main(): void {
     );
     const fp2 = scoreResponses(bank, model, fa2);
     retakeSlidersFixed.push(
-      TRAIT_IDS.map((_, d) =>
+      CORE_TRAIT_IDS.map((_, d) =>
         thetaToSlider(fp2.mean[d]!, model.normMean[d]!, model.normSd[d]!),
       ),
     );
@@ -292,7 +300,7 @@ function main(): void {
     );
     const ap2 = scoreResponses(bank, model, aa2);
     retakeSlidersAdapt.push(
-      TRAIT_IDS.map((_, d) =>
+      CORE_TRAIT_IDS.map((_, d) =>
         thetaToSlider(ap2.mean[d]!, model.normMean[d]!, model.normSd[d]!),
       ),
     );
@@ -321,13 +329,13 @@ function main(): void {
 
   const naiveCorr = {} as Record<TraitId, number>;
   for (let d = 0; d < 5; d++) {
-    const t = TRAIT_IDS[d]!;
+    const t = CORE_TRAIT_IDS[d]!;
     naiveCorr[t] = pearson(
       trueThetas.map((th) => th[d]!),
       naiveEst.map((e) => e[d]!),
     );
   }
-  const naiveMean = TRAIT_IDS.reduce((s, t) => s + naiveCorr[t]!, 0) / 5;
+  const naiveMean = CORE_TRAIT_IDS.reduce((s, t) => s + naiveCorr[t]!, 0) / 5;
 
   const deltaR = adaptStats.meanCorr - fixedStats.meanCorr;
   const multFit = findRetakeMultiplier(model, fixedPosts, retakeSlidersFixed);
@@ -350,11 +358,11 @@ function main(): void {
 
   for (const s of [adaptStats, fixedStats]) {
     lines.push(
-      `| ${s.name} | ${TRAIT_IDS.map((t) => fmt(s.corr[t]!)).join(" | ")} | ${fmt(s.meanCorr)} |`,
+      `| ${s.name} | ${CORE_TRAIT_IDS.map((t) => fmt(s.corr[t]!)).join(" | ")} | ${fmt(s.meanCorr)} |`,
     );
   }
   lines.push(
-    `| naive-2/trait | ${TRAIT_IDS.map((t) => fmt(naiveCorr[t]!)).join(" | ")} | ${fmt(naiveMean)} |`,
+    `| naive-2/trait | ${CORE_TRAIT_IDS.map((t) => fmt(naiveCorr[t]!)).join(" | ")} | ${fmt(naiveMean)} |`,
   );
   lines.push("");
   lines.push(`**Adaptive − fixed Δr (mean) = ${fmt(deltaR, 4)}**`);
@@ -389,6 +397,73 @@ function main(): void {
   lines.push(`| % firm | ${fmt(adaptStats.pctFirm * 100, 1)}% |`);
   lines.push("");
 
+  // --- Go deeper (6-trait model, SYNTHETIC) ---
+  const deeperN = Number(process.env.SIM_DEEPER_N ?? Math.min(N, 12));
+  const deeperModel = loadDeeperModelVersion();
+  const L6 = cholesky(deeperModel.priorCov, 6);
+  let deeperReachTarget = 0;
+  let deeperItemsSum = 0;
+  let coreUnchanged = 0;
+
+  for (let i = 0; i < deeperN; i++) {
+    const z = Array.from({ length: 6 }, () => {
+      const u1 = Math.max(rng.next(), 1e-12);
+      const u2 = rng.next();
+      return Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
+    });
+    const theta6 = matVec(L6, z, 6);
+    const seed = (SEED + 50_000 + i * 9973) >>> 0;
+    const coreAnswered = runFixed(
+      bank,
+      model,
+      theta6.slice(0, 5),
+      seed,
+      rng,
+    );
+    const coreScored = scoreSession(bank, model, coreAnswered);
+    // Skipping deeper must leave core scores identical
+    const coreAgain = scoreSession(bank, model, coreAnswered);
+    if (
+      coreScored.traits.every(
+        (t, j) =>
+          Math.abs(t.theta - coreAgain.traits[j]!.theta) < 1e-12 &&
+          Math.abs(t.slider - coreAgain.traits[j]!.slider) < 1e-12,
+      )
+    ) {
+      coreUnchanged++;
+    }
+
+    const result = runDeeperRound(
+      bank,
+      deeperModel,
+      coreAnswered,
+      seed,
+      syntheticDeeperRespond(bank, deeperModel, theta6),
+    );
+    deeperItemsSum += result.itemsAsked;
+    if (result.stoppedReason === "sd_target") deeperReachTarget++;
+    if ((i + 1) % 4 === 0) {
+      console.log(`[sim] deeper ${i + 1}/${deeperN}`);
+    }
+  }
+
+  const deeperReachPct = (deeperReachTarget / deeperN) * 100;
+  const deeperMeanItems = deeperItemsSum / deeperN;
+  lines.push("## Go deeper (SYNTHETIC)");
+  lines.push("");
+  lines.push(`- N_deeper = ${deeperN}`);
+  lines.push(`- model = \`${deeperModel.id}\` (grid nodes/dim = ${deeperModel.config.GRID_NODES_PER_DIM})`);
+  lines.push(`- SD target = ${deeperModel.config.DEEPER_SD_TARGET}`);
+  lines.push(`- budget max = ${deeperModel.config.DEEPER_BUDGET_MAX}`);
+  lines.push(
+    `- % reaching SD target within budget | ${fmt(deeperReachPct, 1)}%`,
+  );
+  lines.push(`- mean deeper items asked | ${fmt(deeperMeanItems, 2)}`);
+  lines.push(
+    `- core scores unchanged when deeper skipped | ${coreUnchanged}/${deeperN}`,
+  );
+  lines.push("");
+
   writeFileSync(OUT, lines.join("\n"));
   console.log(`[sim] wrote ${OUT}`);
 
@@ -399,7 +474,18 @@ function main(): void {
     );
     process.exit(1);
   }
+  if (deeperReachTarget === 0) {
+    console.error("[sim] FAIL: go-deeper never reached SD target within budget");
+    process.exit(1);
+  }
+  if (coreUnchanged !== deeperN) {
+    console.error("[sim] FAIL: core scores changed when deeper was skipped");
+    process.exit(1);
+  }
   console.log("[sim] coverage check OK");
+  console.log(
+    `[sim] deeper: ${fmt(deeperReachPct, 1)}% hit SD target (mean items ${fmt(deeperMeanItems, 2)})`,
+  );
 }
 
 main();

@@ -1,6 +1,7 @@
 import bankRaw from "../../content/items/bank.dev.json";
 import textEnRaw from "../../content/items/en.json";
 import modelRaw from "../../content/model/model-v0-dev.json";
+import deeperModelRaw from "../../content/model/model-v0-dev-deeper.json";
 import { itemBankSchema, modelVersionSchema } from "@/engine/schema";
 import type { ItemBank, ModelVersion } from "@/engine/types";
 
@@ -11,6 +12,10 @@ export function getItemBank(): ItemBank {
 
 export function getModelVersion(): ModelVersion {
   return modelVersionSchema.parse(modelRaw) as ModelVersion;
+}
+
+export function getDeeperModelVersion(): ModelVersion {
+  return modelVersionSchema.parse(deeperModelRaw) as ModelVersion;
 }
 
 export function getItemTextEn(): Record<string, string> {

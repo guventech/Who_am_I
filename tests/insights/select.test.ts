@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { TraitScore } from "@/engine/types";
-import { TRAIT_IDS } from "@/engine/types";
+import { CORE_TRAIT_IDS } from "@/engine/types";
 import { filterInsightLibrary } from "@/insights/filter-drafts";
 import { selectInsights } from "@/insights/select";
 import type { InsightEntry, InsightLibrary } from "@/insights/types";
@@ -99,7 +99,7 @@ describe("selectInsights", () => {
   });
 
   it("never produces watch-outs from unclear traits", () => {
-    const traits = TRAIT_IDS.map((id) =>
+    const traits = CORE_TRAIT_IDS.map((id) =>
       score(id, {
         confidence: "unclear",
         level: "high",

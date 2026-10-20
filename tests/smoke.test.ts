@@ -27,6 +27,7 @@ describe("env schema", () => {
     const env = parseEnv({ NODE_ENV: "production" });
     expect(env.ALLOW_UNCALIBRATED).toBe(false);
     expect(env.ALLOW_DRAFT_CONTENT).toBe(false);
+    expect(env.ENABLE_GO_DEEPER).toBe(false);
   });
 
   it("honours explicit true allow flags in production", () => {
@@ -34,9 +35,11 @@ describe("env schema", () => {
       NODE_ENV: "production",
       ALLOW_UNCALIBRATED: "true",
       ALLOW_DRAFT_CONTENT: "1",
+      ENABLE_GO_DEEPER: "true",
     });
     expect(env.ALLOW_UNCALIBRATED).toBe(true);
     expect(env.ALLOW_DRAFT_CONTENT).toBe(true);
+    expect(env.ENABLE_GO_DEEPER).toBe(true);
   });
 });
 

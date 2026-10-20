@@ -5,7 +5,7 @@ import { useState, useSyncExternalStore } from "react";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/content/copy.en";
-import { TRAIT_IDS, type TraitId } from "@/engine/types";
+import { CORE_TRAIT_IDS, type TraitId } from "@/engine/types";
 import {
   getConsentSnapshot,
   getServerConsentSnapshot,
@@ -36,7 +36,7 @@ export function FeedbackClient() {
   const [overallFit, setOverallFit] = useState<1 | 2 | 3 | 4 | 5>(3);
   const [traits, setTraits] = useState<Record<TraitId, TraitFeedback>>(() =>
     Object.fromEntries(
-      TRAIT_IDS.map((id) => [
+      CORE_TRAIT_IDS.map((id) => [
         id,
         { traitId: id, fit: 3 as const, off: "about_right" as const },
       ]),
@@ -87,7 +87,7 @@ export function FeedbackClient() {
               void adapter
                 .saveFeedback(session.sessionCode, {
                   overallFit,
-                  traits: TRAIT_IDS.map((id) => traits[id]!),
+                  traits: CORE_TRAIT_IDS.map((id) => traits[id]!),
                   insightThumbs: session.shownInsightIds.map((entryId) => ({
                     entryId,
                     up: true,
@@ -114,7 +114,7 @@ export function FeedbackClient() {
               </select>
             </label>
 
-            {TRAIT_IDS.map((id) => {
+            {CORE_TRAIT_IDS.map((id) => {
               const meta = model.traits.find((t) => t.id === id);
               const row = traits[id]!;
               return (

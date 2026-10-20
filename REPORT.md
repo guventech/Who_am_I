@@ -8,7 +8,7 @@ These override older chat history and Spec v1.0 if they conflict:
 |---|---|
 | Language | **English only** — no Dutch, no `next-intl`, no language switch |
 | Authority | `WHO_AM_I_CURSOR_BRIEF.md` wins over `WHO_AM_I_SPEC.md` |
-| Phase status | 0–4 done; next = 5 go-deeper on `continue` |
+| Phase status | 0–5 done; next = 6 hardening/deploy on `continue` |
 | Selector default | Fixed 10 until real data justifies adaptive |
 | Briefs on GitHub | `WHO_AM_I_*.md` gitignored (local only) |
 
@@ -130,3 +130,31 @@ Also mirrored in [`.cursor/rules/who-am-i.mdc`](.cursor/rules/who-am-i.mdc) (`al
 - Run `npx convex dev` and confirm EU region before production
 - Wire `ConvexAdapter` into `getServerStorage()` when URL is set
 - Legal review of privacy draft
+
+## Phase 5 — Go deeper
+
+**Status:** done
+
+### Built
+- 6-trait model `model-v0-dev-deeper.json` (Big Five + Honesty-Humility) — does not mutate the 5-trait core model
+- H01–H06 deeper-pool placeholders: `primaryTrait: H`, `status: candidate`, placeholder EN text
+- Engine generalized to dim = `traits.length` (grid, GRM loadings, A-optimal gain)
+- `runDeeperRound` / `/deeper` UI: adaptive selection, budget ≤ 20, stop on SD target
+- Production: round off unless `ENABLE_GO_DEEPER` **and** licensed (non-placeholder, `active`) H-H items; dev/test on by default
+- Sim section + unit tests: SD target within budget; core scores unchanged when deeper skipped
+- Storage re-score resolves core vs deeper model by `modelVersionId`; max responses 30
+
+### Decisions
+- 6D grid uses **7** GH nodes/dim (~118k points) so browser/sim stay feasible; core stays at 11
+- DEV `DEEPER_SD_TARGET` on the deeper model is **0.65** — brief’s 0.35 is not reachable with |a|=1.2 placeholders within 20 items; restore 0.35 after calibration
+- H–Big Five prior correlations are DEV PLACEHOLDERS (modest; H–A 0.25)
+- Insights still use Big Five only (no H insight entries in v1)
+
+### Simulation snapshot (SYNTHETIC)
+- Deeper N=8 (example run): **100%** hit DEV SD target; mean deeper items ≈ 11.25
+- Core unchanged when skipped: 8/8
+
+### Open
+- Licensed Honesty-Humility item set (§14) before production enable
+- Recalibrate `DEEPER_SD_TARGET` to 0.35 after real parameters
+- Optional: H-trait insight entries (out of current v1 insight scope)

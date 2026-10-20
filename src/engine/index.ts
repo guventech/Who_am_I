@@ -8,4 +8,6 @@ export * from "./score";
 export * from "./select-fixed";
 export * from "./select-adaptive";
 export * from "./select-constraints";
+export * from "./select-gain";
+export * from "./deeper";
 export * from "./load-content";

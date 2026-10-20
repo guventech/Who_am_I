@@ -1,4 +1,4 @@
-import { informationWeight, loadingVector } from "./grm";
+import { aOptimalGain, shermanMorrisonUpdate } from "./select-gain";
 import {
   activeCoreItems,
   filterFeasible,
@@ -13,6 +13,7 @@ import type {
   Rng,
   SessionState,
 } from "./types";
+import { CORE_TRAIT_IDS, modelTraitIds } from "./types";
 import { createRng } from "./math";
 
 /**
@@ -71,51 +72,6 @@ export class FixedSelector implements ItemSelector {
   }
 }
 
-function matVec5(M: number[], v: number[]): number[] {
-  const out = [0, 0, 0, 0, 0];
-  for (let i = 0; i < 5; i++) {
-    let s = 0;
-    for (let j = 0; j < 5; j++) s += M[i * 5 + j]! * v[j]!;
-    out[i] = s;
-  }
-  return out;
-}
-
-function dot5(a: number[], b: number[]): number {
-  return (
-    a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]! + a[3]! * b[3]! + a[4]! * b[4]!
-  );
-}
-
-function aOptimalGain(item: Item, S: number[], theta: number[]): number {
-  const a = loadingVector(item);
-  const w = informationWeight(item, theta);
-  const Sa = matVec5(S, a);
-  const aSa = dot5(a, Sa);
-  const S2a = matVec5(S, Sa);
-  const aS2a = dot5(a, S2a);
-  return (w * aS2a) / (1 + w * aSa);
-}
-
-function shermanMorrisonUpdate(
-  S: number[],
-  item: Item,
-  theta: number[],
-): number[] {
-  const a = loadingVector(item);
-  const w = informationWeight(item, theta);
-  const Sa = matVec5(S, a);
-  const aSa = dot5(a, Sa);
-  const denom = 1 + w * aSa;
-  const out = [...S];
-  for (let i = 0; i < 5; i++) {
-    for (let j = 0; j < 5; j++) {
-      out[i * 5 + j]! -= (w * Sa[i]! * Sa[j]!) / denom;
-    }
-  }
-  return out;
-}
-
 /** Greedy A-optimal fixed form under the population prior. */
 export function buildFixedFormOrder(
   bank: ItemBank,
@@ -125,8 +81,9 @@ export function buildFixedFormOrder(
   const byId = new Map(bank.items.map((i) => [i.id, i]));
   const pool = activeCoreItems(bank);
   const chosen: ItemId[] = [];
+  const traitOrder = modelTraitIds(model);
   let S = [...model.priorCov];
-  const theta = [0, 0, 0, 0, 0];
+  const theta = traitOrder.map(() => 0);
 
   while (chosen.length < n) {
     const state: SessionState = {
@@ -139,7 +96,9 @@ export function buildFixedFormOrder(
       })),
       usedItemIds: [...chosen],
     };
-    const feasible = filterFeasible(pool, state, byId, n);
+    const feasible = filterFeasible(pool, state, byId, n, {
+      coverageTraits: CORE_TRAIT_IDS,
+    });
     if (feasible.length === 0) break;
 
     let best: Item | null = null;
@@ -149,7 +108,7 @@ export function buildFixedFormOrder(
       0,
     );
     for (const item of feasible) {
-      let gain = aOptimalGain(item, S, theta);
+      let gain = aOptimalGain(item, S, theta, traitOrder);
       if (chosen.length >= 7 && revSoFar < 3 && item.keyed === -1) {
         gain += 0.01;
       }
@@ -160,7 +119,7 @@ export function buildFixedFormOrder(
     }
     if (!best) break;
     chosen.push(best.id);
-    S = shermanMorrisonUpdate(S, best, theta);
+    S = shermanMorrisonUpdate(S, best, theta, traitOrder);
   }
 
   return chosen;

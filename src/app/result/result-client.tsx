@@ -6,9 +6,16 @@ import { CopyInsightsButton } from "@/components/CopyInsightsButton";
 import { InsightBlocks } from "@/components/InsightBlocks";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { TraitSlider } from "@/components/TraitSlider";
+import { isGoDeeperAvailable } from "@/config/go-deeper";
 import { ENABLE_LLM_REWORD } from "@/config/flags";
-import { getModelVersion } from "@/content/client-content";
+import {
+  getDeeperModelVersion,
+  getItemBank,
+  getItemTextEn,
+  getModelVersion,
+} from "@/content/client-content";
 import { copyEn } from "@/content/copy.en";
+import { CORE_TRAIT_IDS } from "@/engine/types";
 import { getInsightLibrary } from "@/insights/client-library";
 import { formatInsightsAsText } from "@/insights/format-copy";
 import { selectInsights } from "@/insights/select";
@@ -28,7 +35,11 @@ import {
 } from "@/session/session-store";
 import { createClientStorage } from "@/storage/client";
 
-const model = getModelVersion();
+const coreModel = getModelVersion();
+const deeperModel = getDeeperModelVersion();
+const bank = getItemBank();
+const textEn = getItemTextEn();
+const goDeeperOn = isGoDeeperAvailable(bank, textEn);
 const insightLibrary = getInsightLibrary();
 
 export function ResultClient() {
@@ -71,7 +82,8 @@ export function ResultClient() {
     void (async () => {
       try {
         const { sessionCode } = await adapter.saveCompletion({
-          modelVersionId: model.id,
+          modelVersionId:
+            current.round === "deeper" ? deeperModel.id : coreModel.id,
           responses: current.answered,
           clientScores: current.scored!.traits.map((t) => ({
             traitId: t.traitId,
@@ -106,7 +118,7 @@ export function ResultClient() {
   if (!session?.completed || !session.scored) {
     return (
       <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
-        <PrototypeBanner bankStatus={model.bankStatus} />
+        <PrototypeBanner bankStatus={coreModel.bankStatus} />
         <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-4 px-6 py-16">
           <p className="text-lg text-slate-700">{copyEn.missingResult}</p>
           <Link
@@ -120,15 +132,24 @@ export function ResultClient() {
     );
   }
 
-  const insights = selectInsights(session.scored.traits, insightLibrary);
-  const accuracy = accuracySentenceFromClaims(model.config.ACCURACY_CLAIMS);
-  const traitsById = new Map(model.traits.map((t) => [t.id, t]));
+  const activeModel =
+    session.round === "deeper" ? deeperModel : coreModel;
+  const insightTraits = session.scored.traits.filter((t) =>
+    (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
+  );
+  const insights = selectInsights(insightTraits, insightLibrary);
+  const accuracy = accuracySentenceFromClaims(
+    activeModel.config.ACCURACY_CLAIMS,
+  );
+  const traitsById = new Map(activeModel.traits.map((t) => [t.id, t]));
   const copyText = formatInsightsAsText(insights);
   const consented = hasStorageConsent(consent);
+  const canGoDeeper =
+    goDeeperOn && session.round === "core" && session.completed;
 
   return (
     <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
-      <PrototypeBanner bankStatus={model.bankStatus} />
+      <PrototypeBanner bankStatus={activeModel.bankStatus} />
       <main className="mx-auto flex w-full max-w-lg flex-col gap-8 px-6 py-12">
         <header className="flex flex-col gap-3">
           <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase">
@@ -176,7 +197,14 @@ export function ResultClient() {
           ) : null}
         </header>
 
-        <section className="flex flex-col gap-8" aria-label={copyEn.yourSliders}>
+        <section
+          className="flex flex-col gap-8"
+          aria-label={
+            session.round === "deeper"
+              ? copyEn.yourSlidersDeeper
+              : copyEn.yourSliders
+          }
+        >
           {session.scored.traits.map((score) => {
             const trait = traitsById.get(score.traitId);
             if (!trait) return null;
@@ -228,7 +256,17 @@ export function ResultClient() {
               {copyEn.deleteData}
             </Link>
           ) : null}
-          <p className="text-sm text-slate-500">{copyEn.goDeeperSoon}</p>
+          {canGoDeeper ? (
+            <Link
+              href="/deeper"
+              className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-medium text-white hover:bg-slate-800"
+              data-testid="go-deeper"
+            >
+              {copyEn.goDeeper}
+            </Link>
+          ) : session.round === "core" ? (
+            <p className="text-sm text-slate-500">{copyEn.goDeeperDisabled}</p>
+          ) : null}
           <Link
             href="/"
             className="inline-flex h-11 items-center justify-center rounded-md border border-slate-400 bg-white/70 px-4 text-sm font-medium text-slate-900 hover:bg-white"

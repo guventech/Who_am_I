@@ -1,4 +1,9 @@
-import { loadItemBank, loadModelVersion } from "@/engine/load-content";
+import {
+  loadDeeperModelVersion,
+  loadItemBank,
+  loadModelVersion,
+} from "@/engine/load-content";
+import type { ModelVersion } from "@/engine/types";
 import { getMemoryAdapter, type MemoryAdapter } from "./memory";
 import { validateAndRescore } from "./rescore";
 import type {
@@ -9,6 +14,14 @@ import type {
   StorageAdapter,
 } from "./types";
 
+function resolveModel(modelVersionId: string): ModelVersion {
+  const core = loadModelVersion();
+  if (modelVersionId === core.id) return core;
+  const deeper = loadDeeperModelVersion();
+  if (modelVersionId === deeper.id) return deeper;
+  throw new Error(`unknown_model_version:${modelVersionId}`);
+}
+
 /**
  * Server-side store: Memory when Convex URL is unset.
  * ConvexAdapter is used when NEXT_PUBLIC_CONVEX_URL / CONVEX_URL is set
@@ -16,8 +29,8 @@ import type {
  */
 export function getServerStorage(): StorageAdapter {
   const bank = loadItemBank();
-  const model = loadModelVersion();
   return getMemoryAdapter((payload) => {
+    const model = resolveModel(payload.modelVersionId);
     const result = validateAndRescore(payload, bank, model);
     if (!result.ok) {
       throw new Error(result.reason);
@@ -34,7 +47,7 @@ export async function completeWithRescore(
   payload: CompletionPayload,
 ): Promise<SaveCompletionResult> {
   const bank = loadItemBank();
-  const model = loadModelVersion();
+  const model = resolveModel(payload.modelVersionId);
   const checked = validateAndRescore(payload, bank, model);
   if (!checked.ok) {
     throw new Error(checked.reason);

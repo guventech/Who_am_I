@@ -4,7 +4,7 @@ import { AdaptiveSelector } from "../../src/engine/select-adaptive";
 import { FixedSelector, shuffleFixedForm } from "../../src/engine/select-fixed";
 import { loadItemBank, loadModelVersion } from "../../src/engine/load-content";
 import type { SessionState } from "../../src/engine/types";
-import { TRAIT_IDS } from "../../src/engine/types";
+import { CORE_TRAIT_IDS } from "../../src/engine/types";
 
 describe("selectors", () => {
   it("fixed selector returns 10 unique items covering all traits", () => {
@@ -28,7 +28,7 @@ describe("selectors", () => {
 
     const byId = new Map(bank.items.map((i) => [i.id, i]));
     const traits = new Set(ids.map((id) => byId.get(id)!.primaryTrait));
-    for (const t of TRAIT_IDS) expect(traits.has(t)).toBe(true);
+    for (const t of CORE_TRAIT_IDS) expect(traits.has(t)).toBe(true);
   });
 
   it("shuffleFixedForm never has 3 consecutive same primary", () => {

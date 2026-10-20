@@ -45,6 +45,7 @@ function normalizeSession(raw: TestSession): TestSession {
     storageError: raw.storageError ?? null,
     shownInsightIds: raw.shownInsightIds ?? [],
     startDay: raw.startDay ?? new Date().toISOString().slice(0, 10),
+    round: raw.round ?? "core",
   };
 }
 
@@ -78,10 +79,15 @@ export function beginFreshSession(seed?: number): TestSession {
   return session;
 }
 
-/** Resume in-progress answers, or start fresh. */
+/** Resume in-progress core answers, or start fresh. */
 export function ensureActiveSession(): TestSession {
   const existing = getSessionSnapshot();
-  if (existing && !existing.completed && existing.answered.length < 10) {
+  if (
+    existing &&
+    existing.round === "core" &&
+    !existing.completed &&
+    existing.answered.length < 10
+  ) {
     return existing;
   }
   return beginFreshSession();

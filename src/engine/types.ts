@@ -1,6 +1,11 @@
 /** Pure engine types — no React/DOM. */
 
-export const TRAIT_IDS = ["E", "A", "C", "ES", "O"] as const;
+/** Big Five core traits (10-item sketch). */
+export const CORE_TRAIT_IDS = ["E", "A", "C", "ES", "O"] as const;
+/** Honesty-Humility — go-deeper model only. */
+export const DEEPER_EXTRA_TRAIT_IDS = ["H"] as const;
+export const TRAIT_IDS = [...CORE_TRAIT_IDS, ...DEEPER_EXTRA_TRAIT_IDS] as const;
+export type CoreTraitId = (typeof CORE_TRAIT_IDS)[number];
 export type TraitId = (typeof TRAIT_IDS)[number];
 
 export type ItemId = string;
@@ -47,7 +52,14 @@ export type ModelConfig = {
   P_LEVEL_FIRM: number;
   LEVEL_CUT: number;
   DEEPER_SD_TARGET: number;
+  /** Max additional items in the go-deeper round (brief: 12–20). */
+  DEEPER_BUDGET_MAX: number;
   FLAG_BAND_FACTOR: number;
+  /**
+   * Gauss–Hermite nodes per dimension. Core 5D uses 11; 6D deeper
+   * uses fewer (e.g. 7) so the grid stays browser-feasible.
+   */
+  GRID_NODES_PER_DIM: number;
   ACCURACY_CLAIMS: {
     corrWithLongTest: [number, number] | null;
     retest: number | null;
@@ -58,11 +70,11 @@ export type ModelVersion = {
   id: string;
   bankStatus: BankStatus;
   traits: TraitMeta[];
-  /** 5x5 row-major prior covariance (DEV PLACEHOLDER). */
+  /** Row-major prior covariance, size dim² (DEV PLACEHOLDER). */
   priorCov: number[];
   normSampleId: string;
   normsLabel: string;
-  /** Per-trait mean/SD in theta space; length 5. */
+  /** Per-trait mean/SD in theta space; length = traits.length. */
   normMean: number[];
   normSd: number[];
   /** SHA-256 hex of EN item text per item id. */
@@ -71,6 +83,23 @@ export type ModelVersion = {
   fixedFormOrder: ItemId[];
   config: ModelConfig;
 };
+
+export function modelTraitIds(model: ModelVersion): TraitId[] {
+  return model.traits.map((t) => t.id);
+}
+
+export function modelDim(model: ModelVersion): number {
+  return model.traits.length;
+}
+
+/** Dimension inferred from a row-major covariance matrix. */
+export function covDim(cov: number[]): number {
+  const n = Math.round(Math.sqrt(cov.length));
+  if (n * n !== cov.length) {
+    throw new Error(`Covariance length ${cov.length} is not a square`);
+  }
+  return n;
+}
 
 export type ResponseValue = 1 | 2 | 3 | 4 | 5;
 
@@ -91,7 +120,7 @@ export type SessionState = {
 export type PosteriorSummary = {
   mean: number[];
   sd: number[];
-  /** Row-major 5x5 posterior covariance. */
+  /** Row-major posterior covariance (dim × dim). */
   cov: number[];
 };
 

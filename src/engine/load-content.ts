@@ -19,6 +19,12 @@ export function loadModelVersion(
   return modelVersionSchema.parse(raw) as ModelVersion;
 }
 
+export function loadDeeperModelVersion(
+  path = join(ROOT, "content/model/model-v0-dev-deeper.json"),
+): ModelVersion {
+  return loadModelVersion(path);
+}
+
 export function loadItemTextEn(
   path = join(ROOT, "content/items/en.json"),
 ): Record<string, string> {

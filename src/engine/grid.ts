@@ -7,9 +7,10 @@ import type {
   ModelVersion,
   PosteriorSummary,
   ResponseValue,
+  TraitId,
 } from "./types";
+import { modelTraitIds } from "./types";
 
-const DIM = 5;
 /**
  * Physicist's Gauss–Hermite nodes/weights for ∫ f(x) e^{-x²} dx.
  * For E_{Z~N(0,1)}[f(Z)]: use z = √2 x and weight w/√π.
@@ -31,12 +32,14 @@ const GH_PHYS_WEIGHTS = [
 const SQRT2 = Math.SQRT2;
 const INV_SQRT_PI = 1 / Math.sqrt(Math.PI);
 
-const GH_NODES = GH_PHYS_NODES.map((x) => SQRT2 * x);
-const GH_WEIGHTS = GH_PHYS_WEIGHTS.map((w) => w * INV_SQRT_PI);
+const GH_NODES_11 = GH_PHYS_NODES.map((x) => SQRT2 * x);
+const GH_WEIGHTS_11 = GH_PHYS_WEIGHTS.map((w) => w * INV_SQRT_PI);
 
 export type ScoringGrid = {
+  dim: number;
+  traitOrder: TraitId[];
   nPoints: number;
-  /** Flattened theta coords: length nPoints * DIM. */
+  /** Flattened theta coords: length nPoints * dim. */
   thetas: Float64Array;
   /** Log prior weights (GH product). */
   logPrior: Float64Array;
@@ -49,39 +52,56 @@ function priorKey(priorCov: number[]): string {
   return priorCov.map((x) => x.toFixed(8)).join(",");
 }
 
-export function buildGrid(priorCov: number[], nodesPerDim = 11): ScoringGrid {
-  const key = `${nodesPerDim}|${priorKey(priorCov)}`;
+export function buildGrid(
+  priorCov: number[],
+  traitOrder: readonly TraitId[],
+  nodesPerDim = 11,
+): ScoringGrid {
+  const dim = traitOrder.length;
+  if (priorCov.length !== dim * dim) {
+    throw new Error(
+      `priorCov length ${priorCov.length} does not match traitOrder dim ${dim}`,
+    );
+  }
+  const key = `${dim}|${nodesPerDim}|${traitOrder.join(",")}|${priorKey(priorCov)}`;
   if (cachedGrid && cachedGridKey === key) return cachedGrid;
 
-  const nodes = nodesPerDim === 11 ? GH_NODES : gaussHermiteNodes(nodesPerDim);
+  const nodes =
+    nodesPerDim === 11 ? GH_NODES_11 : gaussHermiteNodes(nodesPerDim);
   const weights =
-    nodesPerDim === 11 ? GH_WEIGHTS : gaussHermiteWeights(nodesPerDim);
+    nodesPerDim === 11 ? GH_WEIGHTS_11 : gaussHermiteWeights(nodesPerDim);
 
-  const L = cholesky(priorCov, DIM);
-  const nPoints = nodesPerDim ** DIM;
-  const thetas = new Float64Array(nPoints * DIM);
+  const L = cholesky(priorCov, dim);
+  const nPoints = nodesPerDim ** dim;
+  const thetas = new Float64Array(nPoints * dim);
   const logPrior = new Float64Array(nPoints);
 
-  const idx = new Array(DIM).fill(0) as number[];
+  const idx = new Array(dim).fill(0) as number[];
   for (let g = 0; g < nPoints; g++) {
     let rem = g;
-    for (let d = DIM - 1; d >= 0; d--) {
+    for (let d = dim - 1; d >= 0; d--) {
       idx[d] = rem % nodesPerDim;
       rem = Math.floor(rem / nodesPerDim);
     }
     const z = idx.map((i) => nodes[i]!);
-    const theta = matVec(L, z, DIM);
-    for (let d = 0; d < DIM; d++) {
-      thetas[g * DIM + d] = theta[d]!;
+    const theta = matVec(L, z, dim);
+    for (let d = 0; d < dim; d++) {
+      thetas[g * dim + d] = theta[d]!;
     }
     let logW = 0;
-    for (let d = 0; d < DIM; d++) {
+    for (let d = 0; d < dim; d++) {
       logW += Math.log(weights[idx[d]!]!);
     }
     logPrior[g] = logW;
   }
 
-  cachedGrid = { nPoints, thetas, logPrior };
+  cachedGrid = {
+    dim,
+    traitOrder: [...traitOrder],
+    nPoints,
+    thetas,
+    logPrior,
+  };
   cachedGridKey = key;
   return cachedGrid;
 }
@@ -95,6 +115,14 @@ function gaussHermiteNodes(n: number): number[] {
     ];
     return phys.map((x) => SQRT2 * x);
   }
+  if (n === 7) {
+    // numpy.polynomial.hermite.hermgauss(7) — physicist weight e^{-x²}
+    const phys = [
+      -2.6519613568352334, -1.6735516287674714, -0.8162878828589647,
+      0, 0.8162878828589647, 1.6735516287674714, 2.6519613568352334,
+    ];
+    return phys.map((x) => SQRT2 * x);
+  }
   throw new Error(`Gauss-Hermite nodes not tabulated for n=${n}`);
 }
 
@@ -104,6 +132,14 @@ function gaussHermiteWeights(n: number): number[] {
       3.960697726326e-5, 0.0049436242755, 0.0884745273944, 0.43265120804,
       0.720235215606, 0.43265120804, 0.0884745273944, 0.0049436242755,
       3.960697726326e-5,
+    ];
+    return phys.map((w) => w * INV_SQRT_PI);
+  }
+  if (n === 7) {
+    const phys = [
+      0.0009717812450995192, 0.05451558281912704, 0.4256072526101278,
+      0.8102646175568073, 0.4256072526101278, 0.05451558281912704,
+      0.0009717812450995192,
     ];
     return phys.map((w) => w * INV_SQRT_PI);
   }
@@ -120,41 +156,44 @@ export function addItemLikelihood(
   item: Item,
   response: ResponseValue,
 ): void {
-  const { thetas, nPoints } = grid;
-  const theta = new Array(DIM) as number[];
+  const { thetas, nPoints, dim, traitOrder } = grid;
+  const theta = new Array(dim) as number[];
   for (let g = 0; g < nPoints; g++) {
-    for (let d = 0; d < DIM; d++) {
-      theta[d] = thetas[g * DIM + d]!;
+    for (let d = 0; d < dim; d++) {
+      theta[d] = thetas[g * dim + d]!;
     }
-    logPost[g]! += logLikItem(item, theta, response);
+    logPost[g]! += logLikItem(item, theta, response, traitOrder);
   }
 }
 
-export function summarizePosterior(grid: ScoringGrid, logPost: Float64Array): PosteriorSummary {
-  const { thetas, nPoints } = grid;
+export function summarizePosterior(
+  grid: ScoringGrid,
+  logPost: Float64Array,
+): PosteriorSummary {
+  const { thetas, nPoints, dim } = grid;
   const lse = logSumExp(logPost);
-  const mean = new Array(DIM).fill(0) as number[];
-  const cov = new Array(DIM * DIM).fill(0) as number[];
+  const mean = new Array(dim).fill(0) as number[];
+  const cov = new Array(dim * dim).fill(0) as number[];
 
   const w = new Float64Array(nPoints);
   for (let g = 0; g < nPoints; g++) {
     w[g] = Math.exp(logPost[g]! - lse);
-    for (let d = 0; d < DIM; d++) {
-      mean[d]! += w[g]! * thetas[g * DIM + d]!;
+    for (let d = 0; d < dim; d++) {
+      mean[d]! += w[g]! * thetas[g * dim + d]!;
     }
   }
 
   for (let g = 0; g < nPoints; g++) {
-    for (let i = 0; i < DIM; i++) {
-      const di = thetas[g * DIM + i]! - mean[i]!;
-      for (let j = 0; j < DIM; j++) {
-        const dj = thetas[g * DIM + j]! - mean[j]!;
-        cov[i * DIM + j]! += w[g]! * di * dj;
+    for (let i = 0; i < dim; i++) {
+      const di = thetas[g * dim + i]! - mean[i]!;
+      for (let j = 0; j < dim; j++) {
+        const dj = thetas[g * dim + j]! - mean[j]!;
+        cov[i * dim + j]! += w[g]! * di * dj;
       }
     }
   }
 
-  const sd = mean.map((_, i) => Math.sqrt(Math.max(cov[i * DIM + i]!, 0)));
+  const sd = mean.map((_, i) => Math.sqrt(Math.max(cov[i * dim + i]!, 0)));
   return { mean, sd, cov };
 }
 
@@ -162,9 +201,10 @@ export function scoreResponses(
   bank: ItemBank,
   model: ModelVersion,
   answered: AnsweredItem[],
-  nodesPerDim = 11,
+  nodesPerDim = model.config.GRID_NODES_PER_DIM,
 ): PosteriorSummary {
-  const grid = buildGrid(model.priorCov, nodesPerDim);
+  const traitOrder = modelTraitIds(model);
+  const grid = buildGrid(model.priorCov, traitOrder, nodesPerDim);
   const logPost = initialLogPosterior(grid);
   const byId = new Map(bank.items.map((i) => [i.id, i]));
   for (const a of answered) {
@@ -176,7 +216,12 @@ export function scoreResponses(
 }
 
 export function priorSummary(model: ModelVersion): PosteriorSummary {
-  const grid = buildGrid(model.priorCov);
+  const traitOrder = modelTraitIds(model);
+  const grid = buildGrid(
+    model.priorCov,
+    traitOrder,
+    model.config.GRID_NODES_PER_DIM,
+  );
   return summarizePosterior(grid, initialLogPosterior(grid));
 }
 
@@ -188,7 +233,12 @@ export type RunningPosterior = {
 };
 
 export function createRunningPosterior(model: ModelVersion): RunningPosterior {
-  const grid = buildGrid(model.priorCov);
+  const traitOrder = modelTraitIds(model);
+  const grid = buildGrid(
+    model.priorCov,
+    traitOrder,
+    model.config.GRID_NODES_PER_DIM,
+  );
   const logPost = initialLogPosterior(grid);
   return {
     grid,

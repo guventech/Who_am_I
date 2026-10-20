@@ -19,6 +19,8 @@ export type TestSession = SessionState & {
   storageError: string | null;
   shownInsightIds: string[];
   startDay: string;
+  /** Core sketch vs go-deeper round. */
+  round: "core" | "deeper";
 };
 
 export function createSession(seed = Date.now()): TestSession {
@@ -33,6 +35,7 @@ export function createSession(seed = Date.now()): TestSession {
     storageError: null,
     shownInsightIds: [],
     startDay: new Date().toISOString().slice(0, 10),
+    round: "core",
   };
 }
 

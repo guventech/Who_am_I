@@ -166,14 +166,15 @@ for (const x of CROSS) {
   hashes[x.id] = sha256(x.text);
 }
 
+// Honesty-Humility placeholders (pool deeper, candidate — not shippable).
 for (let i = 1; i <= 6; i++) {
   const id = `H${String(i).padStart(2, "0")}`;
   const text = `[H-H item placeholder ${i}]`;
   items.push({
     id,
     pool: "deeper",
-    primaryTrait: "E",
-    loadings: { E: A },
+    primaryTrait: "H",
+    loadings: { H: A },
     thresholds: THRESHOLDS,
     keyed: 1,
     isAnchor: false,
@@ -186,11 +187,27 @@ for (let i = 1; i <= 6; i++) {
   hashes[id] = sha256(text);
 }
 
-// Prior cov order E,A,C,ES,O
-const priorCov = [
+// Prior cov order E,A,C,ES,O (DEV PLACEHOLDER)
+const priorCov5 = [
   1, 0.2, 0.15, 0.25, 0.25, 0.2, 1, 0.2, 0.2, 0.1, 0.15, 0.2, 1, 0.25, 0, 0.25,
   0.2, 0.25, 1, 0.1, 0.25, 0.1, 0, 0.1, 1,
 ];
+
+/** Extend 5×5 prior with H (DEV PLACEHOLDER correlations — not calibrated). */
+function extendPriorWithH(prior5: number[]): number[] {
+  // H correlations vs E,A,C,ES,O — modest placeholders only.
+  const hCorr = [0.05, 0.25, 0.15, 0.1, 0.05];
+  const prior6 = new Array(36).fill(0) as number[];
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 5; j++) {
+      prior6[i * 6 + j] = prior5[i * 5 + j]!;
+    }
+    prior6[i * 6 + 5] = hCorr[i]!;
+    prior6[5 * 6 + i] = hCorr[i]!;
+  }
+  prior6[5 * 6 + 5] = 1;
+  return prior6;
+}
 
 const bank = {
   version: 0,
@@ -199,42 +216,58 @@ const bank = {
   items,
 };
 
+const coreTraits = [
+  {
+    id: "E",
+    name: "Extraversion",
+    poleLow: "Reserved — recharges alone",
+    poleHigh: "Outgoing — energised by people",
+  },
+  {
+    id: "A",
+    name: "Agreeableness",
+    poleLow: "Direct — candid",
+    poleHigh: "Accommodating — cooperative",
+  },
+  {
+    id: "C",
+    name: "Conscientiousness",
+    poleLow: "Flexible — spontaneous",
+    poleHigh: "Organised — disciplined",
+  },
+  {
+    id: "ES",
+    name: "Emotional Stability",
+    poleLow: "Sensitive — reactive",
+    poleHigh: "Calm — even-keeled",
+  },
+  {
+    id: "O",
+    name: "Openness",
+    poleLow: "Practical — conventional",
+    poleHigh: "Curious — imaginative",
+  },
+] as const;
+
+const sharedConfig = {
+  RETAKE_BAND_MULTIPLIER: 1.41,
+  UNCLEAR_WIDTH: 1.0,
+  P_LEVEL_FIRM: 0.7,
+  LEVEL_CUT: 0.4,
+  DEEPER_SD_TARGET: 0.35,
+  DEEPER_BUDGET_MAX: 20,
+  FLAG_BAND_FACTOR: 1.25,
+  ACCURACY_CLAIMS: {
+    corrWithLongTest: null as null,
+    retest: null as null,
+  },
+};
+
 const model = {
   id: "model-v0-dev",
-  bankStatus: "dev-uncalibrated",
-  traits: [
-    {
-      id: "E",
-      name: "Extraversion",
-      poleLow: "Reserved — recharges alone",
-      poleHigh: "Outgoing — energised by people",
-    },
-    {
-      id: "A",
-      name: "Agreeableness",
-      poleLow: "Direct — candid",
-      poleHigh: "Accommodating — cooperative",
-    },
-    {
-      id: "C",
-      name: "Conscientiousness",
-      poleLow: "Flexible — spontaneous",
-      poleHigh: "Organised — disciplined",
-    },
-    {
-      id: "ES",
-      name: "Emotional Stability",
-      poleLow: "Sensitive — reactive",
-      poleHigh: "Calm — even-keeled",
-    },
-    {
-      id: "O",
-      name: "Openness",
-      poleLow: "Practical — conventional",
-      poleHigh: "Curious — imaginative",
-    },
-  ],
-  priorCov,
+  bankStatus: "dev-uncalibrated" as const,
+  traits: [...coreTraits],
+  priorCov: priorCov5,
   normSampleId: "provisional-standard-normal",
   normsLabel: "provisional norms",
   normMean: [0, 0, 0, 0, 0],
@@ -242,16 +275,40 @@ const model = {
   itemHashes: hashes,
   fixedFormOrder: [] as string[],
   config: {
-    RETAKE_BAND_MULTIPLIER: 1.41,
-    UNCLEAR_WIDTH: 1.0,
-    P_LEVEL_FIRM: 0.7,
-    LEVEL_CUT: 0.4,
-    DEEPER_SD_TARGET: 0.35,
-    FLAG_BAND_FACTOR: 1.25,
-    ACCURACY_CLAIMS: {
-      corrWithLongTest: null,
-      retest: null,
+    ...sharedConfig,
+    GRID_NODES_PER_DIM: 11,
+  },
+};
+
+const deeperModel = {
+  id: "model-v0-dev-deeper",
+  bankStatus: "dev-uncalibrated" as const,
+  traits: [
+    ...coreTraits,
+    {
+      id: "H",
+      name: "Honesty-Humility",
+      poleLow: "Self-promoting — status-oriented",
+      poleHigh: "Modest — fairness-oriented",
     },
+  ],
+  priorCov: extendPriorWithH(priorCov5),
+  normSampleId: "provisional-standard-normal",
+  normsLabel: "provisional norms",
+  normMean: [0, 0, 0, 0, 0, 0],
+  normSd: [1, 1, 1, 1, 1, 1],
+  itemHashes: hashes,
+  /** Deeper round uses adaptive selection; fixed form unused. */
+  fixedFormOrder: [] as string[],
+  config: {
+    ...sharedConfig,
+    /**
+     * Brief default is 0.35 after calibration. With DEV |a|=1.2 placeholders,
+     * 20 deeper items typically leave SD ≈ 0.5–0.6 — use a reachable DEV stop.
+     */
+    DEEPER_SD_TARGET: 0.65,
+    /** 7^6 ≈ 118k points — comparable to 11^5 for the core model. */
+    GRID_NODES_PER_DIM: 7,
   },
 };
 
@@ -263,4 +320,10 @@ writeFileSync(
   join(ROOT, "content/model/model-v0-dev.json"),
   JSON.stringify(model, null, 2) + "\n",
 );
-console.log("Wrote bank.dev.json, en.json, model-v0-dev.json (fixedFormOrder empty — run build-fixed-form)");
+writeFileSync(
+  join(ROOT, "content/model/model-v0-dev-deeper.json"),
+  JSON.stringify(deeperModel, null, 2) + "\n",
+);
+console.log(
+  "Wrote bank.dev.json, en.json, model-v0-dev.json, model-v0-dev-deeper.json (run build-fixed-form for core order)",
+);

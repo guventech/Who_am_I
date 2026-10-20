@@ -12,7 +12,8 @@ alwaysApply: true
 - **Phase gate:** After each phase, stop until the owner replies `continue`. Do not skip ahead.
 - **Default selector:** fixed 10-item form until real data justifies adaptive.
 - **Colours / LLM reword / free text:** flags off (`ENABLE_COLOURS`, `ENABLE_LLM_REWORD`, `ENABLE_FREE_TEXT` = false).
-- Phases 0–4 are done. Next is Phase 5 (go deeper) when the owner says continue.
+- Phases 0–5 are done. Next is Phase 6 (hardening/deploy) when the owner says continue.
+- **Go deeper:** mechanism ships; production UI off until licensed H-H items + `ENABLE_GO_DEEPER`.
 
 ## Hard rules
 

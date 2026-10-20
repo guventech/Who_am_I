@@ -1,16 +1,23 @@
 import { clampProb, sigmoid } from "./math";
 import type { Item, ResponseValue, TraitId } from "./types";
-import { TRAIT_IDS } from "./types";
+import { CORE_TRAIT_IDS } from "./types";
 
 /**
- * Loading vector in trait order E,A,C,ES,O.
+ * Loading vector in the given trait order (defaults to Big Five).
  */
-export function loadingVector(item: Item): number[] {
-  return TRAIT_IDS.map((t) => item.loadings[t] ?? 0);
+export function loadingVector(
+  item: Item,
+  traitOrder: readonly TraitId[] = CORE_TRAIT_IDS,
+): number[] {
+  return traitOrder.map((t) => item.loadings[t] ?? 0);
 }
 
-function linearPredictor(item: Item, theta: number[]): number {
-  const a = loadingVector(item);
+function linearPredictor(
+  item: Item,
+  theta: number[],
+  traitOrder: readonly TraitId[],
+): number {
+  const a = loadingVector(item, traitOrder);
   let linear = 0;
   for (let i = 0; i < a.length; i++) {
     linear += a[i]! * (theta[i] ?? 0);
@@ -21,8 +28,12 @@ function linearPredictor(item: Item, theta: number[]): number {
 /**
  * pStar[0]=P*(1)=1, pStar[1..4]=P*(2..5), pStar[5]=P*(6)=0.
  */
-function survivalProbs(item: Item, theta: number[]): number[] {
-  const linear = linearPredictor(item, theta);
+function survivalProbs(
+  item: Item,
+  theta: number[],
+  traitOrder: readonly TraitId[],
+): number[] {
+  const linear = linearPredictor(item, theta, traitOrder);
   return [
     1,
     sigmoid(linear - item.thresholds[0]!),
@@ -37,8 +48,12 @@ function survivalProbs(item: Item, theta: number[]): number[] {
  * Category probabilities for a GRM item at theta.
  * P*(X >= k | θ) = sigmoid(a·θ - b_k) for k=2..5; P(X=k)=P*(k)-P*(k+1).
  */
-export function categoryProbs(item: Item, theta: number[]): number[] {
-  const pStar = survivalProbs(item, theta);
+export function categoryProbs(
+  item: Item,
+  theta: number[],
+  traitOrder: readonly TraitId[] = CORE_TRAIT_IDS,
+): number[] {
+  const pStar = survivalProbs(item, theta, traitOrder);
   const probs: number[] = [];
   for (let k = 0; k < 5; k++) {
     probs.push(Math.max(1e-9, pStar[k]! - pStar[k + 1]!));
@@ -51,8 +66,9 @@ export function logLikItem(
   item: Item,
   theta: number[],
   response: ResponseValue,
+  traitOrder: readonly TraitId[] = CORE_TRAIT_IDS,
 ): number {
-  const probs = categoryProbs(item, theta);
+  const probs = categoryProbs(item, theta, traitOrder);
   return Math.log(clampProb(probs[response - 1]!));
 }
 
@@ -61,8 +77,12 @@ export function logLikItem(
  * (item information = w_i a a').
  * w = Σ_k (P*_k' - P*_{k+1}')² / P_k where P*' = P*(1-P*).
  */
-export function informationWeight(item: Item, theta: number[]): number {
-  const linear = linearPredictor(item, theta);
+export function informationWeight(
+  item: Item,
+  theta: number[],
+  traitOrder: readonly TraitId[] = CORE_TRAIT_IDS,
+): number {
+  const linear = linearPredictor(item, theta, traitOrder);
   const pStar = [
     1,
     sigmoid(linear - item.thresholds[0]!),
@@ -90,8 +110,9 @@ export function sampleResponse(
   item: Item,
   theta: number[],
   u: number,
+  traitOrder: readonly TraitId[] = CORE_TRAIT_IDS,
 ): ResponseValue {
-  const probs = categoryProbs(item, theta);
+  const probs = categoryProbs(item, theta, traitOrder);
   let cum = 0;
   for (let k = 0; k < 5; k++) {
     cum += probs[k]!;
