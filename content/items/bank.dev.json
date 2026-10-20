@@ -1,0 +1,1345 @@
+{
+  "version": 0,
+  "placeholderNote": "DEV PLACEHOLDER item parameters — not calibrated. Do not treat scores as valid.",
+  "items": [
+    {
+      "id": "E01",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E02",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E03",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E04",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E05",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E06",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E07",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E08",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E09",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "E10",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A01",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A02",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A03",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A04",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A05",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A06",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A07",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A08",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A09",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "A10",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C01",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C02",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C03",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C04",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C05",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C06",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C07",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C08",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C09",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "C10",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES01",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES02",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES03",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES04",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES05",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES06",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES07",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES08",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES09",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "ES10",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O01",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O02",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O03",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O04",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O05",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": true,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O06",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": -1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": -1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O07",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O08",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O09",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "O10",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "active",
+      "source": "ipip",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "X01",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2,
+        "ES": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X02",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": 1.2,
+        "C": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X03",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2,
+        "A": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X04",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2,
+        "C": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X05",
+      "pool": "core",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2,
+        "A": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X06",
+      "pool": "core",
+      "primaryTrait": "O",
+      "loadings": {
+        "O": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X07",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": 1.2,
+        "A": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X08",
+      "pool": "core",
+      "primaryTrait": "C",
+      "loadings": {
+        "C": 1.2,
+        "O": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X09",
+      "pool": "core",
+      "primaryTrait": "A",
+      "loadings": {
+        "A": 1.2,
+        "C": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "X10",
+      "pool": "core",
+      "primaryTrait": "ES",
+      "loadings": {
+        "ES": 1.2,
+        "E": 0.3
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1,
+      "secondaryEstimated": false
+    },
+    {
+      "id": "H01",
+      "pool": "deeper",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "H02",
+      "pool": "deeper",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "H03",
+      "pool": "deeper",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "H04",
+      "pool": "deeper",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "H05",
+      "pool": "deeper",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1
+    },
+    {
+      "id": "H06",
+      "pool": "deeper",
+      "primaryTrait": "E",
+      "loadings": {
+        "E": 1.2
+      },
+      "thresholds": [
+        -1.8,
+        -0.7,
+        0.4,
+        1.5
+      ],
+      "keyed": 1,
+      "isAnchor": false,
+      "status": "candidate",
+      "source": "original",
+      "sourceVerified": false,
+      "version": 1
+    }
+  ]
+}

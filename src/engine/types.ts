@@ -1,0 +1,135 @@
+/** Pure engine types — no React/DOM. */
+
+export const TRAIT_IDS = ["E", "A", "C", "ES", "O"] as const;
+export type TraitId = (typeof TRAIT_IDS)[number];
+
+export type ItemId = string;
+
+export type ItemPool = "core" | "deeper";
+export type ItemStatus = "active" | "candidate" | "retired";
+export type ItemSource = "ipip" | "original";
+export type BankStatus = "dev-uncalibrated" | "calibrated";
+
+export type Item = {
+  id: ItemId;
+  pool: ItemPool;
+  primaryTrait: TraitId;
+  loadings: Partial<Record<TraitId, number>>;
+  /** Ordered thresholds b2 < b3 < b4 < b5. */
+  thresholds: [number, number, number, number];
+  keyed: 1 | -1;
+  isAnchor: boolean;
+  status: ItemStatus;
+  source: ItemSource;
+  sourceVerified: boolean;
+  version: number;
+  /** Candidate secondary loadings are hypotheses, not asserted. */
+  secondaryEstimated?: boolean;
+};
+
+export type ItemBank = {
+  version: number;
+  /** DEV PLACEHOLDER parameters until calibration. */
+  placeholderNote: string;
+  items: Item[];
+};
+
+export type TraitMeta = {
+  id: TraitId;
+  name: string;
+  poleLow: string;
+  poleHigh: string;
+};
+
+export type ModelConfig = {
+  RETAKE_BAND_MULTIPLIER: number;
+  UNCLEAR_WIDTH: number;
+  P_LEVEL_FIRM: number;
+  LEVEL_CUT: number;
+  DEEPER_SD_TARGET: number;
+  FLAG_BAND_FACTOR: number;
+  ACCURACY_CLAIMS: {
+    corrWithLongTest: [number, number] | null;
+    retest: number | null;
+  };
+};
+
+export type ModelVersion = {
+  id: string;
+  bankStatus: BankStatus;
+  traits: TraitMeta[];
+  /** 5x5 row-major prior covariance (DEV PLACEHOLDER). */
+  priorCov: number[];
+  normSampleId: string;
+  normsLabel: string;
+  /** Per-trait mean/SD in theta space; length 5. */
+  normMean: number[];
+  normSd: number[];
+  /** SHA-256 hex of EN item text per item id. */
+  itemHashes: Record<string, string>;
+  /** Precomputed fixed 10-item form (item ids). */
+  fixedFormOrder: ItemId[];
+  config: ModelConfig;
+};
+
+export type ResponseValue = 1 | 2 | 3 | 4 | 5;
+
+export type AnsweredItem = {
+  itemId: ItemId;
+  value: ResponseValue;
+  rtMs: number;
+  order: number;
+};
+
+export type SessionState = {
+  seed: number;
+  answered: AnsweredItem[];
+  /** Item ids already used (including answered). */
+  usedItemIds: ItemId[];
+};
+
+export type PosteriorSummary = {
+  mean: number[];
+  sd: number[];
+  /** Row-major 5x5 posterior covariance. */
+  cov: number[];
+};
+
+export type TraitLevel = "low" | "mid" | "high";
+export type LevelConfidence = "firm" | "soft" | "unclear";
+
+export type TraitScore = {
+  traitId: TraitId;
+  theta: number;
+  sd: number;
+  slider: number;
+  credibleLow: number;
+  credibleHigh: number;
+  retakeLow: number;
+  retakeHigh: number;
+  pLow: number;
+  pMid: number;
+  pHigh: number;
+  level: TraitLevel;
+  confidence: LevelConfidence;
+};
+
+export type QualityFlags = {
+  fast: boolean;
+  straightline: boolean;
+  any: boolean;
+};
+
+export type Rng = {
+  next(): number;
+  int(maxExclusive: number): number;
+};
+
+export interface ItemSelector {
+  next(
+    state: SessionState,
+    bank: ItemBank,
+    cfg: ModelVersion,
+    rng: Rng,
+  ): ItemId | null;
+}

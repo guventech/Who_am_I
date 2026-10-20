@@ -11,8 +11,11 @@
     "test": "vitest run",
     "e2e": "playwright test",
     "sim": "tsx scripts/sim.ts",
+    "build-fixed-form": "tsx scripts/build-fixed-form.ts",
+    "generate-dev-content": "tsx scripts/generate-dev-content.ts",
     "format": "prettier --write ."
   },
+
   "dependencies": {
     "next": "16.4.2",
     "react": "19.3.0",
