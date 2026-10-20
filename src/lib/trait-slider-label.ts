@@ -1,10 +1,8 @@
 import type { LevelConfidence } from "@/engine/types";
+import { formatScoreNumber } from "@/lib/score-phrase";
 
 export function formatSignedSlider(value: number): string {
-  const rounded = Math.round(value * 100) / 100;
-  if (rounded > 0) return `+${rounded.toFixed(2)}`;
-  if (rounded < 0) return rounded.toFixed(2);
-  return "0.00";
+  return formatScoreNumber(value);
 }
 
 export function traitSliderAriaLabel(opts: {

@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { TraitScore } from "@/engine/types";
-import { getInsightEntry } from "@/insights/library";
-import { selectInsightsV1 } from "@/insights/select-v1";
+import { INSIGHTS_VERSION, getInsightEntry } from "@/insights/library";
+import { formatResultsPlainText, selectInsightsV1 } from "@/insights/select-v1";
+import { formatScoreNumber } from "@/lib/score-phrase";
 
 function score(
   traitId: TraitScore["traitId"],
@@ -69,5 +70,44 @@ describe("selectInsightsV1", () => {
     expect(watch.entryId).toBe("A-high");
     expect(watch.watchOut).toBe(getInsightEntry("A", "high")!.watchOutSoft);
     expect(watch.watchOut).not.toBe(getInsightEntry("A", "high")!.watchOut);
+  });
+
+  it("puts a space before (less certain) in copied text", () => {
+    const text = formatResultsPlainText(
+      [
+        {
+          title: "Handling stress",
+          phrase: "About in the middle",
+          num: formatScoreNumber(-0.001),
+          lessCertain: true,
+        },
+      ],
+      {
+        version: INSIGHTS_VERSION,
+        shownEntryIds: ["E-mid"],
+        strengths: [
+          {
+            entryId: "E-mid",
+            strength: "You may work alone or with a group, and switch easily.",
+            interview: "I am fine leading a meeting.",
+            cv: "Comfortable both in team settings and in independent work.",
+            soft: true,
+          },
+        ],
+        watchOuts: [
+          {
+            entryId: "E-mid",
+            watchOut: "Other people may not know which kind of work gives you energy.",
+            tips: ["Notice which days leave you tired."],
+            soft: true,
+          },
+        ],
+      },
+    );
+    expect(text).toContain("0.00 (less certain)");
+    expect(text).not.toContain("-0.00");
+    expect(text).toContain("switch easily. (less certain)");
+    expect(text).toContain("energy. (less certain)");
+    expect(text).not.toMatch(/\S\(less certain\)/);
   });
 });

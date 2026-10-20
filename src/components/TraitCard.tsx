@@ -1,3 +1,4 @@
+import { LessCertainMark } from "@/components/LessCertainMark";
 import { copyEn } from "@/copy/en";
 import type { TraitId, TraitScore } from "@/engine/types";
 import { formatScoreNumber, isLessCertain, scoreToPhrase } from "@/lib/score-phrase";
@@ -39,11 +40,7 @@ export function TraitCard({ traitId, score }: Props) {
         <span className="text-[13px] font-normal" style={{ color: "var(--muted)" }}>
           {formatScoreNumber(score.slider)}
         </span>
-        {less ? (
-          <span className="ml-1 text-[13px] font-medium" style={{ color: "var(--less)" }}>
-            {copyEn.lessCertain}
-          </span>
-        ) : null}
+        {less ? <LessCertainMark /> : null}
       </p>
 
       <div

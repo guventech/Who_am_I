@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useRef, useSyncExternalStore } from "react";
 import { CopyInsightsButton } from "@/components/CopyInsightsButton";
+import { LessCertainMark } from "@/components/LessCertainMark";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { TraitCard } from "@/components/TraitCard";
 import { getModelVersion } from "@/content/client-content";
@@ -242,11 +243,7 @@ function ResultBody({
           >
             <h3 className="text-lg font-semibold" style={{ color: "var(--accent)" }}>
               {s.strength}
-              {s.soft ? (
-                <span className="ml-1 text-[13px] font-medium" style={{ color: "var(--less)" }}>
-                  {copyEn.lessCertain}
-                </span>
-              ) : null}
+              {s.soft ? <LessCertainMark /> : null}
             </h3>
             <dl className="mt-2">
               <dt
@@ -280,11 +277,7 @@ function ResultBody({
               >
                 <h3 className="text-lg font-semibold" style={{ color: "var(--warn)" }}>
                   {w.watchOut}
-                  {w.soft ? (
-                    <span className="ml-1 text-[13px] font-medium" style={{ color: "var(--less)" }}>
-                      {copyEn.lessCertain}
-                    </span>
-                  ) : null}
+                  {w.soft ? <LessCertainMark /> : null}
                 </h3>
                 <p className="mt-3 font-semibold">{copyEn.tryThis}</p>
                 <ul className="mt-2 list-disc space-y-1 pl-5">

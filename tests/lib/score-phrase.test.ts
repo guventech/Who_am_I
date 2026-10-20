@@ -6,7 +6,9 @@ import { cholesky, createRng, matVec } from "@/engine/math";
 import { scoreSession } from "@/engine/score";
 import { shuffleFixedForm } from "@/engine/select-fixed";
 import { CORE_TRAIT_IDS, type AnsweredItem } from "@/engine/types";
+import { copyEn } from "@/copy/en";
 import {
+  formatScoreNumber,
   isLessCertain,
   LESS_CERTAIN_RANGE_WIDTH,
   scoreToPhrase,
@@ -29,6 +31,55 @@ describe("scoreToPhrase", () => {
     expect(scoreToPhrase(0, "Reserved", "Outgoing")).toContain(
       "About in the middle",
     );
+  });
+
+  it("uses a natural comparative for every trait pole", () => {
+    const expected: Array<[number, string, string, string]> = [
+      [-0.8, "Reserved", "Outgoing", "Much more reserved than most people"],
+      [-0.3, "Reserved", "Outgoing", "A bit more reserved than most people"],
+      [0.3, "Reserved", "Outgoing", "A bit more outgoing than most people"],
+      [0.8, "Reserved", "Outgoing", "Much more outgoing than most people"],
+      [-0.8, "Direct", "Cooperative", "Much more direct than most people"],
+      [-0.3, "Direct", "Cooperative", "A bit more direct than most people"],
+      [0.3, "Direct", "Cooperative", "A bit more cooperative than most people"],
+      [0.8, "Direct", "Cooperative", "Much more cooperative than most people"],
+      [-0.8, "Flexible", "Organised", "Much more flexible than most people"],
+      [-0.3, "Flexible", "Organised", "A bit more flexible than most people"],
+      [0.3, "Flexible", "Organised", "A bit more organised than most people"],
+      [0.8, "Flexible", "Organised", "Much more organised than most people"],
+      [-0.8, "Sensitive", "Calm", "Much more sensitive than most people"],
+      [-0.3, "Sensitive", "Calm", "A bit more sensitive than most people"],
+      [0.3, "Sensitive", "Calm", "A bit calmer than most people"],
+      [0.8, "Sensitive", "Calm", "Much calmer than most people"],
+      [-0.8, "Practical", "Curious", "Much more practical than most people"],
+      [-0.3, "Practical", "Curious", "A bit more practical than most people"],
+      [0.3, "Practical", "Curious", "A bit more curious than most people"],
+      [0.8, "Practical", "Curious", "Much more curious than most people"],
+    ];
+    for (const [s, left, right, phrase] of expected) {
+      expect(scoreToPhrase(s, left, right)).toBe(phrase);
+    }
+    const awkward =
+      /\bmore (calm|warm|cool|kind|nice|quiet|shy|bold|clear|simple|soft|firm|fair|cold)\b/i;
+    for (const trait of Object.values(copyEn.traits)) {
+      for (const s of [-1, -0.4, 0.4, 1]) {
+        const phrase = scoreToPhrase(s, trait.left, trait.right);
+        expect(phrase).not.toMatch(awkward);
+      }
+    }
+  });
+});
+
+describe("formatScoreNumber", () => {
+  it("never shows negative zero", () => {
+    expect(formatScoreNumber(-0)).toBe("0.00");
+    expect(formatScoreNumber(0)).toBe("0.00");
+    expect(formatScoreNumber(-0.0001)).toBe("0.00");
+    expect(formatScoreNumber(-0.004)).toBe("0.00");
+    expect(formatScoreNumber(0.004)).toBe("0.00");
+    expect(formatScoreNumber(-0.06)).toBe("-0.06");
+    expect(formatScoreNumber(0.83)).toBe("+0.83");
+    expect(formatScoreNumber(-0.5)).toBe("-0.50");
   });
 });
 
