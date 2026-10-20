@@ -1,6 +1,6 @@
 # Who Am I?
 
-Honest 10-question adaptive Big Five sketch (English, prototype).
+Honest 10-question adaptive Big Five sketch (**English only**, prototype).
 
 ## Commands (PowerShell)
 
@@ -14,5 +14,5 @@ pnpm e2e
 pnpm sim
 ```
 
-Progress is tracked in `REPORT.md`. Product briefs stay local and are not published.
+Progress and standing decisions: [`REPORT.md`](REPORT.md). Product briefs stay local and are not published.
 

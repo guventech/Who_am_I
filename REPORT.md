@@ -1,5 +1,19 @@
 # Who Am I? — Build Report
 
+## Standing decisions (compaction-safe)
+
+These override older chat history and Spec v1.0 if they conflict:
+
+| Decision | Value |
+|---|---|
+| Language | **English only** — no Dutch, no `next-intl`, no language switch |
+| Authority | `WHO_AM_I_CURSOR_BRIEF.md` wins over `WHO_AM_I_SPEC.md` |
+| Phase status | 0 scaffold done; 1 engine+sim done; next = 2 core UI on `continue` |
+| Selector default | Fixed 10 until real data justifies adaptive |
+| Briefs on GitHub | `WHO_AM_I_*.md` gitignored (local only) |
+
+Also mirrored in [`.cursor/rules/who-am-i.mdc`](.cursor/rules/who-am-i.mdc) (`alwaysApply`).
+
 ## Phase 0 — Scaffold
 
 **Status:** done
@@ -13,7 +27,7 @@
 - `.gitattributes` (LF), `.cursor/rules/who-am-i.mdc`
 
 ### Decisions beyond the brief
-- **English only** — skipped Dutch / `next-intl` per owner request; NL deferred.
+- **English only** — written into brief v1.2; no Dutch / `next-intl`.
 - Package name `who-am-i` (directory name `Who_am_I` is not a valid npm name).
 - Home Start button disabled until Phase 2 test flow.
 - `robots: noindex` from day one (uncalibrated product).
@@ -21,7 +35,6 @@
 
 ### Open / deferred
 - Prototype calibration banner → Phase 2 (needs `bankStatus`)
-- NL locale → deferred indefinitely unless reopened
 
 ### Still to verify (human)
 - See brief §14

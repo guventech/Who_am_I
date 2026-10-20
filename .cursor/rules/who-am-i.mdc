@@ -1,9 +1,20 @@
 ---
-description: Hard rules for the Who Am I? personality sketch app
+description: Hard rules and standing decisions for the Who Am I? app (survives chat compaction)
 alwaysApply: true
 ---
 
 # Who Am I? — project rules
+
+## Standing product decisions (do not re-ask; survive context compaction)
+
+- **English only.** No Dutch, no `next-intl`, no `[locale]` routes, no language switch, no `nl.json`. Spec v1.0 EN+NL is superseded by `WHO_AM_I_CURSOR_BRIEF.md` v1.2+.
+- **Brief wins** over `WHO_AM_I_SPEC.md` on any conflict. Briefs are local/gitignored; this rule file and `REPORT.md` are the committed memory.
+- **Phase gate:** After each phase, stop until the owner replies `continue`. Do not skip ahead.
+- **Default selector:** fixed 10-item form until real data justifies adaptive.
+- **Colours / LLM reword / free text:** flags off (`ENABLE_COLOURS`, `ENABLE_LLM_REWORD`, `ENABLE_FREE_TEXT` = false).
+- Phases 0–1 are done. Next is Phase 2 (core UI) when the owner says continue.
+
+## Hard rules
 
 - **Engine purity:** `src/engine/` is pure TypeScript — no React/DOM imports. Deterministic given a seed.
 - **No invented psychometrics:** Item parameters in-repo are DEV PLACEHOLDERS until calibrated ones are supplied. Never invent loadings, thresholds, norms, or accuracy numbers.
@@ -12,5 +23,4 @@ alwaysApply: true
 - **No storage before consent:** Zero network calls to the storage backend until the user explicitly consents. Default path is client-only.
 - **Drafts never ship:** LLM-drafted or unreviewed user-facing content must carry `reviewStatus: "draft"` and must not be included in production builds unless `ALLOW_DRAFT_CONTENT=true`.
 - **Immutable item ids:** Changing item text requires a new id; retire the old id. Never mutate text under an existing id.
-- **English only (v1):** Do not add Dutch or other locales unless the owner explicitly reopens that scope.
-- **Out of scope:** accounts, facets, PDF export, colours (flag stub only), LLM reword API (stub only).
+- **Out of scope:** accounts, facets, PDF export, extra languages, career/relationship advice.
