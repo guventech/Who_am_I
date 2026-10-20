@@ -34,6 +34,8 @@ describe("MemoryAdapter delete", () => {
       startDay: "2026-10-20",
       locale: "en",
       retakeLater: true,
+      consentStore: true,
+      ageConfirmed: true,
     };
   }
 

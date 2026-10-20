@@ -15,6 +15,8 @@ describe("NoopAdapter", () => {
       startDay: "2026-10-20",
       locale: "en",
       retakeLater: false,
+      consentStore: true,
+      ageConfirmed: true,
     });
     await adapter.deleteByCode("ABCDEFGH");
     await adapter.saveFeedback("ABCDEFGH", {

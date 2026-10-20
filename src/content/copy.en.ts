@@ -104,4 +104,8 @@ export const copyEn = {
   deleteDone: "Deleted linked sessions.",
   deleteNone: "No stored sessions matched that code.",
   deleteCodeLabel: "Session code",
+  errorHeading: "Something went wrong",
+  errorBody:
+    "The sketch hit an unexpected error. Your answers on this device may still be available — try again or start over.",
+  errorRetry: "Try again",
 } as const;

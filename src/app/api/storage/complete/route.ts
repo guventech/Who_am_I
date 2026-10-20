@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { allowRequest } from "@/storage/rate-limit";
+import { assertStorageConsent } from "@/storage/consent-gate";
+import { allowRoutedRequest } from "@/storage/rate-limit";
 import { completeWithRescore } from "@/storage/server-store";
 import type { CompletionPayload } from "@/storage/types";
 
 export async function POST(request: Request) {
-  const bucket = `complete:${new Date().toISOString().slice(0, 13)}`;
-  if (!allowRequest(bucket, 60, 60_000)) {
+  if (!allowRoutedRequest(request, "complete", 30, 10)) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }
 
@@ -14,6 +14,11 @@ export async function POST(request: Request) {
     payload = (await request.json()) as CompletionPayload;
   } catch {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
+  }
+
+  const consent = assertStorageConsent(payload);
+  if (!consent.ok) {
+    return NextResponse.json({ error: consent.reason }, { status: 403 });
   }
 
   try {

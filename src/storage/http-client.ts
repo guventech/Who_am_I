@@ -1,3 +1,4 @@
+import { getClientRateBucket } from "@/lib/rate-bucket";
 import type {
   CompletionPayload,
   DeleteResult,
@@ -13,12 +14,19 @@ import type {
 export class HttpStorageAdapter implements StorageAdapter {
   constructor(private readonly baseUrl = "/api/storage") {}
 
+  private headers(): HeadersInit {
+    return {
+      "content-type": "application/json",
+      "x-rate-bucket": getClientRateBucket(),
+    };
+  }
+
   async saveCompletion(
     payload: CompletionPayload,
   ): Promise<SaveCompletionResult> {
     const res = await fetch(`${this.baseUrl}/complete`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: this.headers(),
       body: JSON.stringify(payload),
     });
     if (!res.ok) {
@@ -31,7 +39,7 @@ export class HttpStorageAdapter implements StorageAdapter {
   async deleteByCode(sessionCode: string): Promise<DeleteResult> {
     const res = await fetch(`${this.baseUrl}/delete`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: this.headers(),
       body: JSON.stringify({ sessionCode }),
     });
     if (!res.ok) {
@@ -47,7 +55,7 @@ export class HttpStorageAdapter implements StorageAdapter {
   ): Promise<void> {
     const res = await fetch(`${this.baseUrl}/feedback`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: this.headers(),
       body: JSON.stringify({ sessionCode, feedback }),
     });
     if (!res.ok) {

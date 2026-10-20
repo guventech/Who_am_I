@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Libre_Baskerville, Source_Sans_3 } from "next/font/google";
+import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/content/copy.en";
 import "./globals.css";
 
@@ -14,10 +15,16 @@ const body = Source_Sans_3({
   subsets: ["latin"],
 });
 
+const model = getModelVersion();
+const uncalibrated = model.bankStatus !== "calibrated";
+
 export const metadata: Metadata = {
   title: copyEn.brand,
   description: copyEn.promise,
-  robots: { index: false, follow: false },
+  /** noindex while the bank is uncalibrated (brief §4 / Phase 6). */
+  robots: uncalibrated
+    ? { index: false, follow: false }
+    : { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
@@ -30,11 +37,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         className="flex min-h-full flex-col font-[family-name:var(--font-body)]"
         style={{ fontFamily: "var(--font-body), system-ui, sans-serif" }}
       >
-        <style>{`
-          h1, h2, h3 {
-            font-family: var(--font-display), Georgia, serif;
-          }
-        `}</style>
         {children}
       </body>
     </html>

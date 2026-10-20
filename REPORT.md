@@ -8,7 +8,7 @@ These override older chat history and Spec v1.0 if they conflict:
 |---|---|
 | Language | **English only** — no Dutch, no `next-intl`, no language switch |
 | Authority | `WHO_AM_I_CURSOR_BRIEF.md` wins over `WHO_AM_I_SPEC.md` |
-| Phase status | 0–5 done; next = 6 hardening/deploy on `continue` |
+| Phase status | 0–6 done (MVP build complete); next = human §14 / explicit new scope |
 | Selector default | Fixed 10 until real data justifies adaptive |
 | Briefs on GitHub | `WHO_AM_I_*.md` gitignored (local only) |
 
@@ -158,3 +158,30 @@ Also mirrored in [`.cursor/rules/who-am-i.mdc`](.cursor/rules/who-am-i.mdc) (`al
 - Licensed Honesty-Humility item set (§14) before production enable
 - Recalibrate `DEEPER_SD_TARGET` to 0.35 after real parameters
 - Optional: H-trait insight entries (out of current v1 insight scope)
+
+## Phase 6 — Hardening and deploy
+
+**Status:** done
+
+### Built
+- Security headers on all routes: CSP, `X-Frame-Options: DENY`, `nosniff`, Referrer-Policy, Permissions-Policy (`next.config.ts`)
+- App `error.tsx` + `global-error.tsx`
+- `robots` metadata tied to `bankStatus` (noindex while uncalibrated)
+- Server **rejects** `/api/storage/complete` without `consentStore` + `ageConfirmed` (403)
+- Rate limit: opaque `x-rate-bucket` per browser (no IPs); shared fallback tighter; applies to complete/delete/feedback
+- README Vercel preview checklist (incl. Lighthouse a11y ≥ 95) + preview URL log table
+- Unit tests for consent gate + rate-limit bucketing
+
+### Decisions
+- CSP allows `'unsafe-inline'` / `'unsafe-eval'` for Next/Turbopack; tighten further only after a production CSP audit
+- Per-client rate keys live in `sessionStorage` (not accounts); rotating the key resets quota (acceptable without IP storage)
+- Lighthouse ≥ 95 is a **preview checklist** item — not automated in CI this phase
+
+### Final open items (carry to human §14 / ops)
+- Calibration pilot + replace `bankStatus` / item parameters
+- Licensed H-H items; then Production `ENABLE_GO_DEEPER`
+- Privacy notice legal review; DPA; Convex/Vercel EU confirmation
+- Insight content review (all still `draft`)
+- Accuracy copy comprehension test
+- Run README preview checklist and fill the Preview URL log
+- Optional later: colours, LLM reword, local compare-with-last-time, remaining combos (v1.1)

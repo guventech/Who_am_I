@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { allowRequest } from "@/storage/rate-limit";
+import { allowRoutedRequest } from "@/storage/rate-limit";
 import { feedbackStored } from "@/storage/server-store";
 import type { FeedbackPayload } from "@/storage/types";
 
 export async function POST(request: Request) {
-  const bucket = `feedback:${new Date().toISOString().slice(0, 13)}`;
-  if (!allowRequest(bucket, 60, 60_000)) {
+  if (!allowRoutedRequest(request, "feedback", 30, 10)) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }
 

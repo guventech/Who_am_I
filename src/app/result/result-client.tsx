@@ -96,6 +96,8 @@ export function ResultClient() {
           startDay: current.startDay,
           locale: "en",
           retakeLater: c.retakeLater,
+          consentStore: true,
+          ageConfirmed: true,
         });
         saveSession({
           ...current,

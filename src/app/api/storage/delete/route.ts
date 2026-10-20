@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
-import { allowRequest } from "@/storage/rate-limit";
+import { allowRoutedRequest } from "@/storage/rate-limit";
 import { deleteStored } from "@/storage/server-store";
 
 export async function POST(request: Request) {
-  const bucket = `delete:${new Date().toISOString().slice(0, 13)}`;
-  if (!allowRequest(bucket, 30, 60_000)) {
+  if (!allowRoutedRequest(request, "delete", 20, 8)) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }
 
