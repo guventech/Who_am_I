@@ -8,7 +8,7 @@ These override older chat history and Spec v1.0 if they conflict:
 |---|---|
 | Language | **English only** — no Dutch, no `next-intl`, no language switch |
 | Authority | `WHO_AM_I_CURSOR_BRIEF.md` wins over `WHO_AM_I_SPEC.md` |
-| Phase status | 0 scaffold done; 1 engine+sim done; next = 2 core UI on `continue` |
+| Phase status | 0–2 done; next = 3 insights on `continue` |
 | Selector default | Fixed 10 until real data justifies adaptive |
 | Briefs on GitHub | `WHO_AM_I_*.md` gitignored (local only) |
 
@@ -65,3 +65,25 @@ Also mirrored in [`.cursor/rules/who-am-i.mdc`](.cursor/rules/who-am-i.mdc) (`al
 ### Open
 - Calibrated parameters, norms, `RETAKE_BAND_MULTIPLIER` from human studies (§14)
 - Unclear rate ~47% at 10 items with DEV params — tune `UNCLEAR_WIDTH` after calibration
+
+## Phase 2 — Core UI
+
+**Status:** done
+
+### Built
+- Home (Start + How accurate link), Test (Likert 1–5, progress, Back, keyboard 1–5), Result (`TraitSlider` SVG with hatched retake band), How accurate page
+- `PrototypeBanner` when `bankStatus === "dev-uncalibrated"`
+- Client session store (`sessionStorage`) + fixed-form runner; scores via engine `scoreSession` in-browser
+- `accuracySentenceFromClaims` — empty `ACCURACY_CLAIMS` ⇒ no accuracy numbers in UI
+- E2E: full 10-q flow, Back, keyboard, axe (home + how-accurate) with `@axe-core/playwright`
+
+### Decisions
+- Session state in `sessionStorage` (no network); consent/storage deferred to Phase 4
+- Go deeper / Copy insights / Feedback / Delete omitted or “coming later” until later phases
+- Trait level blurb is short pole text only; insight trade-off sentences wait for Phase 3 content
+- Start is a button that seeds a fresh session before navigation (not a bare link)
+
+### Open
+- Insights blocks (Phase 3)
+- Consent + Convex storage (Phase 4)
+- Axe on result after answering still optional (home/how-accurate covered; result has dynamic scores)

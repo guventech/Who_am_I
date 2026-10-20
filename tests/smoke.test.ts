@@ -45,5 +45,6 @@ describe("english copy", () => {
     expect(copyEn.brand).toBe("Who Am I?");
     expect(copyEn.promise).toContain("10 questions");
     expect(copyEn.promise).not.toMatch(/\d\.\d{2}/);
+    expect(copyEn.prototypeBanner).toBe("Prototype - scores not calibrated");
   });
 });
