@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
+import { isStorageEnabled } from "@/config/storage-enabled";
 import { jsonError } from "@/lib/api-errors";
 import { allowRoutedRequest } from "@/storage/rate-limit";
 import { deleteStored } from "@/storage/server-store";
 
 export async function POST(request: Request) {
+  if (!isStorageEnabled()) {
+    return NextResponse.json({ error: "storage_unavailable" }, { status: 503 });
+  }
+
   if (!allowRoutedRequest(request, "delete", 20, 8)) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }

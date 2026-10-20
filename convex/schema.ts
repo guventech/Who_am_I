@@ -2,7 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 /**
- * Convex schema (trimmed) — brief §10.
+ * Convex schema (trimmed); brief §10.
  * Deploy with `npx convex dev` when EU region is confirmed.
  */
 export default defineSchema({

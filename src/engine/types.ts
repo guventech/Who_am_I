@@ -1,8 +1,8 @@
-/** Pure engine types — no React/DOM. */
+/** Pure engine types; no React/DOM. */
 
 /** Big Five core traits (10-item sketch). */
 export const CORE_TRAIT_IDS = ["E", "A", "C", "ES", "O"] as const;
-/** Honesty-Humility — go-deeper model only. */
+/** Honesty-Humility; go-deeper model only. */
 export const DEEPER_EXTRA_TRAIT_IDS = ["H"] as const;
 export const TRAIT_IDS = [...CORE_TRAIT_IDS, ...DEEPER_EXTRA_TRAIT_IDS] as const;
 export type CoreTraitId = (typeof CORE_TRAIT_IDS)[number];

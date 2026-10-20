@@ -17,4 +17,4 @@ export function computeQualityFlags(answered: AnsweredItem[]): QualityFlags {
 }
 
 export const FLAG_NOTE =
-  "Some answers came very quickly — your ranges are widened";
+  "Some answers came very quickly; your ranges are widened";

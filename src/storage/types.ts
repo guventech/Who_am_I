@@ -23,7 +23,7 @@ export type CompletionPayload = {
   startDay: string;
   locale: "en";
   retakeLater: boolean;
-  /** Required on the wire — server rejects saves without both true. */
+  /** Required on the wire; server rejects saves without both true. */
   consentStore: boolean;
   ageConfirmed: boolean;
   /** Optional: link to a previous session via its plaintext code. */

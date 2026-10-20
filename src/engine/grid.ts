@@ -116,7 +116,7 @@ function gaussHermiteNodes(n: number): number[] {
     return phys.map((x) => SQRT2 * x);
   }
   if (n === 7) {
-    // numpy.polynomial.hermite.hermgauss(7) — physicist weight e^{-x²}
+    // numpy.polynomial.hermite.hermgauss(7); physicist weight e^{-x²}
     const phys = [
       -2.6519613568352334, -1.6735516287674714, -0.8162878828589647,
       0, 0.8162878828589647, 1.6735516287674714, 2.6519613568352334,

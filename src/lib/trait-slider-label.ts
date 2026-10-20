@@ -20,12 +20,12 @@ export function traitSliderAriaLabel(opts: {
   const poleHigh = shortPole(opts.poleHigh);
   const base = `${opts.traitName}: ${formatSignedSlider(opts.slider)}, between ${poleLow} and ${poleHigh}, likely retake range ${formatSignedSlider(opts.retakeLow)} to ${formatSignedSlider(opts.retakeHigh)}`;
   if (opts.confidence === "unclear") {
-    return `${base}; unclear — go deeper recommended`;
+    return `${base}; unclear - go deeper recommended`;
   }
   return base;
 }
 
 function shortPole(pole: string): string {
-  const beforeDash = pole.split("—")[0]?.trim() ?? pole;
-  return beforeDash.split(",")[0]?.trim() ?? beforeDash;
+  const beforeColon = pole.split(":")[0]?.trim() ?? pole;
+  return beforeColon.split(",")[0]?.trim() ?? beforeColon;
 }

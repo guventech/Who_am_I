@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
-import { isStorageUiEnabled } from "@/config/storage-enabled";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/copy/en";
 import {
@@ -15,7 +14,11 @@ import { setConsent } from "@/session/consent-store";
 
 const model = getModelVersion();
 
-export function ConsentClient() {
+type Props = {
+  storageEnabled: boolean;
+};
+
+export function ConsentClient({ storageEnabled }: Props) {
   const router = useRouter();
   const session = useSyncExternalStore(
     subscribeSession,
@@ -23,13 +26,12 @@ export function ConsentClient() {
     getServerSessionSnapshot,
   );
   const [age, setAge] = useState(false);
-  const storageOn = isStorageUiEnabled();
 
   if (!session?.completed || !session.scored) {
     return (
       <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
         <PrototypeBanner bankStatus={model.bankStatus} />
-        <main className="mx-auto flex w-full max-w-[720px] flex-1 flex-col justify-center gap-4 px-5 py-12">
+        <main className="page flex flex-1 flex-col justify-center gap-4 py-12">
           <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>
           <button
             type="button"
@@ -49,7 +51,7 @@ export function ConsentClient() {
   }
 
   function goResultsWithSave() {
-    if (!age || !storageOn) return;
+    if (!age || !storageEnabled) return;
     setConsent({ store: true, ageConfirmed: true, retakeLater: false });
     router.push("/result");
   }
@@ -57,12 +59,12 @@ export function ConsentClient() {
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={model.bankStatus} />
-      <main className="mx-auto flex w-full max-w-[720px] flex-col gap-6 px-5 py-12">
+      <main className="page flex flex-col gap-6 py-12">
         <h1 className="text-[32px]" style={{ color: "var(--ink)" }}>
           {copyEn.consentHeading}
         </h1>
         <p style={{ color: "var(--ink)" }}>{copyEn.consentBody}</p>
-        {storageOn ? (
+        {storageEnabled ? (
           <label className="flex items-start gap-3 text-[17px]">
             <input
               type="checkbox"
@@ -75,7 +77,7 @@ export function ConsentClient() {
           </label>
         ) : null}
         <div className="flex flex-col gap-3 sm:flex-row">
-          {storageOn ? (
+          {storageEnabled ? (
             <button
               type="button"
               className="btn-primary"
@@ -88,7 +90,7 @@ export function ConsentClient() {
           ) : null}
           <button
             type="button"
-            className={storageOn ? "btn-secondary" : "btn-primary"}
+            className={storageEnabled ? "btn-secondary" : "btn-primary"}
             data-testid="consent-no"
             onClick={goResultsWithoutSave}
           >

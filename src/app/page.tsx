@@ -1,16 +1,18 @@
 import Link from "next/link";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { StartButton } from "@/components/StartButton";
+import { isStorageEnabled } from "@/config/storage-enabled";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/copy/en";
 
 export default function Home() {
   const model = getModelVersion();
+  const storageEnabled = isStorageEnabled();
 
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={model.bankStatus} />
-      <main className="mx-auto flex w-full max-w-[720px] flex-1 flex-col justify-center gap-6 px-5 py-12">
+      <main className="page flex flex-1 flex-col justify-center gap-6 py-12">
         <h1
           className="text-[32px] leading-tight tracking-tight sm:text-4xl"
           style={{ color: "var(--ink)" }}
@@ -24,9 +26,11 @@ export default function Home() {
           {copyEn.youGet}
         </p>
         <StartButton />
-        <p className="text-sm" style={{ color: "var(--muted)" }}>
-          {copyEn.nothingSavedUnless}
-        </p>
+        {storageEnabled ? (
+          <p className="text-sm" style={{ color: "var(--muted)" }}>
+            {copyEn.nothingSavedUnless}
+          </p>
+        ) : null}
         <div className="flex flex-wrap gap-4 text-[15px]">
           <Link
             href="/how-accurate"

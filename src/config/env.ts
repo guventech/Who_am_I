@@ -46,7 +46,7 @@ function asNodeEnv(
 
 /**
  * Read env with literal `process.env.KEY` access so Next can inline values.
- * Never pass the whole `process.env` object from the client — it is empty there
+ * Never pass the whole `process.env` object from the client; it is empty there
  * and would wrongly default NODE_ENV to development.
  *
  * When `raw` is passed (tests), its keys win over `process.env`.
@@ -81,7 +81,7 @@ export function parseEnv(
     NODE_ENV: parsed.NODE_ENV,
     ALLOW_UNCALIBRATED: parsed.ALLOW_UNCALIBRATED ?? allowDefault,
     ALLOW_DRAFT_CONTENT: parsed.ALLOW_DRAFT_CONTENT ?? allowDefault,
-    // Off in production unless explicitly enabled (and H-H verified — see go-deeper.ts).
+    // Off in production unless explicitly enabled (and H-H verified; see go-deeper.ts).
     ENABLE_GO_DEEPER: parsed.ENABLE_GO_DEEPER ?? allowDefault,
   };
 }

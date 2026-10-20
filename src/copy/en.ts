@@ -26,6 +26,7 @@ export const copyEn = {
   ] as const,
   answerHint:
     "Answer how you usually are, not how you want to be. There are no right or wrong answers.",
+  loading: "Loading...",
   loadingNext: "Loading next question...",
   workingResults: "Working out your results...",
   takingLonger:

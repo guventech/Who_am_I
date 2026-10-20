@@ -1,6 +1,6 @@
 /**
  * Coarse in-memory rate limit without storing IPs.
- * Keys are HMAC-SHA256 of (IP + daily salt), truncated — the raw IP is not kept
+ * Keys are HMAC-SHA256 of (IP + daily salt), truncated. The raw IP is not kept
  * past this function call. Client-supplied `x-rate-bucket` is ignored for the
  * limit (it was bypassable).
  */
@@ -9,6 +9,7 @@ import { createHmac } from "node:crypto";
 type Bucket = { count: number; resetAt: number };
 
 const buckets = new Map<string, Bucket>();
+const DEV_RATE_SALT = "whoami-dev-rate-salt";
 
 export function allowRequest(
   key: string,
@@ -38,14 +39,16 @@ function clientIp(request: Request): string {
 }
 
 function dailySalt(): string {
-  return (
-    process.env.RATE_LIMIT_SALT ??
-    process.env.SESSION_CODE_PEPPER ??
-    "whoami-dev-rate-salt"
-  );
+  const salt =
+    process.env.RATE_LIMIT_SALT ?? process.env.SESSION_CODE_PEPPER ?? "";
+  if (salt.length > 0) return salt;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("rate_salt_missing");
+  }
+  return DEV_RATE_SALT;
 }
 
-/** Opaque HMAC bucket id — IP is hashed with a daily salt and discarded. */
+/** Opaque HMAC bucket id. IP is hashed with a daily salt and discarded. */
 export function hmacBucketFromRequest(request: Request): string {
   const day = new Date().toISOString().slice(0, 10);
   const ip = clientIp(request);

@@ -109,7 +109,7 @@ export function ResultClient() {
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={coreModel.bankStatus} />
-      <main className="mx-auto w-full max-w-[720px] flex-1 px-5 py-8 pb-16">
+      <main className="page flex-1 py-8 pb-16">
         {missing ? (
           <div className="flex flex-col gap-4 py-16">
             <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>

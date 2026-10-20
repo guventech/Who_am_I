@@ -1,13 +1,14 @@
 import { v } from "convex/values";
 import { mutation } from "./_generated/server";
+import { assertServerKey } from "./lib/assertServerKey";
 
 /**
  * Convex mutations for consented storage.
  * Server re-scoring happens in Next.js API before calling these
  * (engine is TS in-repo; keep Convex payloads already validated).
  *
+ * Every public mutation requires serverKey matching CONVEX_SERVER_KEY.
  * Note: `convex/_generated` appears after `npx convex dev`.
- * Until then, the app uses MemoryAdapter via /api/storage.
  */
 
 const payloadValidator = v.object({
@@ -38,7 +39,7 @@ const payloadValidator = v.object({
   locale: v.literal("en"),
   retakeLater: v.boolean(),
   previousSessionCode: v.optional(v.string()),
-  /** Precomputed on the Next server — plaintext code never stored. */
+  /** Precomputed on the Next server; plaintext code never stored. */
   codeHash: v.string(),
   sessionCodePlaintextForClient: v.string(),
   scoredTraits: v.array(
@@ -54,8 +55,9 @@ const payloadValidator = v.object({
 });
 
 export const saveCompletion = mutation({
-  args: { payload: payloadValidator },
-  handler: async (ctx, { payload }) => {
+  args: { serverKey: v.string(), payload: payloadValidator },
+  handler: async (ctx, { serverKey, payload }) => {
+    assertServerKey(serverKey);
     const sessionId = await ctx.db.insert("sessions", {
       codeHash: payload.codeHash,
       modelVersion: payload.modelVersionId,
@@ -102,8 +104,9 @@ export const saveCompletion = mutation({
 });
 
 export const deleteByCode = mutation({
-  args: { codeHash: v.string() },
-  handler: async (ctx, { codeHash }) => {
+  args: { serverKey: v.string(), codeHash: v.string() },
+  handler: async (ctx, { serverKey, codeHash }) => {
+    assertServerKey(serverKey);
     const roots = await ctx.db
       .query("sessions")
       .withIndex("by_codeHash", (q) => q.eq("codeHash", codeHash))
@@ -137,6 +140,7 @@ export const deleteByCode = mutation({
 
 export const saveFeedback = mutation({
   args: {
+    serverKey: v.string(),
     codeHash: v.string(),
     modelVersion: v.string(),
     overallFit: v.number(),
@@ -144,6 +148,7 @@ export const saveFeedback = mutation({
     insightThumbsJson: v.string(),
   },
   handler: async (ctx, args) => {
+    assertServerKey(args.serverKey);
     const session = await ctx.db
       .query("sessions")
       .withIndex("by_codeHash", (q) => q.eq("codeHash", args.codeHash))

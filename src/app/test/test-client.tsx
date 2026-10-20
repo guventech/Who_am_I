@@ -12,6 +12,7 @@ import {
 import { copyEn, itemHints } from "@/copy/en";
 import type { ResponseValue } from "@/engine/types";
 import { formatItemStem } from "@/lib/item-display";
+import { setConsent } from "@/session/consent-store";
 import {
   answerCurrent,
   backOne,
@@ -29,8 +30,13 @@ import {
 const bank = getItemBank();
 const model = getModelVersion();
 const textEn = getItemTextEn();
+const MIN_LOADING_MS = 300;
 
-export function TestClient() {
+type Props = {
+  storageEnabled: boolean;
+};
+
+export function TestClient({ storageEnabled }: Props) {
   const router = useRouter();
   const shownAt = useRef(0);
   const [loadingLabel, setLoadingLabel] = useState<string | null>(null);
@@ -84,7 +90,7 @@ export function TestClient() {
 
     const nextCount = current.answered.length + 1;
     setLoadingLabel(
-      nextCount >= 10 ? copyEn.workingResults : copyEn.loadingNext,
+      nextCount >= 10 ? copyEn.workingResults : copyEn.loading,
     );
     clearLongTimer();
     longTimer.current = window.setTimeout(() => {
@@ -97,14 +103,19 @@ export function TestClient() {
         next = finishIfComplete(next, bank, model);
         saveSession(next);
         clearLongTimer();
-        router.push("/consent");
+        if (storageEnabled) {
+          router.push("/consent");
+        } else {
+          setConsent({ store: false, ageConfirmed: false, retakeLater: false });
+          router.push("/result");
+        }
         return;
       }
       saveSession(next);
       clearLongTimer();
       setLoadingLabel(null);
       shownAt.current = performance.now();
-    }, 100);
+    }, MIN_LOADING_MS);
   }
 
   function handleBack() {
@@ -120,7 +131,15 @@ export function TestClient() {
   if (!session) {
     return (
       <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
-        <p style={{ color: "var(--muted)" }}>{copyEn.loadingNext}</p>
+        <p
+          role="status"
+          aria-live="polite"
+          className="loading-status"
+          data-testid="loading-status"
+        >
+          <span className="loading-spinner" aria-hidden />
+          {copyEn.loading}
+        </p>
       </div>
     );
   }
@@ -134,7 +153,15 @@ export function TestClient() {
   if (!itemId || !questionText) {
     return (
       <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
-        <p style={{ color: "var(--muted)" }}>{copyEn.workingResults}</p>
+        <p
+          role="status"
+          aria-live="polite"
+          className="loading-status"
+          data-testid="loading-status"
+        >
+          <span className="loading-spinner" aria-hidden />
+          {copyEn.workingResults}
+        </p>
       </div>
     );
   }
@@ -144,7 +171,7 @@ export function TestClient() {
   return (
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={model.bankStatus} />
-      <main className="mx-auto w-full max-w-[720px] flex-1 px-5 py-10">
+      <main className="page flex-1 py-10">
         <LikertQuestion
           questionKey={itemId}
           questionText={questionText}

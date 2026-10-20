@@ -6,7 +6,7 @@ import type {
   StorageAdapter,
 } from "./types";
 
-/** Default adapter — no network, no persistence. */
+/** Default adapter; no network, no persistence. */
 export class NoopAdapter implements StorageAdapter {
   async saveCompletion(
     _payload: CompletionPayload,

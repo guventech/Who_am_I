@@ -66,9 +66,7 @@ function LikertQuestionInner({
   function choose(value: ResponseValue) {
     if (disabled) return;
     setPending(value);
-    window.setTimeout(() => {
-      onAnswer(value);
-    }, 250);
+    onAnswer(value);
   }
 
   const shownSelected = pending ?? selectedValue ?? null;
@@ -122,7 +120,13 @@ function LikertQuestionInner({
       ) : null}
 
       {loadingLabel ? (
-        <p role="status" className="text-sm font-medium" style={{ color: "var(--muted)" }}>
+        <p
+          role="status"
+          aria-live="polite"
+          className="loading-status"
+          data-testid="loading-status"
+        >
+          <span className="loading-spinner" aria-hidden />
           {loadingLabel}
         </p>
       ) : null}
@@ -140,19 +144,25 @@ function LikertQuestionInner({
               key={value}
               type="button"
               data-likert={value}
+              data-selected={selected ? "true" : undefined}
               disabled={disabled}
               onClick={() => choose(value)}
-              className="min-h-12 rounded-[10px] border-2 px-4 py-3 text-left text-base font-medium transition disabled:opacity-60"
+              className="min-h-12 rounded-[10px] border-2 px-4 py-3 text-left text-base font-medium transition"
               style={{
                 borderColor: selected ? "var(--accent)" : "var(--line)",
                 background: selected ? "#eef2ff" : "#fff",
                 color: "var(--ink)",
+                opacity: disabled && !selected ? 0.6 : 1,
               }}
             >
               <span className="flex items-center justify-between gap-3">
                 <span>{label}</span>
                 {selected ? (
-                  <span aria-hidden style={{ color: "var(--accent)" }}>
+                  <span
+                    aria-hidden
+                    data-testid="likert-check"
+                    style={{ color: "var(--accent)", opacity: 1 }}
+                  >
                     ✓
                   </span>
                 ) : null}

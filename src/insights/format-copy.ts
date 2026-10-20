@@ -28,7 +28,7 @@ export function fillInsightPlaceholders(text: string): string {
 /** Plain-text export for "Copy my insights as text". */
 export function formatInsightsAsText(selected: SelectedInsights): string {
   const lines: string[] = [];
-  lines.push("Who Am I? — insights (draft content may be unreviewed)");
+  lines.push("Who Am I? - insights (draft content may be unreviewed)");
   lines.push("");
   lines.push(NOTE);
   lines.push("");

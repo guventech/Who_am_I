@@ -1,4 +1,7 @@
+import "server-only";
+
 import { ConvexHttpClient } from "convex/browser";
+import { isStorageEnabled } from "@/config/storage-enabled";
 import {
   loadDeeperModelVersion,
   loadItemBank,
@@ -25,14 +28,13 @@ function resolveModel(modelVersionId: string): ModelVersion {
 }
 
 function convexUrl(): string | undefined {
-  const url =
-    process.env.CONVEX_URL ?? process.env.NEXT_PUBLIC_CONVEX_URL ?? undefined;
+  const url = process.env.CONVEX_URL;
   return typeof url === "string" && url.length > 0 ? url : undefined;
 }
 
-/** True when durable storage (Convex) is configured. */
-export function isDurableStorageConfigured(): boolean {
-  return convexUrl() !== undefined;
+function convexServerKey(): string | undefined {
+  const key = process.env.CONVEX_SERVER_KEY;
+  return typeof key === "string" && key.length > 0 ? key : undefined;
 }
 
 function memoryStore(): MemoryAdapter {
@@ -48,21 +50,56 @@ function memoryStore(): MemoryAdapter {
 }
 
 /**
- * Server-side store: Convex when URL is set; Memory outside production.
- * Production without Convex throws `storage_unavailable`.
+ * Server-side store: Convex when production storage is fully configured;
+ * Memory outside production. Production without storage throws storage_unavailable.
  */
 export function getServerStorage(): StorageAdapter {
   const url = convexUrl();
-  if (url) {
+  const serverKey = convexServerKey();
+  if (
+    process.env.NODE_ENV === "production" &&
+    url &&
+    serverKey &&
+    isStorageEnabled()
+  ) {
     const client = new ConvexHttpClient(url);
-    return new ConvexAdapter({
-      mutation: (name, args) =>
-        client.mutation(name as never, args as never),
-    });
+    return new ConvexAdapter(
+      {
+        mutation: (name, args) =>
+          client.mutation(name as never, args as never),
+      },
+      serverKey,
+      (payload) => {
+        const bank = loadItemBank();
+        const model = resolveModel(payload.modelVersionId);
+        const result = validateAndRescore(payload, bank, model);
+        if (!result.ok) throw new Error(result.reason);
+        return result.scored;
+      },
+    );
   }
 
   if (process.env.NODE_ENV === "production") {
     throw new Error("storage_unavailable");
+  }
+
+  // Dev/test: prefer Convex when URL + key are set, else memory.
+  if (url && serverKey) {
+    const client = new ConvexHttpClient(url);
+    return new ConvexAdapter(
+      {
+        mutation: (name, args) =>
+          client.mutation(name as never, args as never),
+      },
+      serverKey,
+      (payload) => {
+        const bank = loadItemBank();
+        const model = resolveModel(payload.modelVersionId);
+        const result = validateAndRescore(payload, bank, model);
+        if (!result.ok) throw new Error(result.reason);
+        return result.scored;
+      },
+    );
   }
 
   return memoryStore();
@@ -73,7 +110,7 @@ export function getMemoryStoreForTests(): MemoryAdapter {
 }
 
 function assertStorageAvailable(): void {
-  if (process.env.NODE_ENV === "production" && !isDurableStorageConfigured()) {
+  if (!isStorageEnabled()) {
     throw new Error("storage_unavailable");
   }
 }
@@ -106,11 +143,14 @@ export async function feedbackStored(
   return getServerStorage().saveFeedback(sessionCode, feedback);
 }
 
-/** 24 months in ms — retention job target. */
+/** 24 months in ms - retention job target. */
 export const RETENTION_MS = 24 * 30 * 24 * 60 * 60 * 1000;
 
 export function runRetentionPurge(now = Date.now()): number {
-  if (process.env.NODE_ENV === "production" && !isDurableStorageConfigured()) {
+  if (!isStorageEnabled()) {
+    return 0;
+  }
+  if (process.env.NODE_ENV === "production" && !convexUrl()) {
     return 0;
   }
   const store = getServerStorage();

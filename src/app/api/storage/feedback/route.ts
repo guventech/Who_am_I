@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server";
+import { isStorageEnabled } from "@/config/storage-enabled";
 import { jsonError } from "@/lib/api-errors";
 import { feedbackPayloadSchema } from "@/storage/feedback-schema";
 import { allowRoutedRequest } from "@/storage/rate-limit";
 import { feedbackStored } from "@/storage/server-store";
 
 export async function POST(request: Request) {
+  if (!isStorageEnabled()) {
+    return NextResponse.json({ error: "storage_unavailable" }, { status: 503 });
+  }
+
   if (!allowRoutedRequest(request, "feedback", 30, 10)) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }
