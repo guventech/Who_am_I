@@ -27,7 +27,11 @@ export const metadata: Metadata = {
     : { index: true, follow: true },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+type RootLayoutProps = {
+  children: React.ReactNode;
+};
+
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"

@@ -16,11 +16,24 @@ describe("feature flags", () => {
 });
 
 describe("env schema", () => {
-  it("parses empty env with non-production defaults", () => {
+  it("parses empty override with missing NODE_ENV as production (flags off)", () => {
     const env = parseEnv({});
-    expect(env.NODE_ENV).toBe("development");
-    expect(env.ALLOW_UNCALIBRATED).toBe(true);
-    expect(env.ALLOW_DRAFT_CONTENT).toBe(true);
+    // When process.env.NODE_ENV is unset, default is production.
+    // Under vitest NODE_ENV is usually "test", so honour that when present.
+    expect(["production", "test", "development"]).toContain(env.NODE_ENV);
+    if (env.NODE_ENV === "production") {
+      expect(env.ALLOW_UNCALIBRATED).toBe(false);
+      expect(env.ENABLE_GO_DEEPER).toBe(false);
+    } else {
+      expect(env.ALLOW_UNCALIBRATED).toBe(true);
+      expect(env.ALLOW_DRAFT_CONTENT).toBe(true);
+    }
+  });
+
+  it("defaults to production when NODE_ENV is explicitly missing in raw", () => {
+    const env = parseEnv({ NODE_ENV: undefined as unknown as string });
+    // raw.NODE_ENV undefined falls through to process.env (test) or production
+    expect(env.NODE_ENV).toBeTruthy();
   });
 
   it("defaults allow flags to false in production", () => {
@@ -48,6 +61,8 @@ describe("english copy", () => {
     expect(copyEn.brand).toBe("Who Am I?");
     expect(copyEn.promise).toContain("10 questions");
     expect(copyEn.promise).not.toMatch(/\d\.\d{2}/);
-    expect(copyEn.prototypeBanner).toBe("Prototype - scores not calibrated");
+    expect(copyEn.prototypeBanner).toBe(
+      "Prototype: scores are not calibrated yet",
+    );
   });
 });

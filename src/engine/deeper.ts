@@ -51,6 +51,7 @@ export function runDeeperRound(
   seed: number,
   respond: (itemId: ItemId, order: number, rng: Rng) => ResponseValue,
 ): DeeperRoundResult {
+  const minBudget = deeperModel.config.DEEPER_BUDGET_MIN;
   const budget = deeperModel.config.DEEPER_BUDGET_MAX;
   const target = deeperModel.config.DEEPER_SD_TARGET;
   const traitOrder = modelTraitIds(deeperModel);
@@ -83,33 +84,41 @@ export function runDeeperRound(
 
   let stoppedReason: "sd_target" | "budget" = "budget";
 
-  if (allTraitsMeetSdTarget(running.summary.sd, target)) {
-    stoppedReason = "sd_target";
-  } else {
-    for (let i = 0; i < budget; i++) {
-      const id = selector.next(state, bank, deeperModel, rng);
-      if (!id) break;
-      const item = itemById(bank, id);
-      const order = state.answered.length;
-      const value = respond(id, order, rng);
-      const answer: AnsweredItem = {
-        itemId: id,
-        value,
-        rtMs: 1500 + rng.int(2000),
-        order,
-      };
-      deeperAnswered.push(answer);
-      state.answered.push(answer);
-      state.usedItemIds.push(id);
-      updateRunningPosterior(running, item, value);
-      selector.setPosterior(running.summary);
+  for (let i = 0; i < budget; i++) {
+    const asked = deeperAnswered.length;
+    if (
+      asked >= minBudget &&
+      allTraitsMeetSdTarget(running.summary.sd, target)
+    ) {
+      stoppedReason = "sd_target";
+      break;
+    }
+    const id = selector.next(state, bank, deeperModel, rng);
+    if (!id) break;
+    const item = itemById(bank, id);
+    const order = state.answered.length;
+    const value = respond(id, order, rng);
+    const answer: AnsweredItem = {
+      itemId: id,
+      value,
+      rtMs: 1500 + rng.int(2000),
+      order,
+    };
+    deeperAnswered.push(answer);
+    state.answered.push(answer);
+    state.usedItemIds.push(id);
+    updateRunningPosterior(running, item, value);
+    selector.setPosterior(running.summary);
 
-      if (allTraitsMeetSdTarget(running.summary.sd, target)) {
-        stoppedReason = "sd_target";
-        break;
-      }
+    if (
+      deeperAnswered.length >= minBudget &&
+      allTraitsMeetSdTarget(running.summary.sd, target)
+    ) {
+      stoppedReason = "sd_target";
+      break;
     }
   }
+  if (deeperAnswered.length >= budget) stoppedReason = "budget";
 
   const allAnswered = [...coreAnswered, ...deeperAnswered];
   const scored = scoreSession(bank, deeperModel, allAnswered);
@@ -135,25 +144,25 @@ export function syntheticDeeperRespond(
   };
 }
 
-/**
- * Placeholder H-H text pattern — production enablement requires licensed items
- * without this marker and status active.
- */
-export function isHonestyHumilityPlaceholderText(text: string): boolean {
-  return /\[H-H item placeholder/i.test(text);
-}
-
-export function hasLicensedHonestyHumilityItems(
+/** True when H-H items are active, IPIP-HEXACO sourced, and not placeholders. */
+export function hasVerifiedHonestyHumilityItems(
   bank: ItemBank,
   textEn: Record<string, string>,
 ): boolean {
   const hh = bank.items.filter(
-    (i) => i.pool === "deeper" && i.primaryTrait === "H",
+    (i) =>
+      i.pool === "deeper" &&
+      i.primaryTrait === "H" &&
+      i.status === "active",
   );
   if (hh.length < 6) return false;
-  return hh.every(
-    (i) =>
-      i.status === "active" &&
-      !isHonestyHumilityPlaceholderText(textEn[i.id] ?? ""),
-  );
+  return hh.every((i) => {
+    const text = textEn[i.id] ?? "";
+    return (
+      i.source === "ipip-hexaco" &&
+      i.sourceVerified === true &&
+      text.length > 0 &&
+      !/\[H-H item placeholder/i.test(text)
+    );
+  });
 }

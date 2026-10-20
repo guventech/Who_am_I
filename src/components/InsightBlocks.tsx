@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { copyEn } from "@/content/copy.en";
+import { fillInsightPlaceholders } from "@/insights/format-copy";
 import type { SelectedInsights } from "@/insights/types";
 
 type Props = {
@@ -38,7 +39,11 @@ export function InsightBlocks({ insights }: Props) {
                   <span className="font-medium">Interview:</span> {s.interviewLine}
                 </p>
                 <p className="text-sm text-slate-700">
-                  <span className="font-medium">CV/LinkedIn:</span> {s.cvLine}
+                  <span className="font-medium">CV/LinkedIn:</span>{" "}
+                  <span className="text-slate-500">
+                    Fill in your own example:
+                  </span>{" "}
+                  {fillInsightPlaceholders(s.cvLine)}
                 </p>
                 <p className="text-sm text-slate-700">
                   <span className="font-medium">Team:</span> {s.teamLine}

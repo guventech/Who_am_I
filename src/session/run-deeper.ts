@@ -36,7 +36,7 @@ function posteriorFromAnswers(
   return running.summary;
 }
 
-function deeperAsked(session: DeeperSession): number {
+export function deeperAsked(session: DeeperSession): number {
   return session.answered.length - session.deeperStartCount;
 }
 
@@ -45,24 +45,19 @@ export function beginDeeperSession(
   bank: ItemBank,
   deeperModel: ModelVersion,
 ): DeeperSession {
+  void bank;
+  void deeperModel;
   if (!core.completed || !core.scored || core.answered.length < 10) {
     throw new Error("Go deeper requires a completed core session");
   }
-  const summary = posteriorFromAnswers(bank, deeperModel, core.answered);
-  const alreadyMet = allTraitsMeetSdTarget(
-    summary.sd,
-    deeperModel.config.DEEPER_SD_TARGET,
-  );
-
   return {
     ...core,
     round: "deeper",
     coreAnswered: [...core.answered],
     deeperStartCount: core.answered.length,
-    completed: alreadyMet,
-    scored: alreadyMet
-      ? scoreSession(bank, deeperModel, core.answered)
-      : null,
+    // Always enter the deeper round; stop rule enforces DEEPER_BUDGET_MIN.
+    completed: false,
+    scored: null,
     sessionCode: null,
     storageSaved: false,
     storageError: null,
@@ -76,12 +71,16 @@ export function currentDeeperItemId(
   deeperModel: ModelVersion,
 ): ItemId | null {
   if (session.completed) return null;
+  const minBudget = deeperModel.config.DEEPER_BUDGET_MIN;
   const budget = deeperModel.config.DEEPER_BUDGET_MAX;
   const asked = deeperAsked(session);
   if (asked >= budget) return null;
 
   const summary = posteriorFromAnswers(bank, deeperModel, session.answered);
-  if (allTraitsMeetSdTarget(summary.sd, deeperModel.config.DEEPER_SD_TARGET)) {
+  if (
+    asked >= minBudget &&
+    allTraitsMeetSdTarget(summary.sd, deeperModel.config.DEEPER_SD_TARGET)
+  ) {
     return null;
   }
 
@@ -125,14 +124,16 @@ export function answerDeeper(
     scored: null,
   };
 
-  const budget = deeperModel.config.DEEPER_BUDGET_MAX;
+  const minBudget = deeperModel.config.DEEPER_BUDGET_MIN;
+  const maxBudget = deeperModel.config.DEEPER_BUDGET_MAX;
   const summary = posteriorFromAnswers(bank, deeperModel, next.answered);
   const met = allTraitsMeetSdTarget(
     summary.sd,
     deeperModel.config.DEEPER_SD_TARGET,
   );
   const asked = deeperAsked(next);
-  if (met || asked >= budget) {
+  // Brief: stop only after at least MIN items, or when MAX is spent.
+  if (asked >= maxBudget || (asked >= minBudget && met)) {
     return {
       ...next,
       completed: true,

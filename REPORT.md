@@ -64,7 +64,7 @@ Also mirrored in [`.cursor/rules/who-am-i.mdc`](.cursor/rules/who-am-i.mdc) (`al
 
 ### Open
 - Calibrated parameters, norms, `RETAKE_BAND_MULTIPLIER` from human studies (§14)
-- Unclear rate ~47% at 10 items with DEV params — tune `UNCLEAR_WIDTH` after calibration
+- Unclear rate was ~48% at 10 items with DEV params; `UNCLEAR_WIDTH` loosened to 1.35 for the uncalibrated bank (revisit after calibration)
 
 ## Phase 2 — Core UI
 
@@ -137,10 +137,10 @@ Also mirrored in [`.cursor/rules/who-am-i.mdc`](.cursor/rules/who-am-i.mdc) (`al
 
 ### Built
 - 6-trait model `model-v0-dev-deeper.json` (Big Five + Honesty-Humility) — does not mutate the 5-trait core model
-- H01–H06 deeper-pool placeholders: `primaryTrait: H`, `status: candidate`, placeholder EN text
+- HH01–HH06 deeper-pool IPIP-HEXACO Honesty-Humility items (`sourceVerified: true`); H01–H06 placeholders retired
 - Engine generalized to dim = `traits.length` (grid, GRM loadings, A-optimal gain)
 - `runDeeperRound` / `/deeper` UI: adaptive selection, budget ≤ 20, stop on SD target
-- Production: round off unless `ENABLE_GO_DEEPER` **and** licensed (non-placeholder, `active`) H-H items; dev/test on by default
+- Production: round off unless `ENABLE_GO_DEEPER` / `NEXT_PUBLIC_ENABLE_GO_DEEPER` **and** verified active H-H items; dev/test on by default
 - Sim section + unit tests: SD target within budget; core scores unchanged when deeper skipped
 - Storage re-score resolves core vs deeper model by `modelVersionId`; max responses 30
 

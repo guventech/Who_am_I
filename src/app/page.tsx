@@ -2,11 +2,13 @@ import Link from "next/link";
 import { ConsentBox } from "@/components/ConsentBox";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { StartButton } from "@/components/StartButton";
+import { isStorageUiEnabled } from "@/config/storage-enabled";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/content/copy.en";
 
 export default function Home() {
   const model = getModelVersion();
+  const showConsent = isStorageUiEnabled();
 
   return (
     <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
@@ -25,7 +27,7 @@ export default function Home() {
           <p className="text-base text-slate-600">{copyEn.honesty}</p>
         </div>
 
-        <ConsentBox />
+        {showConsent ? <ConsentBox /> : null}
 
         <div className="flex flex-col gap-3">
           <StartButton />

@@ -6,20 +6,20 @@ version: 1
 strengths:
   - title: "Conscientiousness: organised strength"
     interviewLine: Tell me about a time when being organised clearly helped the outcome.
-    cvLine: Brought a organised approach to [context], supporting [result].
+    cvLine: Brought an organised approach to [context], supporting [result].
     teamLine: I tend to show up as organised in day-to-day work.
 watchOuts:
   - can come across as too organised when the situation needs the opposite pole
 improve:
   - area: Balancing organised energy
     actions:
-      - This week, pick one meeting and decide in advance whether a organised or
-        opposite-pole move serves the goal.
+      - This week, pick one meeting and decide in advance whether an organised
+        or opposite-pole move serves the goal.
       - 'Ask a trusted colleague: "When does my conscientiousness style help
         you, and when does it get in the way?"'
       - Schedule a 15-minute practice of the opposite pole (quiet focus /
         outreach / structure / openness) midweek.
-workWithOthers: You often prefer a organised style. Name that preference early,
+workWithOthers: You often prefer an organised style. Name that preference early,
   and ask opposite-pole colleagues what they need to work well with you.
 tradeOff: Leaning organised helps in some rooms and costs recovery or coverage
   in others; the trade-off is real.

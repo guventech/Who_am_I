@@ -5,32 +5,32 @@
     {
       "id": "E",
       "name": "Extraversion",
-      "poleLow": "Reserved — recharges alone",
-      "poleHigh": "Outgoing — energised by people"
+      "poleLow": "Reserved: recharges alone",
+      "poleHigh": "Outgoing: energised by people"
     },
     {
       "id": "A",
       "name": "Agreeableness",
-      "poleLow": "Direct — candid",
-      "poleHigh": "Accommodating — cooperative"
+      "poleLow": "Direct: candid",
+      "poleHigh": "Accommodating: cooperative"
     },
     {
       "id": "C",
       "name": "Conscientiousness",
-      "poleLow": "Flexible — spontaneous",
-      "poleHigh": "Organised — disciplined"
+      "poleLow": "Flexible: spontaneous",
+      "poleHigh": "Organised: disciplined"
     },
     {
       "id": "ES",
       "name": "Emotional Stability",
-      "poleLow": "Sensitive — reactive",
-      "poleHigh": "Calm — even-keeled"
+      "poleLow": "Sensitive: reactive",
+      "poleHigh": "Calm: even-keeled"
     },
     {
       "id": "O",
       "name": "Openness",
-      "poleLow": "Practical — conventional",
-      "poleHigh": "Curious — imaginative"
+      "poleLow": "Practical: conventional",
+      "poleHigh": "Curious: imaginative"
     }
   ],
   "priorCov": [
@@ -137,28 +137,28 @@
     "X08": "d1e6915fbb7965ed950a9d8b218b82ef3f32f86eb273e7d45e850d6ff8b718d2",
     "X09": "a0b3dd83ea41c503e45c2369382eb28fa917073988d594b4378d012ec2dfd24e",
     "X10": "4e9bbf0f8f9fed160e84ed47c86fbfede4aca0cc1b74ea017fb8fc36eba02620",
-    "H01": "a31bd81191436c8e2097c93986cf3981aff87dfa6728917bff9ad5b4c4519d4e",
-    "H02": "a50111e8e57cfd0f751357f54cc7eed713a6f2d526351e1315656ee1556efd54",
-    "H03": "417587acb2e975260d5b7a74ff8a09c82e90039acab0b7c74dbeb2d437506916",
-    "H04": "29af7473cec3c764076883bb47501cd9aef6cd6695719f79384fac1e2d7dbcba",
-    "H05": "88b3c81b29548f34fc952aaa1efc8e2192fae0a13f797e01a5b5c092e42bf4e7",
-    "H06": "5099b1253868010a922dbfa4bdbef51c5b9c2e8970218a6bbae7245c7999e963"
+    "HH01": "9bd1ffc30a7e85851b0cf2fe34031057a92d9f22f3777d5d6680674ff6e90ecc",
+    "HH02": "d96c7d72de95804ff278271e64a18afd93e0dd9541b3595e248f09f0f2e4816a",
+    "HH03": "829bc44e2a7a1df89436d2c4faf95c7a26a0a9385b5c8a7464234d87c76fea43",
+    "HH04": "4664aa2fca3e50cbf4761a058a6a9c635f35fbaba50baf0669c7943cc5620a36",
+    "HH05": "3ab9e7cf40894c8356d11d71de6de44d01728aee06108507ed0e2c4e6f786fd0",
+    "HH06": "9edfa2d8b72cb229b86dc40c8399cd5a43361245ec159c43be210f5f7eaeb4c1"
   },
   "fixedFormOrder": [
-    "E01",
-    "ES01",
+    "X01",
+    "C01",
     "A01",
     "O01",
-    "C01",
-    "E02",
-    "C02",
+    "ES01",
     "O02",
+    "C02",
     "A02",
+    "E01",
     "ES02"
   ],
   "config": {
     "RETAKE_BAND_MULTIPLIER": 1.41,
-    "UNCLEAR_WIDTH": 1,
+    "UNCLEAR_WIDTH": 1.35,
     "P_LEVEL_FIRM": 0.7,
     "LEVEL_CUT": 0.4,
     "DEEPER_SD_TARGET": 0.35,
@@ -168,6 +168,8 @@
     "ACCURACY_CLAIMS": {
       "corrWithLongTest": null,
       "retest": null
-    }
+    },
+    "FIXED_FIRST_ITEM_ID": "X01",
+    "DEEPER_BUDGET_MIN": 12
   }
 }

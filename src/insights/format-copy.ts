@@ -1,7 +1,29 @@
 import type { SelectedInsights } from "./types";
 
 const NOTE =
-  "Use lines only if they are backed by your real examples.";
+  "Only use these lines if you have a real example that backs them up.";
+
+/** Indefinite article for a following word (ASCII vowel heuristic). */
+export function aOrAn(word: string): "a" | "an" {
+  const first = word.trim().match(/[a-z]/i)?.[0]?.toLowerCase();
+  if (!first) return "a";
+  return "aeiou".includes(first) ? "an" : "a";
+}
+
+/** Replace `a ` / `an ` before a word with the correct article. */
+export function withArticle(word: string): string {
+  return `${aOrAn(word)} ${word.trim()}`;
+}
+
+/**
+ * Replace bracket fill-ins in CV lines for on-screen display.
+ * Keeps the line usable without literal `[context]` / `[result]`.
+ */
+export function fillInsightPlaceholders(text: string): string {
+  return text
+    .replaceAll("[context]", "(your project)")
+    .replaceAll("[result]", "(your result)");
+}
 
 /** Plain-text export for "Copy my insights as text". */
 export function formatInsightsAsText(selected: SelectedInsights): string {
@@ -22,7 +44,9 @@ export function formatInsightsAsText(selected: SelectedInsights): string {
       const mark = s.soft ? " ◌ less certain" : "";
       lines.push(`- ${s.title}${mark}`);
       lines.push(`  Interview: ${s.interviewLine}`);
-      lines.push(`  CV/LinkedIn: ${s.cvLine}`);
+      lines.push(
+        `  CV/LinkedIn: ${fillInsightPlaceholders(s.cvLine)}`,
+      );
       lines.push(`  Team: ${s.teamLine}`);
     }
     lines.push("");

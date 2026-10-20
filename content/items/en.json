@@ -59,10 +59,10 @@
   "X08": "I plan ahead rather than decide on the spot.",
   "X09": "I put other people's needs before my own plans.",
   "X10": "I keep my feelings in check around others.",
-  "H01": "[H-H item placeholder 1]",
-  "H02": "[H-H item placeholder 2]",
-  "H03": "[H-H item placeholder 3]",
-  "H04": "[H-H item placeholder 4]",
-  "H05": "[H-H item placeholder 5]",
-  "H06": "[H-H item placeholder 6]"
+  "HH01": "Don't pretend to be more than I am.",
+  "HH02": "Would never take things that aren't mine.",
+  "HH03": "Would not enjoy being a famous celebrity.",
+  "HH04": "Don't think that I'm better than other people.",
+  "HH05": "Use flattery to get ahead.",
+  "HH06": "Cheat to get ahead."
 }

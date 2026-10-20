@@ -1,21 +1,19 @@
-import { hasLicensedHonestyHumilityItems } from "@/engine/deeper";
+import { hasVerifiedHonestyHumilityItems } from "@/engine/deeper";
 import type { ItemBank } from "@/engine/types";
 import { env } from "./env";
 
 /**
  * Go-deeper round availability.
- * Production stays off until a licensed Honesty-Humility item set is supplied
- * (§5.5 / §14) and ENABLE_GO_DEEPER is explicitly true.
+ * Production stays off until verified H-H items exist and
+ * NEXT_PUBLIC_ENABLE_GO_DEEPER / ENABLE_GO_DEEPER is explicitly true.
  */
 export function isGoDeeperAvailable(
   bank: ItemBank,
   textEn: Record<string, string>,
 ): boolean {
+  if (!env.ENABLE_GO_DEEPER) return false;
   if (env.NODE_ENV === "production") {
-    return (
-      env.ENABLE_GO_DEEPER &&
-      hasLicensedHonestyHumilityItems(bank, textEn)
-    );
+    return hasVerifiedHonestyHumilityItems(bank, textEn);
   }
-  return env.ENABLE_GO_DEEPER;
+  return true;
 }

@@ -1,9 +1,11 @@
 /**
  * Coarse in-memory rate limit without storing IPs.
- * Prefer an opaque client bucket header (`x-rate-bucket`) so honest users
- * do not share one global counter. Missing/invalid header uses a shared
- * fallback with a tighter limit.
+ * Keys are HMAC-SHA256 of (IP + daily salt), truncated — the raw IP is not kept
+ * past this function call. Client-supplied `x-rate-bucket` is ignored for the
+ * limit (it was bypassable).
  */
+import { createHmac } from "node:crypto";
+
 type Bucket = { count: number; resetAt: number };
 
 const buckets = new Map<string, Bucket>();
@@ -24,7 +26,34 @@ export function allowRequest(
   return true;
 }
 
-const BUCKET_RE = /^[a-zA-Z0-9_-]{8,64}$/;
+function clientIp(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  if (forwarded) {
+    const first = forwarded.split(",")[0]?.trim();
+    if (first) return first;
+  }
+  const real = request.headers.get("x-real-ip")?.trim();
+  if (real) return real;
+  return "unknown";
+}
+
+function dailySalt(): string {
+  return (
+    process.env.RATE_LIMIT_SALT ??
+    process.env.SESSION_CODE_PEPPER ??
+    "whoami-dev-rate-salt"
+  );
+}
+
+/** Opaque HMAC bucket id — IP is hashed with a daily salt and discarded. */
+export function hmacBucketFromRequest(request: Request): string {
+  const day = new Date().toISOString().slice(0, 10);
+  const ip = clientIp(request);
+  return createHmac("sha256", dailySalt())
+    .update(`${day}:${ip}`)
+    .digest("hex")
+    .slice(0, 32);
+}
 
 /** Build a rate-limit key for a route from the request (no IP storage). */
 export function rateLimitKeyFromRequest(
@@ -32,20 +61,17 @@ export function rateLimitKeyFromRequest(
   route: string,
 ): { key: string; shared: boolean } {
   const hour = new Date().toISOString().slice(0, 13);
-  const header = request.headers.get("x-rate-bucket");
-  if (header && BUCKET_RE.test(header)) {
-    return { key: `${route}:${hour}:${header}`, shared: false };
-  }
-  return { key: `${route}:${hour}:shared`, shared: true };
+  const bucket = hmacBucketFromRequest(request);
+  return { key: `${route}:${hour}:${bucket}`, shared: false };
 }
 
 export function allowRoutedRequest(
   request: Request,
   route: string,
   perClientLimit: number,
-  sharedLimit: number,
+  _sharedLimit: number,
   windowMs = 60_000,
 ): boolean {
-  const { key, shared } = rateLimitKeyFromRequest(request, route);
-  return allowRequest(key, shared ? sharedLimit : perClientLimit, windowMs);
+  const { key } = rateLimitKeyFromRequest(request, route);
+  return allowRequest(key, perClientLimit, windowMs);
 }

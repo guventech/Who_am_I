@@ -11,7 +11,7 @@ export const itemSchema = z.object({
   keyed: z.union([z.literal(1), z.literal(-1)]),
   isAnchor: z.boolean(),
   status: z.enum(["active", "candidate", "retired"]),
-  source: z.enum(["ipip", "original"]),
+  source: z.enum(["ipip", "ipip-hexaco", "original"]),
   sourceVerified: z.boolean(),
   version: z.number().int().positive(),
   secondaryEstimated: z.boolean().optional(),
@@ -29,7 +29,9 @@ const modelConfigSchema = z.object({
   P_LEVEL_FIRM: z.number().min(0).max(1),
   LEVEL_CUT: z.number().min(0).max(1),
   DEEPER_SD_TARGET: z.number().positive(),
+  DEEPER_BUDGET_MIN: z.number().int().min(1).max(20),
   DEEPER_BUDGET_MAX: z.number().int().min(12).max(20),
+  FIXED_FIRST_ITEM_ID: z.string().min(1),
   FLAG_BAND_FACTOR: z.number().positive(),
   GRID_NODES_PER_DIM: z.number().int().positive(),
   ACCURACY_CLAIMS: z.object({

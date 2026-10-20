@@ -50,6 +50,31 @@ export function shuffleFixedForm(
   return result;
 }
 
+/** Build a 10-item session order with FIXED_FIRST_ITEM_ID always at Q1. */
+export function sessionFixedOrder(
+  model: ModelVersion,
+  bank: ItemBank,
+  seed: number,
+): ItemId[] {
+  const first = model.config.FIXED_FIRST_ITEM_ID;
+  const restSource = model.fixedFormOrder.filter((id) => id !== first);
+  const need = 9;
+  let rest = shuffleFixedForm(restSource, bank, seed);
+  if (rest.length < need) {
+    const fillers = shuffleFixedForm(
+      activeCoreItems(bank)
+        .map((i) => i.id)
+        .filter((id) => id !== first && !rest.includes(id)),
+      bank,
+      seed + 1,
+    );
+    rest = [...rest, ...fillers].slice(0, need);
+  } else {
+    rest = rest.slice(0, need);
+  }
+  return [first, ...rest];
+}
+
 export class FixedSelector implements ItemSelector {
   private sessionOrder: ItemId[] | null = null;
   private sessionSeed: number | null = null;
@@ -65,7 +90,7 @@ export class FixedSelector implements ItemSelector {
 
     if (this.sessionSeed !== state.seed || !this.sessionOrder) {
       this.sessionSeed = state.seed;
-      this.sessionOrder = shuffleFixedForm(cfg.fixedFormOrder, bank, state.seed);
+      this.sessionOrder = sessionFixedOrder(cfg, bank, state.seed);
     }
 
     return this.sessionOrder[state.answered.length] ?? null;
@@ -80,10 +105,15 @@ export function buildFixedFormOrder(
 ): ItemId[] {
   const byId = new Map(bank.items.map((i) => [i.id, i]));
   const pool = activeCoreItems(bank);
-  const chosen: ItemId[] = [];
+  const first = model.config.FIXED_FIRST_ITEM_ID;
+  const chosen: ItemId[] = [first];
   const traitOrder = modelTraitIds(model);
   let S = [...model.priorCov];
   const theta = traitOrder.map(() => 0);
+  const firstItem = byId.get(first);
+  if (firstItem) {
+    S = shermanMorrisonUpdate(S, firstItem, theta, traitOrder);
+  }
 
   while (chosen.length < n) {
     const state: SessionState = {
@@ -98,7 +128,7 @@ export function buildFixedFormOrder(
     };
     const feasible = filterFeasible(pool, state, byId, n, {
       coverageTraits: CORE_TRAIT_IDS,
-    });
+    }).filter((i) => i.id !== first);
     if (feasible.length === 0) break;
 
     let best: Item | null = null;

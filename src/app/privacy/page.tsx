@@ -25,6 +25,9 @@ export default function PrivacyPage() {
             <p key={para}>{para}</p>
           ))}
         </div>
+        <p className="text-sm leading-relaxed text-slate-600">
+          {copyEn.ipipAttribution}
+        </p>
         <DeleteDataForm />
       </main>
     </div>

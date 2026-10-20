@@ -29,6 +29,21 @@ test.describe("core flow", () => {
     await expect(page.getByText(/0\.\d{2}\s+to\s+0\.\d{2}/)).toHaveCount(0);
   });
 
+  test("Q1 is the same across three browser contexts", async ({ browser }) => {
+    const q1Texts: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      const context = await browser.newContext();
+      const page = await context.newPage();
+      await page.goto("/test");
+      await expect(page.getByText("1 of 10")).toBeVisible();
+      const heading = page.locator("main h1");
+      q1Texts.push((await heading.innerText()).trim());
+      await context.close();
+    }
+    expect(new Set(q1Texts).size).toBe(1);
+    expect(q1Texts[0]).toMatch(/feel at ease meeting new people/i);
+  });
+
   test("keyboard 1-5 answers a question", async ({ page }) => {
     await page.goto("/test");
     await expect(page.getByText("1 of 10")).toBeVisible();

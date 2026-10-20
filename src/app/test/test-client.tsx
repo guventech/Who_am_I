@@ -11,6 +11,7 @@ import {
 } from "@/content/client-content";
 import { copyEn } from "@/content/copy.en";
 import type { ResponseValue } from "@/engine/types";
+import { formatItemStem } from "@/lib/item-display";
 import {
   answerCurrent,
   backOne,
@@ -95,7 +96,8 @@ export function TestClient() {
   }
 
   const itemId = currentItemId(session, bank, model);
-  const questionText = itemId ? textEn[itemId] : null;
+  const rawText = itemId ? textEn[itemId] : null;
+  const questionText = rawText ? formatItemStem(rawText) : null;
 
   if (!itemId || !questionText) {
     return (

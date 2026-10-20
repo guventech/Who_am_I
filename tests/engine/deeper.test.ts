@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   allTraitsMeetSdTarget,
-  hasLicensedHonestyHumilityItems,
+  hasVerifiedHonestyHumilityItems,
   runDeeperRound,
   syntheticDeeperRespond,
 } from "../../src/engine/deeper";
@@ -13,7 +13,7 @@ import {
 } from "../../src/engine/load-content";
 import { cholesky, createRng, matVec } from "../../src/engine/math";
 import { scoreSession } from "../../src/engine/score";
-import { shuffleFixedForm } from "../../src/engine/select-fixed";
+import { sessionFixedOrder } from "../../src/engine/select-fixed";
 import { itemById } from "../../src/engine/grid";
 import { sampleResponse } from "../../src/engine/grm";
 import type { AnsweredItem } from "../../src/engine/types";
@@ -26,7 +26,7 @@ function runCoreFixed(
   const bank = loadItemBank();
   const model = loadModelVersion();
   const rng = createRng(seed);
-  const order = shuffleFixedForm(model.fixedFormOrder, bank, seed);
+  const order = sessionFixedOrder(model, bank, seed);
   return order.map((id, i) => {
     const item = itemById(bank, id);
     return {
@@ -55,19 +55,37 @@ describe("go deeper", () => {
     expect(modelTraitIds(deeper)).toEqual(["E", "A", "C", "ES", "O", "H"]);
     expect(deeper.priorCov).toHaveLength(36);
     expect(deeper.config.GRID_NODES_PER_DIM).toBe(7);
+    expect(deeper.config.DEEPER_BUDGET_MIN).toBe(12);
     cholesky(deeper.priorCov, 6); // PD check
   });
 
-  it("H-H placeholders remain candidate / unlicensed", () => {
+  it("H-H items are verified IPIP-HEXACO actives", () => {
     const bank = loadItemBank();
     const en = loadItemTextEn();
-    const hh = bank.items.filter((i) => i.primaryTrait === "H");
+    const hh = bank.items.filter(
+      (i) => i.primaryTrait === "H" && i.status === "active",
+    );
     expect(hh).toHaveLength(6);
-    expect(hh.every((i) => i.status === "candidate" && i.pool === "deeper")).toBe(
+    expect(hh.every((i) => i.source === "ipip-hexaco" && i.sourceVerified)).toBe(
       true,
     );
-    expect(hasLicensedHonestyHumilityItems(bank, en)).toBe(false);
+    expect(hasVerifiedHonestyHumilityItems(bank, en)).toBe(true);
+    expect(hh.every((i) => !/placeholder/i.test(en[i.id] ?? ""))).toBe(true);
   });
+
+  it(
+    "asks at least DEEPER_BUDGET_MIN items even with clear answers",
+    () => {
+      const bank = loadItemBank();
+      const deeper = loadDeeperModelVersion();
+      const core = runCoreFixed(7, [1.5, 1.5, 1.5, 1.5, 1.5]);
+      const result = runDeeperRound(bank, deeper, core, 7, () => 5);
+      expect(result.itemsAsked).toBeGreaterThanOrEqual(
+        deeper.config.DEEPER_BUDGET_MIN,
+      );
+    },
+    120_000,
+  );
 
   it(
     "reaches SD target within budget on SYNTHETIC respondents",
@@ -88,7 +106,6 @@ describe("go deeper", () => {
         const theta6 = matVec(L, z, 6);
         const seed = 1000 + i;
         const coreAnswered = runCoreFixed(seed, theta6.slice(0, 5));
-        // Core path still 5 traits
         expect(scoreSession(bank, coreModel, coreAnswered).traits).toHaveLength(
           5,
         );
@@ -103,9 +120,15 @@ describe("go deeper", () => {
         expect(result.itemsAsked).toBeLessThanOrEqual(
           deeper.config.DEEPER_BUDGET_MAX,
         );
+        expect(result.itemsAsked).toBeGreaterThanOrEqual(
+          Math.min(deeper.config.DEEPER_BUDGET_MIN, result.itemsAsked),
+        );
         expect(result.scored.traits).toHaveLength(6);
         if (result.stoppedReason === "sd_target") {
           hits++;
+          expect(result.itemsAsked).toBeGreaterThanOrEqual(
+            deeper.config.DEEPER_BUDGET_MIN,
+          );
           expect(
             allTraitsMeetSdTarget(
               result.scored.traits.map((t) => t.sd),

@@ -117,28 +117,14 @@ export function ResultClient() {
     })();
   }, [session?.completed, consent.store, consent.ageConfirmed]);
 
-  if (!session?.completed || !session.scored) {
-    return (
-      <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
-        <PrototypeBanner bankStatus={coreModel.bankStatus} />
-        <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-4 px-6 py-16">
-          <p className="text-lg text-slate-700">{copyEn.missingResult}</p>
-          <Link
-            href="/"
-            className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-          >
-            {copyEn.startAgain}
-          </Link>
-        </main>
-      </div>
-    );
-  }
-
+  const missing = !session?.completed || !session.scored;
   const activeModel =
-    session.round === "deeper" ? deeperModel : coreModel;
-  const insightTraits = session.scored.traits.filter((t) =>
-    (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
-  );
+    session?.round === "deeper" ? deeperModel : coreModel;
+  const insightTraits = session?.scored
+    ? session.scored.traits.filter((t) =>
+        (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
+      )
+    : [];
   const insights = selectInsights(insightTraits, insightLibrary);
   const accuracy = accuracySentenceFromClaims(
     activeModel.config.ACCURACY_CLAIMS,
@@ -147,12 +133,27 @@ export function ResultClient() {
   const copyText = formatInsightsAsText(insights);
   const consented = hasStorageConsent(consent);
   const canGoDeeper =
-    goDeeperOn && session.round === "core" && session.completed;
+    goDeeperOn &&
+    !!session &&
+    session.round === "core" &&
+    session.completed;
 
   return (
     <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
       <PrototypeBanner bankStatus={activeModel.bankStatus} />
-      <main className="mx-auto flex w-full max-w-lg flex-col gap-8 px-6 py-12">
+      <main className="mx-auto flex w-full max-w-lg flex-1 flex-col gap-8 px-6 py-12">
+        {missing ? (
+          <div className="flex flex-1 flex-col justify-center gap-4">
+            <p className="text-lg text-slate-700">{copyEn.missingResult}</p>
+            <Link
+              href="/"
+              className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
+            >
+              {copyEn.startAgain}
+            </Link>
+          </div>
+        ) : (
+          <>
         <header className="flex flex-col gap-3">
           <p className="text-sm font-medium tracking-[0.2em] text-slate-500 uppercase">
             {copyEn.brand}
@@ -164,7 +165,7 @@ export function ResultClient() {
             {copyEn.disclaimer}
           </p>
           <p className="text-sm text-slate-600">{copyEn.positionWording}</p>
-          {session.scored.flags.any ? (
+          {session!.scored!.flags.any ? (
             <p role="status" className="text-sm text-slate-700">
               {copyEn.flagNote}
             </p>
@@ -172,24 +173,24 @@ export function ResultClient() {
           {accuracy ? (
             <p className="text-sm text-slate-700">{accuracy}</p>
           ) : null}
-          {consented && !session.storageSaved && !session.storageError ? (
+          {consented && !session!.storageSaved && !session!.storageError ? (
             <p className="text-sm text-slate-600">{copyEn.storageSaving}</p>
           ) : null}
-          {session.storageSaved && session.sessionCode ? (
+          {session!.storageSaved && session!.sessionCode ? (
             <div
               className="rounded-md border border-slate-300 bg-white/70 px-3 py-2 text-sm text-slate-800"
               data-testid="session-code"
             >
               <p className="font-medium">{copyEn.sessionCodeStored}</p>
               <p className="mt-1 font-mono text-base tracking-wider">
-                {session.sessionCode}
+                {session!.sessionCode}
               </p>
               <p className="mt-1 text-xs text-slate-500">
                 {copyEn.sessionCodeLabel}
               </p>
             </div>
           ) : null}
-          {session.storageError ? (
+          {session!.storageError ? (
             <p role="alert" className="text-sm text-slate-800">
               {copyEn.storageFailed}
             </p>
@@ -202,12 +203,17 @@ export function ResultClient() {
         <section
           className="flex flex-col gap-8"
           aria-label={
-            session.round === "deeper"
+            session!.round === "deeper"
               ? copyEn.yourSlidersDeeper
               : copyEn.yourSliders
           }
         >
-          {session.scored.traits.map((score) => {
+          <h2 className="font-serif text-2xl text-slate-900">
+            {session!.round === "deeper"
+              ? copyEn.yourSlidersDeeper
+              : copyEn.yourSliders}
+          </h2>
+          {session!.scored!.traits.map((score) => {
             const trait = traitsById.get(score.traitId);
             if (!trait) return null;
             return (
@@ -230,7 +236,7 @@ export function ResultClient() {
               {copyEn.llmRewordStub}
             </button>
           ) : null}
-          {consented && session.storageSaved ? (
+          {consented && session!.storageSaved ? (
             <Link
               href="/feedback"
               className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
@@ -250,7 +256,7 @@ export function ResultClient() {
           >
             {copyEn.privacyLink}
           </Link>
-          {session.storageSaved ? (
+          {session!.storageSaved ? (
             <Link
               href="/privacy#delete"
               className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
@@ -266,7 +272,7 @@ export function ResultClient() {
             >
               {copyEn.goDeeper}
             </Link>
-          ) : session.round === "core" ? (
+          ) : session!.round === "core" ? (
             <p className="text-sm text-slate-500">{copyEn.goDeeperDisabled}</p>
           ) : null}
           <Link
@@ -276,6 +282,8 @@ export function ResultClient() {
             {copyEn.startAgain}
           </Link>
         </nav>
+          </>
+        )}
       </main>
     </div>
   );

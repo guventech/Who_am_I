@@ -20,7 +20,7 @@ const TRAIT_META: Record<
   E: {
     name: "Extraversion",
     low: "reserved",
-    mid: "flexible with social energy",
+    mid: "flexible, sociable",
     high: "outgoing",
   },
   A: {
@@ -48,6 +48,16 @@ const TRAIT_META: Record<
     high: "curious",
   },
 };
+
+function aOrAn(word: string): "a" | "an" {
+  const first = word.trim().match(/[a-z]/i)?.[0]?.toLowerCase();
+  if (!first) return "a";
+  return "aeiou".includes(first) ? "an" : "a";
+}
+
+function art(word: string): string {
+  return `${aOrAn(word)} ${word}`;
+}
 
 function traitEntry(
   trait: Trait,
@@ -79,8 +89,8 @@ function traitEntry(
           ? `If this fits you: tell a story where being ${label} helped a real outcome.`
           : `Tell me about a time when being ${label} clearly helped the outcome.`,
         cvLine: soft
-          ? `May bring a ${label} approach to [context], supporting [result].`
-          : `Brought a ${label} approach to [context], supporting [result].`,
+          ? `May bring ${art(label)} approach to [context], supporting [result].`
+          : `Brought ${art(label)} approach to [context], supporting [result].`,
         teamLine: soft
           ? `I may show up as ${label} depending on the situation.`
           : `I tend to show up as ${label} in day-to-day work.`,
@@ -91,7 +101,7 @@ function traitEntry(
         ? []
         : [
             soft
-              ? `can come across as uneven when others expect a steadier ${meta.name.toLowerCase()} style${ifFits}`
+              ? `Others who expect a steady style may find your energy hard to predict. Say what you plan to do.${ifFits}`
               : `can come across as too ${label} when the situation needs the opposite pole`,
           ],
     improve: [
@@ -99,8 +109,8 @@ function traitEntry(
         area: level === "mid" ? "Choosing a pole on purpose" : `Balancing ${label} energy`,
         actions: [
           soft
-            ? `Once this week, notice when a ${label} response helped — jot one line after the meeting.`
-            : `This week, pick one meeting and decide in advance whether a ${label} or opposite-pole move serves the goal.`,
+            ? `Once this week, notice when ${art(label)} response helped - jot one line after the meeting.`
+            : `This week, pick one meeting and decide in advance whether ${art(label)} or opposite-pole move serves the goal.`,
           `Ask a trusted colleague: "When does my ${meta.name.toLowerCase()} style help you, and when does it get in the way?"`,
           soft
             ? `If it fits, try one small opposite-pole behaviour for 15 minutes and note what changed.`
@@ -109,10 +119,10 @@ function traitEntry(
       },
     ],
     workWithOthers: soft
-      ? `You ${may}prefer working in a ${label} way${ifFits}. Say what you need early, and invite people at the opposite pole to name what helps them.`
-      : `You often prefer a ${label} style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.`,
+      ? `You ${may}prefer working in ${art(label)} way${ifFits}. Say what you need early, and invite people at the opposite pole to name what helps them.`
+      : `You often prefer ${art(label)} style. Name that preference early, and ask opposite-pole colleagues what they need to work well with you.`,
     tradeOff: soft
-      ? `A ${label} lean can help in some contexts and cost energy in others — check which applies today.`
+      ? `${art(label).replace(/^a /, "A ").replace(/^an /, "An ")} lean can help in some contexts and cost energy in others - check which applies today.`
       : `Leaning ${label} helps in some rooms and costs recovery or coverage in others; the trade-off is real.`,
   };
 }
@@ -146,8 +156,8 @@ function comboEntry(
           ? `May combine ${bits.strengthHint} to deliver [result].`
           : `Combined ${bits.strengthHint} to deliver [result].`,
         teamLine: soft
-          ? `I may bring a ${title.toLowerCase()} style when the work needs it.`
-          : `I often bring a ${title.toLowerCase()} style to group work.`,
+          ? `I may bring ${art(title.toLowerCase())} style when the work needs it.`
+          : `I often bring ${art(title.toLowerCase())} style to group work.`,
       },
     ],
     watchOuts: [
@@ -161,7 +171,7 @@ function comboEntry(
         actions: [
           soft
             ? `This week, if it fits, ask one teammate where your ${title.toLowerCase()} style landed well.`
-            : `This week, ask one teammate where your ${title.toLowerCase()} style landed well — and where it overshot.`,
+            : `This week, ask one teammate where your ${title.toLowerCase()} style landed well - and where it overshot.`,
           `Before your next high-stakes conversation, write one sentence on the outcome you want and one on the relationship you want to protect.`,
           `Block 20 minutes after that conversation to note what you would keep or change.`,
         ],
@@ -249,11 +259,11 @@ function fallbackEntry(): InsightEntry {
     version: 1,
     strengths: [
       {
-        title: "Flexible sketch — go deeper to sharpen",
+        title: "Flexible sketch - go deeper to sharpen",
         interviewLine:
           "Your answers did not settle clear poles yet. Use stories from recent weeks rather than a fixed label.",
         cvLine:
-          "Adaptable across situations — refine specifics after a deeper pass.",
+          "Adaptable across situations - refine specifics after a deeper pass.",
         teamLine:
           "I am still mapping what stays steady for me; I can share preferences as they become clearer.",
       },
@@ -264,7 +274,7 @@ function fallbackEntry(): InsightEntry {
         area: "Sharpen the sketch",
         actions: [
           "When Go deeper is available, continue for a tighter read on each trait.",
-          "Meanwhile, note two situations this week where your style clearly helped — and one where it did not.",
+          "Meanwhile, note two situations this week where your style clearly helped - and one where it did not.",
         ],
       },
     ],

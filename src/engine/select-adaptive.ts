@@ -74,6 +74,11 @@ export class AdaptiveSelector implements ItemSelector {
     );
     if (feasible.length === 0) return null;
 
+    // Q1 is identical for every core session (brief / review M1).
+    if (!this.opts.deeperRound && state.answered.length === 0) {
+      return cfg.config.FIXED_FIRST_ITEM_ID;
+    }
+
     const traitOrder = modelTraitIds(cfg);
     const S = this.posterior?.cov ?? cfg.priorCov;
     const theta =
@@ -85,11 +90,6 @@ export class AdaptiveSelector implements ItemSelector {
         gain: aOptimalGain(item, S, theta, traitOrder),
       }))
       .sort((a, b) => b.gain - a.gain);
-
-    // First pick in a core session is deterministic; deeper continues from posterior.
-    if (!this.opts.deeperRound && state.answered.length === 0) {
-      return ranked[0]!.item.id;
-    }
 
     const top = ranked.slice(0, Math.min(3, ranked.length));
     return top[rng.int(top.length)]!.item.id;

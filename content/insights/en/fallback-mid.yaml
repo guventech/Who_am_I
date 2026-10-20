@@ -4,10 +4,10 @@ variant: firm
 reviewStatus: draft
 version: 1
 strengths:
-  - title: Flexible sketch — go deeper to sharpen
+  - title: Flexible sketch - go deeper to sharpen
     interviewLine: Your answers did not settle clear poles yet. Use stories from
       recent weeks rather than a fixed label.
-    cvLine: Adaptable across situations — refine specifics after a deeper pass.
+    cvLine: Adaptable across situations - refine specifics after a deeper pass.
     teamLine: I am still mapping what stays steady for me; I can share preferences
       as they become clearer.
 watchOuts: []
@@ -16,7 +16,7 @@ improve:
     actions:
       - When Go deeper is available, continue for a tighter read on each trait.
       - Meanwhile, note two situations this week where your style clearly helped
-        — and one where it did not.
+        - and one where it did not.
 workWithOthers: Without a clear pole yet, ask teammates what they need from you
   and share what helps you focus.
 tradeOff: A short sketch stays broad on purpose; depth costs more questions but

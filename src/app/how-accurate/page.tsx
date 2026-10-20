@@ -36,6 +36,9 @@ export default function HowAccuratePage() {
             <li key={caveat}>{caveat}</li>
           ))}
         </ul>
+        <p className="text-sm leading-relaxed text-slate-600">
+          {copyEn.ipipAttribution}
+        </p>
       </main>
     </div>
   );

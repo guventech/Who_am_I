@@ -251,11 +251,13 @@ const coreTraits = [
 
 const sharedConfig = {
   RETAKE_BAND_MULTIPLIER: 1.41,
-  UNCLEAR_WIDTH: 1.0,
+  UNCLEAR_WIDTH: 1.35,
   P_LEVEL_FIRM: 0.7,
   LEVEL_CUT: 0.4,
   DEEPER_SD_TARGET: 0.35,
+  DEEPER_BUDGET_MIN: 12,
   DEEPER_BUDGET_MAX: 20,
+  FIXED_FIRST_ITEM_ID: "X01",
   FLAG_BAND_FACTOR: 1.25,
   ACCURACY_CLAIMS: {
     corrWithLongTest: null as null,

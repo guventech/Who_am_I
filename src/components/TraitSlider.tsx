@@ -46,7 +46,14 @@ export function TraitSlider({ trait, score, tradeOff }: Props) {
       aria-label={aria}
     >
       <div className="flex items-baseline justify-between gap-3">
-        <h3 className="font-serif text-lg text-slate-900">{trait.name}</h3>
+        <div className="flex min-w-0 flex-col gap-0.5">
+          <p className="text-xs font-medium tracking-wide text-slate-500 uppercase">
+            {trait.name}
+          </p>
+          <h3 className="font-serif text-lg text-slate-900">
+            {shortPole(trait.poleLow)} to {shortPole(trait.poleHigh)}
+          </h3>
+        </div>
         <span className="font-mono text-sm tabular-nums text-slate-700">
           {formatSignedSlider(score.slider)}
         </span>
@@ -176,5 +183,5 @@ function levelBlurb(
 }
 
 function shortPole(pole: string): string {
-  return pole.split("—")[0]?.trim() ?? pole;
+  return pole.split(/[:—]/u)[0]?.trim() ?? pole;
 }

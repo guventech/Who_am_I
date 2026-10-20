@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { jsonError } from "@/lib/api-errors";
 import { assertStorageConsent } from "@/storage/consent-gate";
 import { allowRoutedRequest } from "@/storage/rate-limit";
 import { completeWithRescore } from "@/storage/server-store";
@@ -26,6 +27,6 @@ export async function POST(request: Request) {
     return NextResponse.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : "save_failed";
-    return NextResponse.json({ error: message }, { status: 400 });
+    return jsonError(message);
   }
 }

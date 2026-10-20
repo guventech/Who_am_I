@@ -12,7 +12,7 @@ export type ItemId = string;
 
 export type ItemPool = "core" | "deeper";
 export type ItemStatus = "active" | "candidate" | "retired";
-export type ItemSource = "ipip" | "original";
+export type ItemSource = "ipip" | "ipip-hexaco" | "original";
 export type BankStatus = "dev-uncalibrated" | "calibrated";
 
 export type Item = {
@@ -52,8 +52,12 @@ export type ModelConfig = {
   P_LEVEL_FIRM: number;
   LEVEL_CUT: number;
   DEEPER_SD_TARGET: number;
+  /** Min additional items before early SD stop (brief: 12–20). */
+  DEEPER_BUDGET_MIN: number;
   /** Max additional items in the go-deeper round (brief: 12–20). */
   DEEPER_BUDGET_MAX: number;
+  /** Q1 is identical for every session (core round). */
+  FIXED_FIRST_ITEM_ID: ItemId;
   FLAG_BAND_FACTOR: number;
   /**
    * Gauss–Hermite nodes per dimension. Core 5D uses 11; 6D deeper

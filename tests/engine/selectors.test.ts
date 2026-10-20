@@ -55,5 +55,19 @@ describe("selectors", () => {
     const id1 = a.next(state, bank, model, createRng(1));
     const id2 = b.next(state, bank, model, createRng(999));
     expect(id1).toBe(id2);
+    expect(id1).toBe(model.config.FIXED_FIRST_ITEM_ID);
+  });
+
+  it("fixed Q1 is identical across 50 seeds", () => {
+    const bank = loadItemBank();
+    const model = loadModelVersion();
+    const first = model.config.FIXED_FIRST_ITEM_ID;
+    expect(first).toBe("X01");
+    for (let seed = 0; seed < 50; seed++) {
+      const selector = new FixedSelector();
+      const state: SessionState = { seed, answered: [], usedItemIds: [] };
+      const id = selector.next(state, bank, model, createRng(seed));
+      expect(id).toBe(first);
+    }
   });
 });

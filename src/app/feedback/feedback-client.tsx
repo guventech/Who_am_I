@@ -22,6 +22,8 @@ import type { TraitFeedback } from "@/storage/types";
 
 const model = getModelVersion();
 
+type TraitDraft = Partial<TraitFeedback> & { traitId: TraitId };
+
 export function FeedbackClient() {
   const session = useSyncExternalStore(
     subscribeSession,
@@ -33,14 +35,11 @@ export function FeedbackClient() {
     getConsentSnapshot,
     getServerConsentSnapshot,
   );
-  const [overallFit, setOverallFit] = useState<1 | 2 | 3 | 4 | 5>(3);
-  const [traits, setTraits] = useState<Record<TraitId, TraitFeedback>>(() =>
+  const [overallFit, setOverallFit] = useState<1 | 2 | 3 | 4 | 5 | null>(null);
+  const [traits, setTraits] = useState<Record<TraitId, TraitDraft>>(() =>
     Object.fromEntries(
-      CORE_TRAIT_IDS.map((id) => [
-        id,
-        { traitId: id, fit: 3 as const, off: "about_right" as const },
-      ]),
-    ) as Record<TraitId, TraitFeedback>,
+      CORE_TRAIT_IDS.map((id) => [id, { traitId: id }]),
+    ) as Record<TraitId, TraitDraft>,
   );
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">(
     "idle",
@@ -48,7 +47,11 @@ export function FeedbackClient() {
 
   const consented = hasStorageConsent(consent);
   const canSubmit =
-    consented && session?.storageSaved && session.sessionCode;
+    consented &&
+    session?.storageSaved &&
+    session.sessionCode &&
+    overallFit !== null &&
+    status !== "saving";
 
   return (
     <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
@@ -65,7 +68,7 @@ export function FeedbackClient() {
         </h1>
         <p className="text-sm text-slate-600">{copyEn.feedbackIntro}</p>
 
-        {!canSubmit ? (
+        {!consented || !session?.storageSaved || !session.sessionCode ? (
           <p className="text-sm text-slate-700">
             {!consented
               ? copyEn.feedbackNeedConsent
@@ -78,8 +81,15 @@ export function FeedbackClient() {
             className="flex flex-col gap-6"
             onSubmit={(e) => {
               e.preventDefault();
-              if (!session?.sessionCode) return;
+              if (!session?.sessionCode || overallFit === null) return;
               setStatus("saving");
+              const ratedTraits = CORE_TRAIT_IDS.filter(
+                (id) => traits[id]?.fit != null && traits[id]?.off != null,
+              ).map((id) => ({
+                traitId: id,
+                fit: traits[id]!.fit as 1 | 2 | 3 | 4 | 5,
+                off: traits[id]!.off as TraitFeedback["off"],
+              }));
               const adapter = createClientStorage({
                 consentStore: true,
                 ageConfirmed: true,
@@ -87,7 +97,7 @@ export function FeedbackClient() {
               void adapter
                 .saveFeedback(session.sessionCode, {
                   overallFit,
-                  traits: CORE_TRAIT_IDS.map((id) => traits[id]!),
+                  traits: ratedTraits,
                   insightThumbs: session.shownInsightIds.map((entryId) => ({
                     entryId,
                     up: true,
@@ -101,11 +111,14 @@ export function FeedbackClient() {
               {copyEn.feedbackOverall}
               <select
                 className="h-10 rounded-md border border-slate-300 bg-white px-2"
-                value={overallFit}
-                onChange={(e) =>
-                  setOverallFit(Number(e.target.value) as 1 | 2 | 3 | 4 | 5)
-                }
+                value={overallFit ?? ""}
+                data-testid="feedback-overall"
+                onChange={(e) => {
+                  const v = e.target.value;
+                  setOverallFit(v === "" ? null : (Number(v) as 1 | 2 | 3 | 4 | 5));
+                }}
               >
+                <option value="">{copyEn.feedbackChooseOverall}</option>
                 {[1, 2, 3, 4, 5].map((n) => (
                   <option key={n} value={n}>
                     {n}
@@ -129,17 +142,22 @@ export function FeedbackClient() {
                     {copyEn.feedbackTraitFit}
                     <select
                       className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-2"
-                      value={row.fit}
-                      onChange={(e) =>
+                      value={row.fit ?? ""}
+                      onChange={(e) => {
+                        const v = e.target.value;
                         setTraits((prev) => ({
                           ...prev,
                           [id]: {
                             ...row,
-                            fit: Number(e.target.value) as 1 | 2 | 3 | 4 | 5,
+                            fit:
+                              v === ""
+                                ? undefined
+                                : (Number(v) as 1 | 2 | 3 | 4 | 5),
                           },
-                        }))
-                      }
+                        }));
+                      }}
                     >
+                      <option value="">{copyEn.feedbackChooseOverall}</option>
                       {[1, 2, 3, 4, 5].map((n) => (
                         <option key={n} value={n}>
                           {n}
@@ -151,17 +169,22 @@ export function FeedbackClient() {
                     {copyEn.feedbackTraitOff}
                     <select
                       className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-2"
-                      value={row.off}
-                      onChange={(e) =>
+                      value={row.off ?? ""}
+                      onChange={(e) => {
+                        const v = e.target.value;
                         setTraits((prev) => ({
                           ...prev,
                           [id]: {
                             ...row,
-                            off: e.target.value as TraitFeedback["off"],
+                            off:
+                              v === ""
+                                ? undefined
+                                : (v as TraitFeedback["off"]),
                           },
-                        }))
-                      }
+                        }));
+                      }}
                     >
+                      <option value="">{copyEn.feedbackChooseOverall}</option>
                       <option value="too_high">{copyEn.feedbackTooHigh}</option>
                       <option value="about_right">
                         {copyEn.feedbackAboutRight}
@@ -175,7 +198,8 @@ export function FeedbackClient() {
 
             <button
               type="submit"
-              disabled={status === "saving"}
+              disabled={!canSubmit}
+              data-testid="feedback-submit"
               className="inline-flex h-11 items-center justify-center rounded-md bg-slate-900 px-4 text-sm font-medium text-white disabled:opacity-60"
             >
               {copyEn.feedbackSubmit}

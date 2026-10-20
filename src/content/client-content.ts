@@ -5,7 +5,7 @@ import deeperModelRaw from "../../content/model/model-v0-dev-deeper.json";
 import { itemBankSchema, modelVersionSchema } from "@/engine/schema";
 import type { ItemBank, ModelVersion } from "@/engine/types";
 
-/** Browser-safe content load (static JSON imports — no fs). */
+/** Browser-safe content load (static JSON imports; no fs). */
 export function getItemBank(): ItemBank {
   return itemBankSchema.parse(bankRaw) as ItemBank;
 }

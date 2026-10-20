@@ -12,6 +12,7 @@ import {
   getItemTextEn,
 } from "@/content/client-content";
 import { copyEn } from "@/content/copy.en";
+import { formatItemStem } from "@/lib/item-display";
 import type { ResponseValue } from "@/engine/types";
 import {
   answerDeeper,
@@ -140,7 +141,8 @@ export function DeeperClient() {
 
   const deeper = session as DeeperSession;
   const itemId = currentDeeperItemId(deeper, bank, deeperModel);
-  const questionText = itemId ? textEn[itemId] : null;
+  const rawText = itemId ? textEn[itemId] : null;
+  const questionText = rawText ? formatItemStem(rawText) : null;
   const asked = deeper.answered.length - deeper.deeperStartCount;
   const total = deeperModel.config.DEEPER_BUDGET_MAX;
 

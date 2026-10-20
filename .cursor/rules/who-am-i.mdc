@@ -13,7 +13,7 @@ alwaysApply: true
 - **Default selector:** fixed 10-item form until real data justifies adaptive.
 - **Colours / LLM reword / free text:** flags off (`ENABLE_COLOURS`, `ENABLE_LLM_REWORD`, `ENABLE_FREE_TEXT` = false).
 - Phases 0–6 are done (MVP build complete per brief). Further work is calibration/content/ops (§14) or explicit new scope.
-- **Go deeper:** mechanism ships; production UI off until licensed H-H items + `ENABLE_GO_DEEPER`.
+- **Go deeper:** mechanism ships with IPIP-HEXACO H-H items; production UI off until `ENABLE_GO_DEEPER` / `NEXT_PUBLIC_ENABLE_GO_DEEPER` is explicitly true.
 
 ## Hard rules
 
