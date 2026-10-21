@@ -9,10 +9,12 @@ export const copyEn = {
   youGet:
     "You get: your five traits, your strengths, what to watch out for, and simple tips.",
   start: "Start the test",
+  landingExpectation:
+    "This is a rough guide for self-reflection, not a diagnosis.",
   howAccurateLink: "How accurate is this?",
   privacyLink: "Privacy",
   nothingSavedUnless:
-    "Nothing is saved unless you say yes at the end.",
+    "Nothing is sent or stored on our side unless you say yes at the end.",
 
   // Questions
   progress: (n: number, total: number) => `Question ${n} of ${total}`,
@@ -31,11 +33,16 @@ export const copyEn = {
   workingResults: "Working out your results...",
   takingLonger:
     "This is taking longer than usual. Please wait or try again.",
+  noSessionHeading: "No test in progress",
+  noSessionBody: "Start from the home page to answer the questions.",
+  noSessionCta: "Go to the start",
 
   // Consent (after Q10)
   consentHeading: "Help us improve the test?",
   consentBody:
     "If you say yes, we save your answers and scores without your name or email. This helps us make the test more accurate.",
+  consentStorageNote:
+    "Nothing is sent or stored on our side unless you say yes.",
   consentAge: "I am 16 or older.",
   consentYes: "Yes, save my answers",
   consentNo: "No, just show my results",
@@ -44,7 +51,8 @@ export const copyEn = {
   consentStore:
     "Store my anonymous answers and feedback to improve the test.",
   consentRetake: "Retake later? Keep a session code so I can link a later run.",
-  consentDefault: "Nothing is saved unless you say yes at the end.",
+  consentDefault:
+    "Nothing is sent or stored on our side unless you say yes at the end.",
   goDeeperDisabled: "Go deeper is not available yet.",
   goDeeperIntro: "A few more questions to make your ranges narrower.",
   startAgain: "Take the test again",
@@ -53,19 +61,22 @@ export const copyEn = {
   // Results
   resultHeading: "Your results",
   resultLead:
-    "This shows how you tend to be compared with other people. Use it to learn about yourself, not to judge yourself or others.",
-  middleLineNote: "The middle of each line is the average person.",
-  savedNot: "Your answers were not saved.",
+    "This is a rough guide for self-reflection. Use it to notice patterns in yourself, not to judge yourself or other people.",
+  scoresNote: "Early version. Not yet checked with real people.",
+  middleLineNote: "The middle of each line is the middle of the scale.",
+  savedNot: "Your answers were not saved on our side.",
   savedYes: "Your answers were saved without your name.",
   yourFiveTraits: "Your five traits",
-  retakeLegend: "Where a retake would likely land",
-  middleLegend: "Middle line = the average person",
+  retakeLegend: "Shaded band: where a retake might land (early estimate)",
+  middleLegend: "Middle line = the middle of the scale",
   lessCertain: "(less certain)",
   aboutMiddleLong:
     "About in the middle. You can be both, depending on the situation.",
   whatThisMeans: "What this means for you",
   insightsNote:
-    "Use these lines in an interview or CV only if you have a real example.",
+    "These interview and CV lines are wording ideas. Adapt them only if they match a real example from your own life. They are not proof of who you are.",
+  notForJudgingOthers:
+    "Fine for your own reflection. Not for judging, choosing or rejecting other people.",
   yourStrengths: "Your strengths",
   watchOutFor: "Watch out for",
   tryThis: "Try this",
@@ -81,19 +92,21 @@ export const copyEn = {
   storageSaving: "Saving your answers...",
   storageFailed: "Could not save. Your results still work on this device.",
   flagNote: "Some answers came very quickly, so your ranges are widened.",
+  copyCaveat:
+    "Early version. Rough guide for self-reflection. Not for judging, choosing or rejecting other people.",
 
   // How accurate
   howAccurateHeading: "How accurate is this?",
   howAccurateBody: [
-    "10 questions can show your general tendencies, but not every detail of who you are. If you take the test again, your results will usually be close, but not the same. The shaded area on each line shows where a retake would likely land.",
-    "This is an early version. We are still testing the questions with more people, so treat your results as a rough guide. Please don't use it to choose or reject people for a job.",
+    "10 questions can show general tendencies, but not every detail of who you are. If you take the test again, your results may shift. The shaded area on each line is an early estimate of where a retake might land. It has not yet been checked with real retakes.",
+    "This is an early version. Fine for thinking about yourself. Not for judging, choosing or rejecting other people.",
     "The questions come from the International Personality Item Pool (ipip.ori.org), which is free for everyone to use.",
   ] as const,
 
   // Privacy
   privacyHeading: "Privacy",
   privacyBody: [
-    "By default, nothing leaves your browser. We do not see your answers.",
+    "During the test, your answers stay in this browser session so you can move between questions. Nothing is sent or stored on our side unless you say yes at the end.",
     "If you say yes at the end and confirm you are 16 or older, we save: your answers and scores; the version of the test; the type of device (phone, tablet or computer); the day you started (not the time).",
     "We never save your name, email, IP address or anything you type.",
     "After you save, you get a code. Keep it. With this code you can delete your data at any time. We only keep a scrambled version of the code, so we cannot see it.",

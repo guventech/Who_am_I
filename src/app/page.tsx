@@ -28,6 +28,9 @@ export default function Home() {
         <p className="text-[17px] leading-relaxed" style={{ color: "var(--muted)" }}>
           {copyEn.youGet}
         </p>
+        <p className="text-[15px] leading-relaxed" style={{ color: "var(--muted)" }}>
+          {copyEn.landingExpectation}
+        </p>
         <StartButton />
         {storageEnabled ? (
           <p className="text-sm" style={{ color: "var(--muted)" }}>

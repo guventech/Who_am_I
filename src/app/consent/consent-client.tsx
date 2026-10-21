@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
@@ -32,17 +33,16 @@ export function ConsentClient({ storageEnabled }: Props) {
       <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
         <PrototypeBanner bankStatus={model.bankStatus} />
         <main
-          data-testid="content-column"
+          data-testid="no-session"
           className="page flex flex-1 flex-col justify-center gap-4 py-12"
         >
+          <h1 className="text-[28px]" style={{ color: "var(--ink)" }}>
+            {copyEn.noSessionHeading}
+          </h1>
           <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => router.push("/")}
-          >
-            {copyEn.takeAgain}
-          </button>
+          <Link href="/" className="btn-primary">
+            {copyEn.noSessionCta}
+          </Link>
         </main>
       </div>
     );
@@ -67,6 +67,9 @@ export function ConsentClient({ storageEnabled }: Props) {
           {copyEn.consentHeading}
         </h1>
         <p style={{ color: "var(--ink)" }}>{copyEn.consentBody}</p>
+        <p className="text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.consentStorageNote}
+        </p>
         {storageEnabled ? (
           <label className="flex items-start gap-3 text-[17px]">
             <input

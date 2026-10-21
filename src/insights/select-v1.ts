@@ -1,3 +1,4 @@
+import { copyEn } from "@/copy/en";
 import type { TraitId, TraitScore } from "@/engine/types";
 import { CORE_TRAIT_IDS } from "@/engine/types";
 import { isLessCertain } from "@/lib/score-phrase";
@@ -138,23 +139,24 @@ export function formatResultsPlainText(
   traits: {
     title: string;
     phrase: string;
-    num: string;
     lessCertain: boolean;
   }[],
   insights: SelectedInsightsV1,
 ): string {
   const lines: string[] = [];
   lines.push("Who Am I? - Your results");
+  lines.push(copyEn.copyCaveat);
   lines.push("");
   for (const t of traits) {
-    const less = t.lessCertain ? " (less certain)" : "";
-    lines.push(`${t.title}: ${t.phrase} ${t.num}${less}`);
+    const less = t.lessCertain ? ` ${copyEn.lessCertain}` : "";
+    lines.push(`${t.title}: ${t.phrase}${less}`);
   }
   lines.push("");
   if (insights.strengths.length) {
     lines.push("Your strengths");
+    lines.push(copyEn.insightsNote);
     for (const s of insights.strengths) {
-      const soft = s.soft ? " (less certain)" : "";
+      const soft = s.soft ? ` ${copyEn.lessCertain}` : "";
       lines.push(`- ${s.strength}${soft}`);
       lines.push(`  Interview: ${s.interview}`);
       lines.push(`  CV: ${s.cv}`);

@@ -65,3 +65,12 @@ export function setConsent( partial: Partial<ConsentState>): ConsentState {
 export function hasStorageConsent(state: ConsentState = getConsentSnapshot()): boolean {
   return state.store && state.ageConfirmed;
 }
+
+/** Clear consent choice (used when taking the test again). */
+export function clearConsent(): void {
+  memory = { ...DEFAULT };
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem(KEY);
+  }
+  emit();
+}

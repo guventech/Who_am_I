@@ -1,7 +1,11 @@
 import { LessCertainMark } from "@/components/LessCertainMark";
 import { copyEn } from "@/copy/en";
 import type { TraitId, TraitScore } from "@/engine/types";
-import { formatScoreNumber, isLessCertain, scoreToPhrase } from "@/lib/score-phrase";
+import {
+  isLessCertain,
+  scoreToPhrase,
+  scoreToRangeEnd,
+} from "@/lib/score-phrase";
 
 type Props = {
   traitId: TraitId;
@@ -21,6 +25,16 @@ export function TraitCard({ traitId, score }: Props) {
   const left = Math.min(pct(score.retakeLow), pct(score.retakeHigh));
   const width = Math.abs(pct(score.retakeHigh) - pct(score.retakeLow));
   const dot = pct(Math.max(-1, Math.min(1, score.slider)));
+  const rangeLow = scoreToRangeEnd(score.retakeLow, meta.left, meta.right);
+  const rangeHigh = scoreToRangeEnd(score.retakeHigh, meta.left, meta.right);
+  const ariaLabel = [
+    meta.title,
+    phrase,
+    less ? copyEn.lessCertain : null,
+    `Range: ${rangeLow} to ${rangeHigh}`,
+  ]
+    .filter(Boolean)
+    .join(". ");
 
   return (
     <div
@@ -36,10 +50,7 @@ export function TraitCard({ traitId, score }: Props) {
         </h3>
       </div>
       <p className="mt-1 font-semibold" style={{ color: "var(--ink)" }}>
-        {phrase}.{" "}
-        <span className="text-[13px] font-normal" style={{ color: "var(--muted)" }}>
-          {formatScoreNumber(score.slider)}
-        </span>
+        {phrase}.
         {less ? <LessCertainMark /> : null}
       </p>
 
@@ -47,7 +58,7 @@ export function TraitCard({ traitId, score }: Props) {
         className="relative mt-3 mb-2 h-3 w-full rounded-md"
         style={{ background: "var(--track)" }}
         role="img"
-        aria-label={`${meta.title}: ${phrase}`}
+        aria-label={ariaLabel}
       >
         <div
           className="absolute top-0 h-3 rounded-md"
@@ -56,6 +67,7 @@ export function TraitCard({ traitId, score }: Props) {
             width: `${Math.max(2, width)}%`,
             background: "var(--band)",
           }}
+          aria-hidden
         />
         <div
           className="absolute"
@@ -67,6 +79,7 @@ export function TraitCard({ traitId, score }: Props) {
             background: "var(--mid)",
             transform: "translateX(-50%)",
           }}
+          aria-hidden
         />
         <div
           className="absolute rounded-full"
@@ -80,6 +93,7 @@ export function TraitCard({ traitId, score }: Props) {
             border: "3px solid #fff",
             boxShadow: "0 1px 3px #0004",
           }}
+          aria-hidden
         />
       </div>
 

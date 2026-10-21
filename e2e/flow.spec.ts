@@ -38,9 +38,13 @@ test.describe("core flow", () => {
     for (let i = 0; i < 3; i++) {
       const context = await browser.newContext();
       const page = await context.newPage();
-      await page.goto("/test");
+      await page.goto("/");
+      await page.getByRole("button", { name: copyEn.start }).click();
       await expect(page.getByText("Question 1 of 10")).toBeVisible();
-      const heading = page.locator("main h1");
+      const heading = page
+        .getByRole("main")
+        .filter({ hasText: "Question 1 of 10" })
+        .getByRole("heading", { level: 1 });
       q1Texts.push((await heading.innerText()).trim());
       await context.close();
     }
@@ -49,7 +53,8 @@ test.describe("core flow", () => {
   });
 
   test("keyboard 1-5 answers a question", async ({ page }) => {
-    await page.goto("/test");
+    await page.goto("/");
+    await page.getByRole("button", { name: copyEn.start }).click();
     await expect(page.getByText("Question 1 of 10")).toBeVisible();
     await page.keyboard.press("4");
     await expect(page.getByText("Question 2 of 10")).toBeVisible({
@@ -58,7 +63,8 @@ test.describe("core flow", () => {
   });
 
   test("back restores previous progress", async ({ page }) => {
-    await page.goto("/test");
+    await page.goto("/");
+    await page.getByRole("button", { name: copyEn.start }).click();
     await page.locator("[data-likert='5']").click();
     await expect(page.getByText("Question 2 of 10")).toBeVisible({
       timeout: 10_000,

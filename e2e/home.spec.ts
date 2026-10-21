@@ -11,6 +11,7 @@ test.describe("home page", () => {
     await expect(page.getByText(copyEn.youGet)).toBeVisible();
     await expect(page.getByRole("status")).toContainText(copyEn.prototypeBanner);
     await expect(page.getByRole("button", { name: copyEn.start })).toBeVisible();
+    await expect(page.getByText(copyEn.landingExpectation)).toBeVisible();
     await expect(
       page.getByRole("link", { name: copyEn.howAccurateLink }),
     ).toBeVisible();

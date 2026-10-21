@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useSyncExternalStore } from "react";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
+import { TakeAgainButton } from "@/components/TakeAgainButton";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/copy/en";
 import { CORE_TRAIT_IDS, type TraitId } from "@/engine/types";
@@ -60,9 +61,7 @@ export function FeedbackClient() {
         {!canSubmit && status !== "done" ? (
           <div className="flex flex-col gap-3">
             <p>{copyEn.feedbackNeedSaved}</p>
-            <Link href="/" className="btn-primary">
-              {copyEn.takeAgain}
-            </Link>
+            <TakeAgainButton className="btn-primary" />
           </div>
         ) : status === "done" ? (
           <p role="status">{copyEn.feedbackThanks}</p>

@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect } from "react";
+import { TakeAgainButton } from "@/components/TakeAgainButton";
 import { copyEn } from "@/copy/en";
 
 export default function ErrorPage({
@@ -26,9 +26,7 @@ export default function ErrorPage({
           <button type="button" onClick={reset} className="btn-primary">
             {copyEn.errorRetry}
           </button>
-          <Link href="/" className="btn-secondary">
-            {copyEn.takeAgain}
-          </Link>
+          <TakeAgainButton />
         </div>
       </main>
     </div>
