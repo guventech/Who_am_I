@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { LikertQuestion } from "@/components/LikertQuestion";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import {
@@ -20,7 +21,6 @@ import {
   finishIfComplete,
 } from "@/session/run-session";
 import {
-  ensureActiveSession,
   getServerSessionSnapshot,
   getSessionSnapshot,
   saveSession,
@@ -36,9 +36,19 @@ type Props = {
   storageEnabled: boolean;
 };
 
+function isResumableSession(
+  session: NonNullable<ReturnType<typeof getSessionSnapshot>>,
+): boolean {
+  return (
+    session.round === "core" &&
+    !session.completed &&
+    session.answered.length < 10
+  );
+}
+
 export function TestClient({ storageEnabled }: Props) {
   const router = useRouter();
-  const shownAt = useRef(0);
+  const shownAt = useRef(performance.now());
   const [loadingLabel, setLoadingLabel] = useState<string | null>(null);
   const [restoredValue, setRestoredValue] = useState<ResponseValue | null>(
     null,
@@ -51,10 +61,9 @@ export function TestClient({ storageEnabled }: Props) {
     getServerSessionSnapshot,
   );
 
-  useLayoutEffect(() => {
-    ensureActiveSession();
+  useEffect(() => {
     shownAt.current = performance.now();
-  }, []);
+  }, [session?.answered.length]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -84,7 +93,7 @@ export function TestClient({ storageEnabled }: Props) {
 
   function handleAnswer(value: ResponseValue) {
     const current = getSessionSnapshot();
-    if (!current || loadingLabel) return;
+    if (!current || !isResumableSession(current) || loadingLabel) return;
     const rtMs = Math.max(0, Math.round(performance.now() - shownAt.current));
     setRestoredValue(null);
 
@@ -128,18 +137,22 @@ export function TestClient({ storageEnabled }: Props) {
     shownAt.current = performance.now();
   }
 
-  if (!session) {
+  if (!session || !isResumableSession(session)) {
     return (
-      <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
-        <p
-          role="status"
-          aria-live="polite"
-          className="loading-status"
-          data-testid="loading-status"
+      <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
+        <PrototypeBanner bankStatus={model.bankStatus} />
+        <main
+          className="page flex flex-1 flex-col justify-center gap-4 py-12"
+          data-testid="no-session"
         >
-          <span className="loading-spinner" aria-hidden />
-          {copyEn.loading}
-        </p>
+          <h1 className="text-[28px]" style={{ color: "var(--ink)" }}>
+            {copyEn.noSessionHeading}
+          </h1>
+          <p style={{ color: "var(--ink)" }}>{copyEn.noSessionBody}</p>
+          <Link href="/" className="btn-primary">
+            {copyEn.noSessionCta}
+          </Link>
+        </main>
       </div>
     );
   }

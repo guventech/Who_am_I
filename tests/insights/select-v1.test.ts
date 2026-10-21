@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import type { TraitScore } from "@/engine/types";
 import { INSIGHTS_VERSION, getInsightEntry } from "@/insights/library";
 import { formatResultsPlainText, selectInsightsV1 } from "@/insights/select-v1";
-import { formatScoreNumber } from "@/lib/score-phrase";
 
 function score(
   traitId: TraitScore["traitId"],
@@ -78,7 +77,6 @@ describe("selectInsightsV1", () => {
         {
           title: "Handling stress",
           phrase: "About in the middle",
-          num: formatScoreNumber(-0.001),
           lessCertain: true,
         },
       ],
@@ -104,8 +102,8 @@ describe("selectInsightsV1", () => {
         ],
       },
     );
-    expect(text).toContain("0.00 (less certain)");
-    expect(text).not.toContain("-0.00");
+    expect(text).toContain("About in the middle (less certain)");
+    expect(text).not.toMatch(/[+-]?\d+\.\d+/);
     expect(text).toContain("switch easily. (less certain)");
     expect(text).toContain("energy. (less certain)");
     expect(text).not.toMatch(/\S\(less certain\)/);

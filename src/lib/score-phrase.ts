@@ -33,7 +33,8 @@ function comparative(pole: string): string {
 }
 
 /**
- * Map slider score s in [-1, 1] to a plain phrase using pole labels.
+ * Map slider score s in [-1, 1] to plain words (no decimals, no population claim).
+ * Uses natural comparatives ("Clearly calmer", never "more calm").
  */
 export function scoreToPhrase(
   s: number,
@@ -42,16 +43,31 @@ export function scoreToPhrase(
 ): string {
   const left = comparative(leftPole);
   const right = comparative(rightPole);
-  if (s <= -0.6) return `Much ${left} than most people`;
-  if (s <= -0.2) return `A bit ${left} than most people`;
+  if (s <= -0.6) return `Clearly ${left}`;
+  if (s <= -0.2) return `A bit ${left}`;
   if (s < 0.2) {
     return "About in the middle. You can be both, depending on the situation";
   }
-  if (s < 0.6) return `A bit ${right} than most people`;
-  return `Much ${right} than most people`;
+  if (s < 0.6) return `A bit ${right}`;
+  return `Clearly ${right}`;
 }
 
-/** Signed score for the results line. Rounds half-up to 2 decimals; never "-0.00". */
+/** Range end in pole words for screen readers (not lower/higher). */
+export function scoreToRangeEnd(
+  s: number,
+  leftPole: string,
+  rightPole: string,
+): string {
+  const left = comparative(leftPole);
+  const right = comparative(rightPole);
+  if (s <= -0.6) return `clearly ${left}`;
+  if (s <= -0.2) return `a bit ${left}`;
+  if (s < 0.2) return "about the middle";
+  if (s < 0.6) return `a bit ${right}`;
+  return `clearly ${right}`;
+}
+
+/** Signed score helper (kept for tests / tooling). Never "-0.00". */
 export function formatScoreNumber(s: number): string {
   const rounded = Number(s.toFixed(2));
   if (rounded === 0) return "0.00";

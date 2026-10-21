@@ -12,49 +12,51 @@ import {
   isLessCertain,
   LESS_CERTAIN_RANGE_WIDTH,
   scoreToPhrase,
+  scoreToRangeEnd,
 } from "@/lib/score-phrase";
 
 describe("scoreToPhrase", () => {
-  it("maps band edges", () => {
+  it("maps band edges without population claims or decimals", () => {
     expect(scoreToPhrase(-0.6, "Reserved", "Outgoing")).toBe(
-      "Much more reserved than most people",
+      "Clearly more reserved",
     );
     expect(scoreToPhrase(-0.2, "Reserved", "Outgoing")).toBe(
-      "A bit more reserved than most people",
+      "A bit more reserved",
     );
     expect(scoreToPhrase(0.2, "Reserved", "Outgoing")).toBe(
-      "A bit more outgoing than most people",
+      "A bit more outgoing",
     );
     expect(scoreToPhrase(0.6, "Reserved", "Outgoing")).toBe(
-      "Much more outgoing than most people",
+      "Clearly more outgoing",
     );
     expect(scoreToPhrase(0, "Reserved", "Outgoing")).toContain(
       "About in the middle",
     );
+    expect(scoreToPhrase(0.42, "Reserved", "Outgoing")).not.toMatch(/\d/);
   });
 
   it("uses a natural comparative for every trait pole", () => {
     const expected: Array<[number, string, string, string]> = [
-      [-0.8, "Reserved", "Outgoing", "Much more reserved than most people"],
-      [-0.3, "Reserved", "Outgoing", "A bit more reserved than most people"],
-      [0.3, "Reserved", "Outgoing", "A bit more outgoing than most people"],
-      [0.8, "Reserved", "Outgoing", "Much more outgoing than most people"],
-      [-0.8, "Direct", "Cooperative", "Much more direct than most people"],
-      [-0.3, "Direct", "Cooperative", "A bit more direct than most people"],
-      [0.3, "Direct", "Cooperative", "A bit more cooperative than most people"],
-      [0.8, "Direct", "Cooperative", "Much more cooperative than most people"],
-      [-0.8, "Flexible", "Organised", "Much more flexible than most people"],
-      [-0.3, "Flexible", "Organised", "A bit more flexible than most people"],
-      [0.3, "Flexible", "Organised", "A bit more organised than most people"],
-      [0.8, "Flexible", "Organised", "Much more organised than most people"],
-      [-0.8, "Sensitive", "Calm", "Much more sensitive than most people"],
-      [-0.3, "Sensitive", "Calm", "A bit more sensitive than most people"],
-      [0.3, "Sensitive", "Calm", "A bit calmer than most people"],
-      [0.8, "Sensitive", "Calm", "Much calmer than most people"],
-      [-0.8, "Practical", "Curious", "Much more practical than most people"],
-      [-0.3, "Practical", "Curious", "A bit more practical than most people"],
-      [0.3, "Practical", "Curious", "A bit more curious than most people"],
-      [0.8, "Practical", "Curious", "Much more curious than most people"],
+      [-0.8, "Reserved", "Outgoing", "Clearly more reserved"],
+      [-0.3, "Reserved", "Outgoing", "A bit more reserved"],
+      [0.3, "Reserved", "Outgoing", "A bit more outgoing"],
+      [0.8, "Reserved", "Outgoing", "Clearly more outgoing"],
+      [-0.8, "Direct", "Cooperative", "Clearly more direct"],
+      [-0.3, "Direct", "Cooperative", "A bit more direct"],
+      [0.3, "Direct", "Cooperative", "A bit more cooperative"],
+      [0.8, "Direct", "Cooperative", "Clearly more cooperative"],
+      [-0.8, "Flexible", "Organised", "Clearly more flexible"],
+      [-0.3, "Flexible", "Organised", "A bit more flexible"],
+      [0.3, "Flexible", "Organised", "A bit more organised"],
+      [0.8, "Flexible", "Organised", "Clearly more organised"],
+      [-0.8, "Sensitive", "Calm", "Clearly more sensitive"],
+      [-0.3, "Sensitive", "Calm", "A bit more sensitive"],
+      [0.3, "Sensitive", "Calm", "A bit calmer"],
+      [0.8, "Sensitive", "Calm", "Clearly calmer"],
+      [-0.8, "Practical", "Curious", "Clearly more practical"],
+      [-0.3, "Practical", "Curious", "A bit more practical"],
+      [0.3, "Practical", "Curious", "A bit more curious"],
+      [0.8, "Practical", "Curious", "Clearly more curious"],
     ];
     for (const [s, left, right, phrase] of expected) {
       expect(scoreToPhrase(s, left, right)).toBe(phrase);
@@ -67,6 +69,19 @@ describe("scoreToPhrase", () => {
         expect(phrase).not.toMatch(awkward);
       }
     }
+  });
+});
+
+describe("scoreToRangeEnd", () => {
+  it("uses pole words, not lower or higher", () => {
+    expect(scoreToRangeEnd(-0.3, "Reserved", "Outgoing")).toBe(
+      "a bit more reserved",
+    );
+    expect(scoreToRangeEnd(0, "Reserved", "Outgoing")).toBe("about the middle");
+    expect(scoreToRangeEnd(0.7, "Sensitive", "Calm")).toBe("clearly calmer");
+    expect(scoreToRangeEnd(0.42, "Reserved", "Outgoing")).not.toMatch(
+      /lower|higher/i,
+    );
   });
 });
 

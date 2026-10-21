@@ -6,7 +6,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: "http://127.0.0.1:3001",
     trace: "on-first-retry",
   },
   projects: [
@@ -16,8 +16,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "pnpm dev",
-    url: "http://127.0.0.1:3000",
+    command: "pnpm exec next dev --port 3001",
+    url: "http://127.0.0.1:3001",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

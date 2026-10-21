@@ -38,12 +38,19 @@ test.describe("layout and loading UX", () => {
     await expect(page).toHaveURL(/\/test/, { timeout: 10_000 });
     await expect(page.getByText("Question 1 of 10")).toBeVisible();
     expectDesktopColumn(await columnBox(page));
-    const answers = page.locator("[role='group']");
+    const answers = page.locator("[role='radiogroup']");
     const answerWidth = await answers.evaluate((el) => el.getBoundingClientRect().width);
     expect(answerWidth).toBeGreaterThanOrEqual(640);
 
     for (let i = 0; i < 10; i++) {
-      await page.locator("[data-likert='3']").click();
+      await expect(page.getByText(`Question ${i + 1} of 10`)).toBeVisible({
+        timeout: 10_000,
+      });
+      await page
+        .getByRole("main")
+        .filter({ hasText: `Question ${i + 1} of 10` })
+        .locator("[data-likert='3']")
+        .click();
       await page.waitForTimeout(350);
     }
     await expect(page).toHaveURL(/\/consent/, { timeout: 15_000 });
@@ -57,7 +64,8 @@ test.describe("layout and loading UX", () => {
 
   test("content column fits a phone without horizontal scroll", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/test");
+    await page.goto("/");
+    await page.getByRole("button", { name: copyEn.start }).click();
     await expect(page.getByText("Question 1 of 10")).toBeVisible();
     const box = await columnBox(page);
     expect(box.border).toBeLessThanOrEqual(390);
@@ -72,11 +80,18 @@ test.describe("layout and loading UX", () => {
   test("answer click shows check and loading within 100ms", async ({
     page,
   }) => {
-    await page.goto("/test");
-    await expect(page.getByText("Question 1 of 10")).toBeVisible();
-    await page.locator("[data-likert='4']").click();
+    await page.goto("/");
+    await page.getByRole("button", { name: copyEn.start }).click();
+    await expect(page).toHaveURL(/\/test/, { timeout: 10_000 });
+    const testMain = page
+      .getByRole("main")
+      .filter({ hasText: "Question 1 of 10" });
+    await expect(testMain).toBeVisible();
+    await testMain.locator("[data-likert='4']").click();
     await page.waitForTimeout(100);
-    await expect(page.getByTestId("likert-check")).toBeVisible();
-    await expect(page.getByTestId("loading-status")).toContainText(/Loading/i);
+    await expect(testMain.getByTestId("likert-check")).toBeVisible();
+    await expect(testMain.getByTestId("loading-status")).toContainText(
+      /Loading/i,
+    );
   });
 });

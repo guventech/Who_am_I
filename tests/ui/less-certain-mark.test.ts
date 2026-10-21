@@ -30,7 +30,7 @@ describe("less certain mark", () => {
     expect(html).not.toMatch(/>\(less certain\)/);
   });
 
-  it("shows 0.00 and a spaced tag on a trait line", () => {
+  it("shows plain words and a spaced tag on a trait line", () => {
     const html = renderToStaticMarkup(
       createElement(TraitCard, {
         traitId: "ES",
@@ -39,10 +39,12 @@ describe("less certain mark", () => {
     );
     expect(html).toContain("About in the middle");
     expect(html).not.toContain("more calm");
-    expect(html).toContain(">0.00<");
-    expect(html).not.toContain("-0.00");
+    expect(html).not.toMatch(/>[+-]?\d+\.\d+</);
     expect(html).toContain(" (less certain)");
     expect(html).not.toMatch(/\d\(less certain\)/);
+    expect(html).toContain('role="img"');
+    expect(html).toContain("Range:");
+    expect(html).not.toContain('class="sr-only"');
   });
 
   it("says calmer, not more calm, on a high calm score", () => {
@@ -52,9 +54,9 @@ describe("less certain mark", () => {
         score: score({ slider: 0.8, retakeLow: 0.2, retakeHigh: 0.95 }),
       }),
     );
-    expect(html).toContain("Much calmer than most people.");
+    expect(html).toContain("Clearly calmer.");
     expect(html).not.toContain("more calm");
-    expect(html).toContain("+0.80");
+    expect(html).not.toMatch(/>[+-]?\d+\.\d+</);
   });
 
   it("is the only tag renderer on trait, strength, and watch-out lines", () => {

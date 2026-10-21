@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useRef, useState } from "react";
 import { copyEn } from "@/copy/en";
 import type { ResponseValue } from "@/engine/types";
 
@@ -61,6 +61,9 @@ function LikertQuestionInner({
   canBack,
 }: Omit<Props, "questionKey">) {
   const [pending, setPending] = useState<ResponseValue | null>(null);
+  const groupId = useId();
+  const legendId = `${groupId}-legend`;
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const disabled = Boolean(loadingLabel) || pending !== null;
 
   function choose(value: ResponseValue) {
@@ -70,6 +73,34 @@ function LikertQuestionInner({
   }
 
   const shownSelected = pending ?? selectedValue ?? null;
+
+  function onRadioKeyDown(
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
+    if (disabled) return;
+    let next = index;
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") {
+      e.preventDefault();
+      next = (index + 1) % copyEn.likert.length;
+    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      next = (index - 1 + copyEn.likert.length) % copyEn.likert.length;
+    } else if (e.key === "Home") {
+      e.preventDefault();
+      next = 0;
+    } else if (e.key === "End") {
+      e.preventDefault();
+      next = copyEn.likert.length - 1;
+    } else if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      choose((index + 1) as ResponseValue);
+      return;
+    } else {
+      return;
+    }
+    buttonRefs.current[next]?.focus();
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -103,6 +134,7 @@ function LikertQuestionInner({
       </div>
 
       <h1
+        id={legendId}
         className="text-2xl leading-snug tracking-tight sm:text-[28px]"
         style={{ color: "var(--ink)" }}
       >
@@ -132,8 +164,8 @@ function LikertQuestionInner({
       ) : null}
 
       <div
-        role="group"
-        aria-label={questionText}
+        role="radiogroup"
+        aria-labelledby={legendId}
         className="flex flex-col gap-2"
       >
         {copyEn.likert.map((label, index) => {
@@ -142,11 +174,28 @@ function LikertQuestionInner({
           return (
             <button
               key={value}
+              ref={(el) => {
+                buttonRefs.current[index] = el;
+              }}
               type="button"
+              role="radio"
+              aria-checked={selected}
+              tabIndex={
+                disabled
+                  ? -1
+                  : shownSelected == null
+                    ? index === 0
+                      ? 0
+                      : -1
+                    : selected
+                      ? 0
+                      : -1
+              }
               data-likert={value}
               data-selected={selected ? "true" : undefined}
               disabled={disabled}
               onClick={() => choose(value)}
+              onKeyDown={(e) => onRadioKeyDown(e, index)}
               className="min-h-12 rounded-[10px] border-2 px-4 py-3 text-left text-base font-medium transition"
               style={{
                 borderColor: selected ? "var(--accent)" : "var(--line)",

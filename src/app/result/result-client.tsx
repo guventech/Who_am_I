@@ -5,6 +5,7 @@ import { useEffect, useRef, useSyncExternalStore } from "react";
 import { CopyInsightsButton } from "@/components/CopyInsightsButton";
 import { LessCertainMark } from "@/components/LessCertainMark";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
+import { TakeAgainButton } from "@/components/TakeAgainButton";
 import { TraitCard } from "@/components/TraitCard";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/copy/en";
@@ -14,7 +15,7 @@ import {
   selectInsightsV1,
 } from "@/insights/select-v1";
 import { coarseDeviceClass } from "@/lib/device-class";
-import { formatScoreNumber, isLessCertain, scoreToPhrase } from "@/lib/score-phrase";
+import { isLessCertain, scoreToPhrase } from "@/lib/score-phrase";
 import {
   getConsentSnapshot,
   getServerConsentSnapshot,
@@ -112,10 +113,13 @@ export function ResultClient() {
       <PrototypeBanner bankStatus={coreModel.bankStatus} />
       <main data-testid="content-column" className="page flex-1 py-8 pb-16">
         {missing ? (
-          <div className="flex flex-col gap-4 py-16">
+          <div className="flex flex-col gap-4 py-16" data-testid="no-session">
+            <h1 className="text-[28px]" style={{ color: "var(--ink)" }}>
+              {copyEn.noSessionHeading}
+            </h1>
             <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>
             <Link href="/" className="btn-primary">
-              {copyEn.takeAgain}
+              {copyEn.noSessionCta}
             </Link>
           </div>
         ) : (
@@ -150,7 +154,6 @@ function ResultBody({
       phrase: meta
         ? scoreToPhrase(score.slider, meta.left, meta.right)
         : "",
-      num: formatScoreNumber(score.slider),
       lessCertain: isLessCertain(score.retakeLow, score.retakeHigh),
     };
   });
@@ -202,6 +205,9 @@ function ResultBody({
       <h2 className="mt-10 text-[22px]" style={{ color: "var(--ink)" }}>
         {copyEn.yourFiveTraits}
       </h2>
+      <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
+        {copyEn.scoresNote}
+      </p>
       <div
         className="mt-3 flex flex-wrap items-center gap-4 text-sm"
         style={{ color: "var(--muted)" }}
@@ -229,6 +235,9 @@ function ResultBody({
       <h2 className="mt-10 text-[22px]" style={{ color: "var(--ink)" }}>
         {copyEn.whatThisMeans}
       </h2>
+      <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
+        {copyEn.notForJudgingOthers}
+      </p>
       <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
         {copyEn.insightsNote}
       </p>
@@ -293,9 +302,7 @@ function ResultBody({
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         <CopyInsightsButton text={copyText} />
-        <Link href="/" className="btn-secondary">
-          {copyEn.takeAgain}
-        </Link>
+        <TakeAgainButton />
         {session.storageSaved ? (
           <Link href="/feedback" className="btn-secondary">
             {copyEn.tellUsFits}
