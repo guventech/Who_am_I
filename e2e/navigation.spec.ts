@@ -29,13 +29,17 @@ test.describe("refresh and history navigation", () => {
     await page.goBack();
     await expect(page.getByRole("heading", { name: copyEn.brand })).toBeVisible();
     await expect(page.locator("body")).not.toBeEmpty();
-    await expect(page.locator("main")).toBeVisible();
+    await expect(
+      page.getByRole("main").filter({ hasText: copyEn.promise }),
+    ).toBeVisible();
 
     await page.goForward();
     await expect(page.getByText("Question 1 of 10")).toBeVisible({
       timeout: 10_000,
     });
-    await expect(page.locator("main")).toBeVisible();
+    await expect(
+      page.getByRole("main").filter({ hasText: "Question 1 of 10" }),
+    ).toBeVisible();
     await expect(page.getByTestId("no-session")).toHaveCount(0);
   });
 });
