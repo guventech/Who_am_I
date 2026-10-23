@@ -24,7 +24,7 @@ export const feedbackPayloadSchema = z.object({
   insightThumbs: z
     .array(
       z.object({
-        entryId: z.string().min(1),
+        entryId: z.string().min(1).max(100),
         up: z.boolean(),
       }),
     )

@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { copyEn } from "@/copy/en";
-import { clearConsent } from "@/session/consent-store";
 import { clearSession } from "@/session/session-store";
 
 type Props = {
@@ -20,7 +19,6 @@ export function TakeAgainButton({ className = "btn-secondary" }: Props) {
       data-testid="take-again"
       onClick={() => {
         clearSession();
-        clearConsent();
         router.push("/");
       }}
     >

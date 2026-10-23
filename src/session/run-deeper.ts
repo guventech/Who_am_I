@@ -1,9 +1,5 @@
 import { allTraitsMeetSdTarget } from "@/engine/deeper";
-import {
-  createRunningPosterior,
-  itemById,
-  updateRunningPosterior,
-} from "@/engine/grid";
+import { createRunningPosterior, itemById, updateRunningPosterior } from "@/engine/grid";
 import { createRng } from "@/engine/math";
 import { scoreSession } from "@/engine/score";
 import { AdaptiveSelector } from "@/engine/select-adaptive";
@@ -52,6 +48,8 @@ export function beginDeeperSession(
   }
   return {
     ...core,
+    completionId: crypto.randomUUID(),
+    storagePayload: null,
     round: "deeper",
     coreAnswered: [...core.answered],
     deeperStartCount: core.answered.length,
@@ -127,10 +125,7 @@ export function answerDeeper(
   const minBudget = deeperModel.config.DEEPER_BUDGET_MIN;
   const maxBudget = deeperModel.config.DEEPER_BUDGET_MAX;
   const summary = posteriorFromAnswers(bank, deeperModel, next.answered);
-  const met = allTraitsMeetSdTarget(
-    summary.sd,
-    deeperModel.config.DEEPER_SD_TARGET,
-  );
+  const met = allTraitsMeetSdTarget(summary.sd, deeperModel.config.DEEPER_SD_TARGET);
   const asked = deeperAsked(next);
   // Brief: stop only after at least MIN items, or when MAX is spent.
   if (asked >= maxBudget || (asked >= minBudget && met)) {
@@ -155,8 +150,6 @@ export function backDeeperOne(session: DeeperSession): DeeperSession {
   };
 }
 
-export function isDeeperSession(
-  session: TestSession,
-): session is DeeperSession {
+export function isDeeperSession(session: TestSession): session is DeeperSession {
   return (session as DeeperSession).round === "deeper";
 }

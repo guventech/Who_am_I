@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation } from "./lib/functions";
 import { assertServerKey } from "./lib/assertServerKey";
 
 /**
@@ -41,6 +41,7 @@ const payloadValidator = v.object({
   previousSessionCode: v.optional(v.string()),
   /** Precomputed on the Next server; plaintext code never stored. */
   codeHash: v.string(),
+  completionFingerprint: v.optional(v.string()),
   sessionCodePlaintextForClient: v.string(),
   scoredTraits: v.array(
     v.object({
@@ -58,8 +59,20 @@ export const saveCompletion = mutation({
   args: { serverKey: v.string(), payload: payloadValidator },
   handler: async (ctx, { serverKey, payload }) => {
     assertServerKey(serverKey);
+    // Indexed read + insert share one Convex transaction, including concurrent retries.
+    const existing = await ctx.db
+      .query("sessions")
+      .withIndex("by_codeHash", (q) => q.eq("codeHash", payload.codeHash))
+      .unique();
+    if (existing) {
+      if (existing.completionFingerprint !== payload.completionFingerprint) {
+        throw new Error("completion_conflict");
+      }
+      return { sessionCode: payload.sessionCodePlaintextForClient };
+    }
     const sessionId = await ctx.db.insert("sessions", {
       codeHash: payload.codeHash,
+      completionFingerprint: payload.completionFingerprint,
       modelVersion: payload.modelVersionId,
       deviceClass: payload.deviceClass,
       startDay: payload.startDay,

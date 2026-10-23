@@ -1,33 +1,28 @@
 import { NextResponse } from "next/server";
-import { isStorageEnabled } from "@/config/storage-enabled";
+import { isLegacyDeletionEnabled } from "@/config/storage-enabled";
 import { jsonError } from "@/lib/api-errors";
 import { allowRoutedRequest } from "@/storage/rate-limit";
-import { deleteStored } from "@/storage/server-store";
+import { deleteLegacyData } from "@/storage/delete-legacy";
+import { deleteRequestSchema } from "@/storage/request-schema";
+import { readStorageRequest, RequestBodyError } from "@/storage/read-request";
 
 export async function POST(request: Request) {
-  if (!isStorageEnabled()) {
+  if (!isLegacyDeletionEnabled()) {
     return NextResponse.json({ error: "storage_unavailable" }, { status: 503 });
   }
 
-  if (!allowRoutedRequest(request, "delete", 20, 8)) {
-    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
-  }
-
-  let body: { sessionCode?: string };
   try {
-    body = (await request.json()) as { sessionCode?: string };
-  } catch {
-    return NextResponse.json({ error: "invalid_json" }, { status: 400 });
-  }
+    if (!allowRoutedRequest(request, "delete", 20, 8)) {
+      return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+    }
 
-  if (!body.sessionCode || typeof body.sessionCode !== "string") {
-    return NextResponse.json({ error: "missing_code" }, { status: 400 });
-  }
-
-  try {
-    const result = await deleteStored(body.sessionCode.trim());
+    const body = await readStorageRequest(request, deleteRequestSchema);
+    const result = await deleteLegacyData(body.sessionCode);
     return NextResponse.json(result);
   } catch (err) {
+    if (err instanceof RequestBodyError) {
+      return NextResponse.json({ error: err.message }, { status: err.status });
+    }
     const message = err instanceof Error ? err.message : "delete_failed";
     return jsonError(message);
   }

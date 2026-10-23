@@ -22,7 +22,17 @@ export default function PrivacyPage() {
             <p key={para}>{para}</p>
           ))}
         </div>
-        <DeleteDataForm />
+        <details>
+          <summary
+            className="cursor-pointer text-[15px]"
+            style={{ color: "var(--accent)" }}
+          >
+            {copyEn.legacyDeleteLabel}
+          </summary>
+          <div className="mt-4">
+            <DeleteDataForm />
+          </div>
+        </details>
       </main>
     </div>
   );

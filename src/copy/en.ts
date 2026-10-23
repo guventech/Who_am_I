@@ -1,6 +1,11 @@
 /** Central English UI copy (copy/UI v2). No em dashes. */
 export const copyEn = {
   brand: "Who Am I?",
+  brandAttribution: "A personal project by Guven Bircan",
+  brandReturn: "Back to Bircans",
+  resultsLocalOnly:
+    "Your results stay in this browser session. We do not save new answers or results on our servers.",
+  legacyDeleteLabel: "I saved data in an earlier version",
   prototypeBanner: "Early version. Your results are a rough guide.",
 
   // Landing
@@ -9,8 +14,7 @@ export const copyEn = {
   youGet:
     "You get: your five traits, your strengths, what to watch out for, and simple tips.",
   start: "Start the test",
-  landingExpectation:
-    "This is a rough guide for self-reflection, not a diagnosis.",
+  landingExpectation: "This is a rough guide for self-reflection, not a diagnosis.",
   howAccurateLink: "How accurate is this?",
   privacyLink: "Privacy",
   nothingSavedUnless:
@@ -31,8 +35,9 @@ export const copyEn = {
   loading: "Loading...",
   loadingNext: "Loading next question...",
   workingResults: "Working out your results...",
-  takingLonger:
-    "This is taking longer than usual. Please wait or try again.",
+  scoringFailed:
+    "We could not work out your results. Your answers are still here. Please try again.",
+  takingLonger: "This is taking longer than usual. Please wait or try again.",
   noSessionHeading: "No test in progress",
   noSessionBody: "Start from the home page to answer the questions.",
   noSessionCta: "Go to the start",
@@ -41,18 +46,15 @@ export const copyEn = {
   consentHeading: "Help us improve the test?",
   consentBody:
     "If you say yes, we save your answers and scores without your name or email. This helps us make the test more accurate.",
-  consentStorageNote:
-    "Nothing is sent or stored on our side unless you say yes.",
+  consentStorageNote: "Nothing is sent or stored on our side unless you say yes.",
   consentAge: "I am 16 or older.",
   consentYes: "Yes, save my answers",
   consentNo: "No, just show my results",
   /** Legacy ConsentBox (unused on landing; kept for compatibility). */
   consentLegend: "Optional storage",
-  consentStore:
-    "Store my anonymous answers and feedback to improve the test.",
+  consentStore: "Store my anonymous answers and feedback to improve the test.",
   consentRetake: "Retake later? Keep a session code so I can link a later run.",
-  consentDefault:
-    "Nothing is sent or stored on our side unless you say yes at the end.",
+  consentDefault: "Nothing is sent or stored on our side unless you say yes at the end.",
   goDeeperDisabled: "Go deeper is not available yet.",
   goDeeperIntro: "A few more questions to make your ranges narrower.",
   startAgain: "Take the test again",
@@ -65,13 +67,13 @@ export const copyEn = {
   scoresNote: "Early version. Not yet checked with real people.",
   middleLineNote: "The middle of each line is the middle of the scale.",
   savedNot: "Your answers were not saved on our side.",
+  saveUnconfirmed: "We could not confirm whether your answers were saved.",
   savedYes: "Your answers were saved without your name.",
   yourFiveTraits: "Your five traits",
   retakeLegend: "Shaded band: where a retake might land (early estimate)",
   middleLegend: "Middle line = the middle of the scale",
   lessCertain: "(less certain)",
-  aboutMiddleLong:
-    "About in the middle. You can be both, depending on the situation.",
+  aboutMiddleLong: "About in the middle. You can be both, depending on the situation.",
   whatThisMeans: "What this means for you",
   insightsNote:
     "These interview and CV lines are wording ideas. Adapt them only if they match a real example from your own life. They are not proof of who you are.",
@@ -90,7 +92,9 @@ export const copyEn = {
   sessionCodeStored: "Keep this code to delete your data later:",
   sessionCodeLabel: "Your session code. Shown only once.",
   storageSaving: "Saving your answers...",
-  storageFailed: "Could not save. Your results still work on this device.",
+  storageFailed:
+    "We could not confirm the save. Your results still work on this device. Try again to recover your code.",
+  storageRetry: "Try saving again",
   flagNote: "Some answers came very quickly, so your ranges are widened.",
   copyCaveat:
     "Early version. Rough guide for self-reflection. Not for judging, choosing or rejecting other people.",
@@ -106,12 +110,11 @@ export const copyEn = {
   // Privacy
   privacyHeading: "Privacy",
   privacyBody: [
-    "During the test, your answers stay in this browser session so you can move between questions. Nothing is sent or stored on our side unless you say yes at the end.",
-    "If you say yes at the end and confirm you are 16 or older, we save: your answers and scores; the version of the test; the type of device (phone, tablet or computer); the day you started (not the time).",
-    "We never save your name, email, IP address or anything you type.",
-    "After you save, you get a code. Keep it. With this code you can delete your data at any time. We only keep a scrambled version of the code, so we cannot see it.",
-    "We delete saved answers after 24 months.",
-    "Who runs this: Who Am I? project. Contact: privacy@who-am-i.app",
+    "Your answers and results stay in this browser session. We do not send them to a database or save new results on our servers.",
+    "Closing this browser tab normally clears the session. If you want to keep your results, use Copy my results and save the text yourself.",
+    "The website host still processes ordinary page requests to deliver the site and prevent misuse. Your quiz answers are not included in those requests.",
+    "If you saved data in an earlier version, your existing code can still be used to request deletion below. Previously saved answers retain their original 24-month deletion period.",
+    "Who runs this: Guven Bircan, a personal Bircans project. Visit bircans.com for contact details.",
   ] as const,
   deleteHeading: "Delete my data",
   deleteHint: "Enter the code you got when you saved your results.",
@@ -119,22 +122,18 @@ export const copyEn = {
   deleteSubmit: "Delete my data",
   deleteDone: "Deleted linked data.",
   deleteNone: "No saved results matched that code.",
+  deleteFailed:
+    "We could not delete your data. Check your code and connection, then try again.",
 
   // Feedback
   feedbackBack: "← Your results",
   feedbackHeading: "Does this sound like you?",
   feedbackIntro:
     "Tell us how well each part fits you. Your answers help us improve the test.",
-  feedbackNeedSaved:
-    "You can only give feedback if you saved your results.",
+  feedbackNeedSaved: "You can only give feedback if you saved your results.",
   feedbackSubmit: "Send feedback",
   feedbackThanks: "Thank you! This helps.",
-  feedbackFitLabels: [
-    "Not at all",
-    "A little",
-    "Mostly",
-    "Exactly",
-  ] as const,
+  feedbackFitLabels: ["Not at all", "A little", "Mostly", "Exactly"] as const,
   feedbackShare: "Would you share this test with a friend?",
   feedbackShareYes: "Yes",
   feedbackShareMaybe: "Maybe",

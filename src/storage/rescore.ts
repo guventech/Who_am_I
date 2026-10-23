@@ -22,16 +22,31 @@ export function validateAndRescore(
   if (payload.locale !== "en") {
     return { ok: false, reason: "locale_must_be_en" };
   }
-  if (
-    payload.responses.length === 0 ||
-    payload.responses.length > MAX_RESPONSES
-  ) {
+  if (payload.responses.length === 0 || payload.responses.length > MAX_RESPONSES) {
     return { ok: false, reason: "response_count" };
   }
 
   const knownIds = new Set(bank.items.map((i) => i.id));
+  const coreCount = model.fixedFormOrder.length;
+  const fixedIds = new Set(model.fixedFormOrder);
+  const deeper = model.traits.some((t) => t.id === "H");
+  if (
+    (!deeper && payload.responses.length !== coreCount) ||
+    (deeper && payload.responses.length < 10)
+  ) {
+    return { ok: false, reason: "incomplete_form" };
+  }
   const seen = new Set<string>();
-  for (const r of payload.responses) {
+  for (const [index, r] of payload.responses.entries()) {
+    if (r.order !== index) return { ok: false, reason: "response_order" };
+    // The fixed form shuffles after Q1, so validate membership rather than bank order.
+    if (
+      !deeper &&
+      (!fixedIds.has(r.itemId) ||
+        (index === 0 && r.itemId !== model.config.FIXED_FIRST_ITEM_ID))
+    ) {
+      return { ok: false, reason: "unexpected_item" };
+    }
     if (!knownIds.has(r.itemId)) {
       return { ok: false, reason: `unknown_item:${r.itemId}` };
     }
@@ -64,6 +79,9 @@ export function validateAndRescore(
     const server = scored.traits[i]!;
     const client = payload.clientScores.find((c) => c.traitId === server.traitId);
     if (!client) return { ok: false, reason: `missing_trait:${server.traitId}` };
+    if (!Number.isFinite(client.slider) || !Number.isFinite(client.theta)) {
+      return { ok: false, reason: "invalid_score" };
+    }
     if (Math.abs(client.slider - server.slider) > SLIDER_EPS) {
       return { ok: false, reason: `slider_mismatch:${server.traitId}` };
     }

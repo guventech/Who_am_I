@@ -1,19 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --ink: #1f2933;
-  --muted: #52606d;
-  --line: #d9e2ec;
-  --accent: #3b5bdb;
-  --bg: #f5f7fa;
+  /* Core palette from bircans.com; score bands use a tint of its teal. */
+  --ink: #16181b;
+  --muted: #5f646b;
+  --line: #ddd8ce;
+  --accent: #0f4c5c;
+  --accent-soft: #e0e4e2;
+  --accent-hover: #0b3a47;
+  --bg: #f7f5f1;
   --card: #fff;
-  --banner-bg: #fff4d6;
-  --banner-ink: #5c4400;
-  --less: #8a6d00;
-  --warn: #a35200;
-  --band: #bac8ff;
-  --track: #e4e7eb;
-  --mid: #9aa5b1;
+  --banner-bg: #efece5;
+  --banner-ink: #4a4f56;
+  --less: #5f646b;
+  --warn: #c2410c;
+  --band: color-mix(in srgb, var(--accent) 25%, var(--card));
+  --track: #efece5;
+  --mid: #5f646b;
   --background: var(--bg);
   --foreground: var(--ink);
 }
@@ -30,6 +33,10 @@ body {
   color: var(--ink);
   font-size: 17px;
   line-height: 1.55;
+}
+
+h1 {
+  font-family: var(--font-display), Georgia, serif;
 }
 
 :focus-visible {
@@ -64,6 +71,15 @@ body {
   font-weight: 600;
   color: var(--accent);
   text-decoration: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--banner-bg);
 }
 
 .btn-primary:disabled,

@@ -1,8 +1,5 @@
-import type {
-  AnsweredItem,
-  QualityFlags,
-  TraitId,
-} from "@/engine/types";
+import type { AnsweredItem, QualityFlags, TraitId } from "@/engine/types";
+import type { ScoredSession } from "@/engine/score";
 
 export type DeviceClass = "mobile" | "tablet" | "desktop" | "unknown";
 
@@ -13,6 +10,8 @@ export type ClientTraitScore = {
 };
 
 export type CompletionPayload = {
+  /** Stable random ID for retrying the same completed run. */
+  completionId?: string;
   modelVersionId: string;
   responses: AnsweredItem[];
   clientScores: ClientTraitScore[];
@@ -52,7 +51,10 @@ export type DeleteResult = {
 };
 
 export interface StorageAdapter {
-  saveCompletion(payload: CompletionPayload): Promise<SaveCompletionResult>;
+  saveCompletion(
+    payload: CompletionPayload,
+    scored?: ScoredSession,
+  ): Promise<SaveCompletionResult>;
   deleteByCode(sessionCode: string): Promise<DeleteResult>;
   saveFeedback(sessionCode: string, feedback: FeedbackPayload): Promise<void>;
 }

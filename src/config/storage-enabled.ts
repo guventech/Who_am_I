@@ -1,12 +1,12 @@
 import "server-only";
 
-/**
- * Whether optional storage UI and APIs should be offered.
- * Production: Convex URL, server key, and session pepper must all be set.
- * Outside production: memory adapter is available (storage UI on).
- */
+/** New answers and results are never saved on the server. */
 export function isStorageEnabled(): boolean {
-  if (process.env.NODE_ENV !== "production") return true;
+  return false;
+}
+
+/** Only supports deletion of records saved before server storage was retired. */
+export function isLegacyDeletionEnabled(): boolean {
   const url = process.env.CONVEX_URL ?? "";
   const key = process.env.CONVEX_SERVER_KEY ?? "";
   const pepper = process.env.SESSION_CODE_PEPPER ?? "";

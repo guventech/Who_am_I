@@ -1,5 +1,5 @@
-import { FeedbackClient } from "./feedback-client";
+import { redirect } from "next/navigation";
 
 export default function FeedbackPage() {
-  return <FeedbackClient />;
+  redirect("/result");
 }

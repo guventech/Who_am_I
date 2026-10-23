@@ -5,21 +5,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { LikertQuestion } from "@/components/LikertQuestion";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
-import {
-  getItemBank,
-  getItemTextEn,
-  getModelVersion,
-} from "@/content/client-content";
+import { getItemBank, getItemTextEn, getModelVersion } from "@/content/client-content";
 import { copyEn, itemHints } from "@/copy/en";
 import type { ResponseValue } from "@/engine/types";
 import { formatItemStem } from "@/lib/item-display";
-import { setConsent } from "@/session/consent-store";
-import {
-  answerCurrent,
-  backOne,
-  currentItemId,
-  finishIfComplete,
-} from "@/session/run-session";
+import { answerCurrent, backOne, currentItemId } from "@/session/run-session";
+import { scoreInBrowser } from "@/session/score-in-browser";
 import {
   getServerSessionSnapshot,
   getSessionSnapshot,
@@ -32,27 +23,19 @@ const model = getModelVersion();
 const textEn = getItemTextEn();
 const MIN_LOADING_MS = 300;
 
-type Props = {
-  storageEnabled: boolean;
-};
-
 function isResumableSession(
   session: NonNullable<ReturnType<typeof getSessionSnapshot>>,
 ): boolean {
-  return (
-    session.round === "core" &&
-    !session.completed &&
-    session.answered.length < 10
-  );
+  return session.round === "core" && !session.completed && session.answered.length < 10;
 }
 
-export function TestClient({ storageEnabled }: Props) {
+export function TestClient() {
   const router = useRouter();
   const shownAt = useRef(performance.now());
   const [loadingLabel, setLoadingLabel] = useState<string | null>(null);
-  const [restoredValue, setRestoredValue] = useState<ResponseValue | null>(
-    null,
-  );
+  const [scoringError, setScoringError] = useState(false);
+  const answering = useRef(false);
+  const [restoredValue, setRestoredValue] = useState<ResponseValue | null>(null);
   const longTimer = useRef<number | null>(null);
 
   const session = useSyncExternalStore(
@@ -93,38 +76,90 @@ export function TestClient({ storageEnabled }: Props) {
 
   function handleAnswer(value: ResponseValue) {
     const current = getSessionSnapshot();
-    if (!current || !isResumableSession(current) || loadingLabel) return;
+    if (!current || !isResumableSession(current) || answering.current) return;
+    answering.current = true;
     const rtMs = Math.max(0, Math.round(performance.now() - shownAt.current));
     setRestoredValue(null);
 
     const nextCount = current.answered.length + 1;
-    setLoadingLabel(
-      nextCount >= 10 ? copyEn.workingResults : copyEn.loading,
-    );
+    setLoadingLabel(nextCount >= 10 ? copyEn.workingResults : copyEn.loading);
     clearLongTimer();
     longTimer.current = window.setTimeout(() => {
       setLoadingLabel(copyEn.takingLonger);
     }, 8000);
 
-    window.setTimeout(() => {
-      let next = answerCurrent(current, bank, model, value, rtMs);
+    window.setTimeout(async () => {
+      const next = answerCurrent(current, bank, model, value, rtMs);
       if (next.answered.length >= 10) {
-        next = finishIfComplete(next, bank, model);
         saveSession(next);
-        clearLongTimer();
-        if (storageEnabled) {
-          router.push("/consent");
-        } else {
-          setConsent({ store: false, ageConfirmed: false, retakeLater: false });
-          router.push("/result");
-        }
+        await finishScoring();
         return;
       }
       saveSession(next);
       clearLongTimer();
       setLoadingLabel(null);
+      answering.current = false;
       shownAt.current = performance.now();
     }, MIN_LOADING_MS);
+  }
+
+  async function finishScoring() {
+    const current = getSessionSnapshot();
+    if (!current || current.completed || current.answered.length !== 10) return;
+    setScoringError(false);
+    setLoadingLabel(copyEn.workingResults);
+    try {
+      const scored = await scoreInBrowser(current.answered);
+      if (getSessionSnapshot()?.completionId !== current.completionId) return;
+      saveSession({ ...current, completed: true, scored });
+      router.push("/result");
+    } catch {
+      setScoringError(true);
+      setLoadingLabel(null);
+    } finally {
+      clearLongTimer();
+      answering.current = false;
+    }
+  }
+
+  // A refresh after question 10 preserves answers and resumes scoring.
+  useEffect(() => {
+    if (
+      session &&
+      !session.completed &&
+      session.answered.length === 10 &&
+      !answering.current
+    ) {
+      answering.current = true;
+      void finishScoring();
+    }
+    // The session ID identifies a run; avoid restarting on each snapshot update.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.completionId]);
+
+  if (session && !session.completed && session.answered.length === 10) {
+    return (
+      <main className="page flex flex-1 flex-col justify-center gap-4 py-12">
+        {scoringError ? (
+          <>
+            <p role="alert">{copyEn.scoringFailed}</p>
+            <button
+              className="btn-primary"
+              type="button"
+              onClick={() => {
+                void finishScoring();
+              }}
+            >
+              {copyEn.errorRetry}
+            </button>
+          </>
+        ) : (
+          <p role="status" aria-live="polite">
+            {loadingLabel ?? copyEn.workingResults}
+          </p>
+        )}
+      </main>
+    );
   }
 
   function handleBack() {
@@ -165,7 +200,10 @@ export function TestClient({ storageEnabled }: Props) {
 
   if (!itemId || !questionText) {
     return (
-      <div className="flex flex-1 items-center justify-center" style={{ background: "var(--bg)" }}>
+      <div
+        className="flex flex-1 items-center justify-center"
+        style={{ background: "var(--bg)" }}
+      >
         <p
           role="status"
           aria-live="polite"

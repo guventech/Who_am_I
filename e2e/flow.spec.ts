@@ -5,31 +5,24 @@ import { copyEn } from "../src/copy/en";
 test.describe("core flow", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("completes 10 questions, consent, then results", async ({ page }) => {
+  test("completes 10 questions directly to results", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: copyEn.start }).click();
     await expect(page).toHaveURL(/\/test/);
 
     for (let i = 0; i < 10; i++) {
-      await expect(
-        page.getByText(`Question ${i + 1} of 10`),
-      ).toBeVisible();
+      await expect(page.getByText(`Question ${i + 1} of 10`)).toBeVisible();
       await page.locator("[data-likert='3']").click();
       await page.waitForTimeout(300);
     }
 
-    await expect(page).toHaveURL(/\/consent/, { timeout: 30_000 });
-    await page.getByTestId("consent-no").click();
-
     await expect(page).toHaveURL(/\/result/, { timeout: 15_000 });
-    await expect(
-      page.getByRole("heading", { name: copyEn.resultHeading }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: copyEn.resultHeading })).toBeVisible();
     await expect(
       page.getByRole("status").filter({ hasText: copyEn.prototypeBanner }),
     ).toBeVisible();
-    await expect(page.getByText(copyEn.yourFiveTraits)).toBeVisible();
-    await expect(page.getByText(copyEn.yourStrengths)).toBeVisible();
+    await expect(page.getByRole("heading", { name: copyEn.yourFiveTraits, exact: true })).toBeVisible();
+    await expect(page.getByRole("heading", { name: copyEn.yourStrengths, exact: true })).toBeVisible();
     await expect(page.getByText(/Extraversion/)).toBeVisible();
   });
 

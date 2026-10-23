@@ -1,35 +1,16 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-
-describe("isStorageEnabled", () => {
-  afterEach(() => {
-    vi.unstubAllEnvs();
-    vi.resetModules();
-  });
-
-  it("is true outside production (memory path)", async () => {
-    vi.stubEnv("NODE_ENV", "test");
-    vi.stubEnv("CONVEX_URL", "");
-    vi.stubEnv("CONVEX_SERVER_KEY", "");
-    vi.stubEnv("SESSION_CODE_PEPPER", "");
-    const { isStorageEnabled } = await import("@/config/storage-enabled");
-    expect(isStorageEnabled()).toBe(true);
-  });
-
-  it("is false in production when any of the three env vars is missing", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("CONVEX_URL", "https://example.convex.cloud");
-    vi.stubEnv("CONVEX_SERVER_KEY", "secret");
-    vi.stubEnv("SESSION_CODE_PEPPER", "");
-    const { isStorageEnabled } = await import("@/config/storage-enabled");
-    expect(isStorageEnabled()).toBe(false);
-  });
-
-  it("is true in production when CONVEX_URL, CONVEX_SERVER_KEY and SESSION_CODE_PEPPER are set", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("CONVEX_URL", "https://example.convex.cloud");
-    vi.stubEnv("CONVEX_SERVER_KEY", "secret");
-    vi.stubEnv("SESSION_CODE_PEPPER", "pepper");
-    const { isStorageEnabled } = await import("@/config/storage-enabled");
-    expect(isStorageEnabled()).toBe(true);
-  });
+import { isStorageEnabled, isLegacyDeletionEnabled } from "@/config/storage-enabled";
+describe("server saving is retired", () => {
+  afterEach(() => vi.unstubAllEnvs());
+  it.each(["development", "test", "production"])(
+    "never enables saving in %s, even with old credentials",
+    (mode) => {
+      vi.stubEnv("NODE_ENV", mode);
+      vi.stubEnv("CONVEX_URL", "https://example.convex.cloud");
+      vi.stubEnv("CONVEX_SERVER_KEY", "test-key");
+      vi.stubEnv("SESSION_CODE_PEPPER", "test-pepper");
+      expect(isStorageEnabled()).toBe(false);
+      expect(isLegacyDeletionEnabled()).toBe(true);
+    },
+  );
 });

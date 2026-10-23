@@ -9,6 +9,8 @@ import { createHmac } from "node:crypto";
 type Bucket = { count: number; resetAt: number };
 
 const buckets = new Map<string, Bucket>();
+export const MAX_RATE_BUCKETS = 10_000;
+let nextSweepAt = 0;
 const DEV_RATE_SALT = "whoami-dev-rate-salt";
 
 export function allowRequest(
@@ -17,8 +19,16 @@ export function allowRequest(
   windowMs: number,
   now = Date.now(),
 ): boolean {
+  if (now >= nextSweepAt) {
+    for (const [bucketKey, bucket] of buckets) {
+      if (now >= bucket.resetAt) buckets.delete(bucketKey);
+    }
+    nextSweepAt = now + 60_000;
+  }
   const existing = buckets.get(key);
   if (!existing || now >= existing.resetAt) {
+    // Refuse new buckets at capacity rather than evicting an active quota.
+    if (!existing && buckets.size >= MAX_RATE_BUCKETS) return false;
     buckets.set(key, { count: 1, resetAt: now + windowMs });
     return true;
   }
@@ -39,8 +49,7 @@ function clientIp(request: Request): string {
 }
 
 function dailySalt(): string {
-  const salt =
-    process.env.RATE_LIMIT_SALT ?? process.env.SESSION_CODE_PEPPER ?? "";
+  const salt = process.env.RATE_LIMIT_SALT ?? process.env.SESSION_CODE_PEPPER ?? "";
   if (salt.length > 0) return salt;
   if (process.env.NODE_ENV === "production") {
     throw new Error("rate_salt_missing");
@@ -63,18 +72,17 @@ export function rateLimitKeyFromRequest(
   request: Request,
   route: string,
 ): { key: string; shared: boolean } {
-  const hour = new Date().toISOString().slice(0, 13);
   const bucket = hmacBucketFromRequest(request);
-  return { key: `${route}:${hour}:${bucket}`, shared: false };
+  return { key: `${route}:${bucket}`, shared: clientIp(request) === "unknown" };
 }
 
 export function allowRoutedRequest(
   request: Request,
   route: string,
   perClientLimit: number,
-  _sharedLimit: number,
+  sharedLimit: number,
   windowMs = 60_000,
 ): boolean {
-  const { key } = rateLimitKeyFromRequest(request, route);
-  return allowRequest(key, perClientLimit, windowMs);
+  const { key, shared } = rateLimitKeyFromRequest(request, route);
+  return allowRequest(key, shared ? sharedLimit : perClientLimit, windowMs);
 }

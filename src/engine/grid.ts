@@ -1,5 +1,5 @@
 import { cholesky, logSumExp, matVec } from "./math";
-import { logLikItem } from "./grm";
+import { loadingVector, logLikAtLinear } from "./grm";
 import type {
   AnsweredItem,
   Item,
@@ -16,17 +16,15 @@ import { modelTraitIds } from "./types";
  * For E_{Z~N(0,1)}[f(Z)]: use z = √2 x and weight w/√π.
  */
 const GH_PHYS_NODES = [
-  -3.6684701415693957, -2.7832900997816495, -2.0259480158257555,
-  -1.3265576484414955, -0.6568095668899325, 0, 0.6568095668899325,
-  1.3265576484414955, 2.0259480158257555, 2.7832900997816495,
-  3.6684701415693957,
+  -3.6684701415693957, -2.7832900997816495, -2.0259480158257555, -1.3265576484414955,
+  -0.6568095668899325, 0, 0.6568095668899325, 1.3265576484414955, 2.0259480158257555,
+  2.7832900997816495, 3.6684701415693957,
 ] as const;
 
 const GH_PHYS_WEIGHTS = [
-  4.31065263071832e-6, 7.58070934412057e-4, 0.0191115805007703,
-  0.135483702980266, 0.344642334932019, 0.411213514021857, 0.344642334932019,
-  0.135483702980266, 0.0191115805007703, 7.58070934412057e-4,
-  4.31065263071832e-6,
+  4.31065263071832e-6, 7.58070934412057e-4, 0.0191115805007703, 0.135483702980266,
+  0.344642334932019, 0.411213514021857, 0.344642334932019, 0.135483702980266,
+  0.0191115805007703, 7.58070934412057e-4, 4.31065263071832e-6,
 ] as const;
 
 const SQRT2 = Math.SQRT2;
@@ -66,10 +64,8 @@ export function buildGrid(
   const key = `${dim}|${nodesPerDim}|${traitOrder.join(",")}|${priorKey(priorCov)}`;
   if (cachedGrid && cachedGridKey === key) return cachedGrid;
 
-  const nodes =
-    nodesPerDim === 11 ? GH_NODES_11 : gaussHermiteNodes(nodesPerDim);
-  const weights =
-    nodesPerDim === 11 ? GH_WEIGHTS_11 : gaussHermiteWeights(nodesPerDim);
+  const nodes = nodesPerDim === 11 ? GH_NODES_11 : gaussHermiteNodes(nodesPerDim);
+  const weights = nodesPerDim === 11 ? GH_WEIGHTS_11 : gaussHermiteWeights(nodesPerDim);
 
   const L = cholesky(priorCov, dim);
   const nPoints = nodesPerDim ** dim;
@@ -109,17 +105,16 @@ export function buildGrid(
 function gaussHermiteNodes(n: number): number[] {
   if (n === 9) {
     const phys = [
-      -3.1909932017815277, -2.266580584531843, -1.468553289216668,
-      -0.723551018752837, 0, 0.723551018752837, 1.468553289216668,
-      2.266580584531843, 3.1909932017815277,
+      -3.1909932017815277, -2.266580584531843, -1.468553289216668, -0.723551018752837, 0,
+      0.723551018752837, 1.468553289216668, 2.266580584531843, 3.1909932017815277,
     ];
     return phys.map((x) => SQRT2 * x);
   }
   if (n === 7) {
     // numpy.polynomial.hermite.hermgauss(7); physicist weight e^{-x²}
     const phys = [
-      -2.6519613568352334, -1.6735516287674714, -0.8162878828589647,
-      0, 0.8162878828589647, 1.6735516287674714, 2.6519613568352334,
+      -2.6519613568352334, -1.6735516287674714, -0.8162878828589647, 0,
+      0.8162878828589647, 1.6735516287674714, 2.6519613568352334,
     ];
     return phys.map((x) => SQRT2 * x);
   }
@@ -129,17 +124,15 @@ function gaussHermiteNodes(n: number): number[] {
 function gaussHermiteWeights(n: number): number[] {
   if (n === 9) {
     const phys = [
-      3.960697726326e-5, 0.0049436242755, 0.0884745273944, 0.43265120804,
-      0.720235215606, 0.43265120804, 0.0884745273944, 0.0049436242755,
-      3.960697726326e-5,
+      3.960697726326e-5, 0.0049436242755, 0.0884745273944, 0.43265120804, 0.720235215606,
+      0.43265120804, 0.0884745273944, 0.0049436242755, 3.960697726326e-5,
     ];
     return phys.map((w) => w * INV_SQRT_PI);
   }
   if (n === 7) {
     const phys = [
-      0.0009717812450995192, 0.05451558281912704, 0.4256072526101278,
-      0.8102646175568073, 0.4256072526101278, 0.05451558281912704,
-      0.0009717812450995192,
+      0.0009717812450995192, 0.05451558281912704, 0.4256072526101278, 0.8102646175568073,
+      0.4256072526101278, 0.05451558281912704, 0.0009717812450995192,
     ];
     return phys.map((w) => w * INV_SQRT_PI);
   }
@@ -157,12 +150,13 @@ export function addItemLikelihood(
   response: ResponseValue,
 ): void {
   const { thetas, nPoints, dim, traitOrder } = grid;
-  const theta = new Array(dim) as number[];
+  const loadings = loadingVector(item, traitOrder);
   for (let g = 0; g < nPoints; g++) {
+    let linear = 0;
     for (let d = 0; d < dim; d++) {
-      theta[d] = thetas[g * dim + d]!;
+      linear += loadings[d]! * thetas[g * dim + d]!;
     }
-    logPost[g]! += logLikItem(item, theta, response, traitOrder);
+    logPost[g]! += logLikAtLinear(item, linear, response);
   }
 }
 
@@ -217,11 +211,7 @@ export function scoreResponses(
 
 export function priorSummary(model: ModelVersion): PosteriorSummary {
   const traitOrder = modelTraitIds(model);
-  const grid = buildGrid(
-    model.priorCov,
-    traitOrder,
-    model.config.GRID_NODES_PER_DIM,
-  );
+  const grid = buildGrid(model.priorCov, traitOrder, model.config.GRID_NODES_PER_DIM);
   return summarizePosterior(grid, initialLogPosterior(grid));
 }
 
@@ -234,11 +224,7 @@ export type RunningPosterior = {
 
 export function createRunningPosterior(model: ModelVersion): RunningPosterior {
   const traitOrder = modelTraitIds(model);
-  const grid = buildGrid(
-    model.priorCov,
-    traitOrder,
-    model.config.GRID_NODES_PER_DIM,
-  );
+  const grid = buildGrid(model.priorCov, traitOrder, model.config.GRID_NODES_PER_DIM);
   const logPost = initialLogPosterior(grid);
   return {
     grid,

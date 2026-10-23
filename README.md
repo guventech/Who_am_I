@@ -1,85 +1,37 @@
 # Who Am I?
 
-Honest 10-question Big Five sketch (**English only**, prototype). Scores are uncalibrated until a human calibration pilot replaces DEV placeholders.
+An English-only, 10-question Big Five prototype. Model parameters are not calibrated yet.
 
-## Commands (PowerShell)
+The flow is simple: answer questions, see results, copy them if wanted. New answers and results are never saved on the server. They stay in the current browser session, including across refreshes. Closing the tab normally clears them.
+
+## Local development
 
 ```powershell
-corepack enable
-pnpm install   # packageManager pin in package.json
+pnpm install
 pnpm dev
 pnpm lint
 pnpm typecheck
 pnpm test
 pnpm e2e
-pnpm sim
-pnpm content:report
+pnpm benchmark
 ```
 
-Storage defaults to **client-only**. With consent (+ age 16+), `/api/storage` uses an in-memory store in development/test. In **production**, storage is off unless all of `CONVEX_URL`, `CONVEX_SERVER_KEY`, and `SESSION_CODE_PEPPER` are set on the server (confirm **EU region** for Convex; human ops, brief §14). The Convex URL is never exposed to the browser. Without storage, the post-test consent step is skipped and storage APIs return 503.
+Set `PLAYWRIGHT_CHANNEL=chrome` to test using an installed Chrome. The browser tests cover desktop and mobile, refresh, keyboard navigation, accessibility, and zero storage requests even when an old consent choice exists.
 
-Honesty-Humility deeper items are IPIP-HEXACO (`HH01`–`HH06`). Production still keeps go-deeper off unless `NEXT_PUBLIC_ENABLE_GO_DEEPER` / `ENABLE_GO_DEEPER` is explicitly true.
+## Hosting
 
-Progress and standing decisions: [`REPORT.md`](REPORT.md). Product briefs (`WHO_AM_I_*.md`) stay local and are not published. See also [`NOTICE.md`](NOTICE.md) for IPIP attribution and [`LICENSE`](LICENSE).
+Vercel builds with `pnpm build`, as specified in `vercel.json`. It no longer deploys Convex as part of an app build. Scoring happens in a short-lived browser worker, so quiz traffic does not cause server scoring or database writes.
 
----
+This prototype requires explicit `ALLOW_UNCALIBRATED=true` and `ALLOW_DRAFT_CONTENT=true` at build time. Keep its early-version notice and noindex until real calibration and content review are complete. The deeper-analysis code remains available but is off in production by default.
 
-## Storage env vars (names only)
+Private briefs, secrets, and test artifacts are excluded from upload by `.vercelignore`. Branding and local favicon assets refer to bircans.com.
 
-| Name | Where | Secret? | Purpose |
-|---|---|---|---|
-| `CONVEX_URL` | Vercel (Production, Preview) | No (server-only) | Server routes connect to Convex |
-| `CONVEX_SERVER_KEY` | Vercel **and** Convex deployment env (same value) | YES | Shared secret checked inside Convex mutations |
-| `SESSION_CODE_PEPPER` | Vercel (Production, Preview) | YES | Hashing session codes and rate-limit buckets |
-| `RATE_LIMIT_SALT` | Vercel | YES, optional | Separate rate-limit salt; falls back to the pepper |
-| `CONVEX_DEPLOY_KEY` | Vercel (build only) | YES, optional | Only if the build command runs `convex deploy` |
+## Previously saved data
 
-Generate secrets with e.g. `openssl rand -hex 32`. Mark them Sensitive in Vercel.
+The older version did save some results. Existing records remain untouched, with their original retention job. Privacy offers a collapsed deletion form for people who kept their code. Only that legacy deletion endpoint needs the existing server-only `CONVEX_URL`, `CONVEX_SERVER_KEY`, and `SESSION_CODE_PEPPER`. Keep the pepper stable so existing deletion codes continue to work.
 
-### One-time Convex setup
+New save and feedback endpoints return HTTP 410, even if old credentials or consent choices are present. The quiz works without Convex. Do not close the shared Convex account or change other projects.
 
-1. `npx convex deploy` (confirm EU region first).
-2. Set `CONVEX_SERVER_KEY` in the Convex dashboard env to the same value as Vercel.
-3. Set `CONVEX_URL`, `CONVEX_SERVER_KEY`, and `SESSION_CODE_PEPPER` on Vercel (Production / Preview).
-4. Redeploy production.
-5. Optional build command: `npx convex deploy --cmd 'pnpm build'` with `CONVEX_DEPLOY_KEY`.
+For production browser verification, build with the prototype flags, set `PLAYWRIGHT_PRODUCTION=true`, and run `pnpm e2e`. This verifies the direct question-to-results flow and no storage requests.
 
----
-
-## Vercel preview deployment checklist
-
-Complete before treating a preview URL as a release candidate:
-
-| # | Step | Done |
-|---|---|---|
-| 1 | Import repo on Vercel; Framework Preset **Next.js**; region prefer **EU** (e.g. `fra1` / `cdg1`) if available | ☐ |
-| 2 | Env (Preview): `ALLOW_UNCALIBRATED=true`, `ALLOW_DRAFT_CONTENT=true` (prototype only) | ☐ |
-| 3 | Env (Production): leave `ENABLE_GO_DEEPER` / `NEXT_PUBLIC_ENABLE_GO_DEEPER` unset/false until you intentionally enable go-deeper | ☐ |
-| 4 | Optional Convex: set `CONVEX_URL`, `CONVEX_SERVER_KEY`, `SESSION_CODE_PEPPER` after `npx convex deploy` + EU confirmation | ☐ |
-| 5 | Deploy Preview from `main`; open the preview URL | ☐ |
-| 6 | Smoke: home → 10 questions → (consent if storage on) → result; Q1 is always X01; prototype banner visible; `noindex` in page metadata / response | ☐ |
-| 7 | Consent off: DevTools Network shows **zero** `/api/storage` calls | ☐ |
-| 8 | Consent on (only when Convex is set): one `/api/storage/complete`; session code shown; delete via Privacy works | ☐ |
-| 9 | Security: response includes `Content-Security-Policy`, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security` | ☐ |
-| 10 | **Lighthouse** (mobile): Accessibility score **≥ 95**; fix regressions before promote | ☐ |
-| 11 | Go deeper: off in production by default; enable only with verified H-H items + explicit env flag | ☐ |
-| 12 | Record preview URL + date in the deploy notes below when checked | ☐ |
-
-### Preview URL log
-
-| Date | Preview URL | Checked by | Notes |
-|---|---|---|---|
-| 2026-10-20 | https://who-am-i-guvens-projects-e5b0373b.vercel.app | Cursor + Guven | Prod deploy `cd56af0` / `dpl_5gxW7NAEMXBrWQQxiWZnbcvU2Kys`, region `fra1`. Protection may require Vercel login. Checklist smoke in progress. |
-
-### Production promote (later)
-
-- Do **not** set `ALLOW_UNCALIBRATED` / `ALLOW_DRAFT_CONTENT` unless intentional.
-- Keep go-deeper off until you explicitly set the env flag (H-H items are already IPIP-HEXACO).
-- Re-run checklist items 6–10 on Production after promote.
-- After setting Convex secrets, redeploy so storage turns on.
-
----
-
-## Open items (human / post-MVP)
-
-See [`REPORT.md`](REPORT.md) Phase 6 and brief §14: calibration pilot, privacy legal review, Convex EU region confirmation, insight content review, accuracy copy comprehension test.
+See [REPORT.md](REPORT.md) for history, [NOTICE.md](NOTICE.md) for IPIP attribution, and [LICENSE](LICENSE).

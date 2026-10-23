@@ -68,8 +68,35 @@ export function logLikItem(
   response: ResponseValue,
   traitOrder: readonly TraitId[] = CORE_TRAIT_IDS,
 ): number {
-  const probs = categoryProbs(item, theta, traitOrder);
-  return Math.log(clampProb(probs[response - 1]!));
+  return logLikAtLinear(item, linearPredictor(item, theta, traitOrder), response);
+}
+
+/** Same category normalization as categoryProbs, without per-grid-point arrays. */
+export function logLikAtLinear(
+  item: Item,
+  linear: number,
+  response: ResponseValue,
+): number {
+  const s2 = sigmoid(linear - item.thresholds[0]!);
+  const s3 = sigmoid(linear - item.thresholds[1]!);
+  const s4 = sigmoid(linear - item.thresholds[2]!);
+  const s5 = sigmoid(linear - item.thresholds[3]!);
+  const p1 = Math.max(1e-9, 1 - s2);
+  const p2 = Math.max(1e-9, s2 - s3);
+  const p3 = Math.max(1e-9, s3 - s4);
+  const p4 = Math.max(1e-9, s4 - s5);
+  const p5 = Math.max(1e-9, s5);
+  const probability =
+    response === 1
+      ? p1
+      : response === 2
+        ? p2
+        : response === 3
+          ? p3
+          : response === 4
+            ? p4
+            : p5;
+  return Math.log(clampProb(probability / (p1 + p2 + p3 + p4 + p5)));
 }
 
 /**

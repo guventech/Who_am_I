@@ -1,13 +1,11 @@
 import Link from "next/link";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { StartButton } from "@/components/StartButton";
-import { isStorageEnabled } from "@/config/storage-enabled";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/copy/en";
 
 export default function Home() {
   const model = getModelVersion();
-  const storageEnabled = isStorageEnabled();
 
   return (
     <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
@@ -32,11 +30,9 @@ export default function Home() {
           {copyEn.landingExpectation}
         </p>
         <StartButton />
-        {storageEnabled ? (
-          <p className="text-sm" style={{ color: "var(--muted)" }}>
-            {copyEn.nothingSavedUnless}
-          </p>
-        ) : null}
+        <p className="text-sm" style={{ color: "var(--muted)" }}>
+          {copyEn.resultsLocalOnly}
+        </p>
         <div className="flex flex-wrap gap-4 text-[15px]">
           <Link
             href="/how-accurate"

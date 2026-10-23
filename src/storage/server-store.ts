@@ -1,12 +1,12 @@
 import "server-only";
 
 import { ConvexHttpClient } from "convex/browser";
-import { isStorageEnabled } from "@/config/storage-enabled";
+import { isLegacyDeletionEnabled, isStorageEnabled } from "@/config/storage-enabled";
 import {
   loadDeeperModelVersion,
   loadItemBank,
   loadModelVersion,
-} from "@/engine/load-content";
+} from "@/content/server-content";
 import type { ModelVersion } from "@/engine/types";
 import { ConvexAdapter } from "./convex-adapter";
 import { getMemoryAdapter, type MemoryAdapter } from "./memory";
@@ -56,17 +56,11 @@ function memoryStore(): MemoryAdapter {
 export function getServerStorage(): StorageAdapter {
   const url = convexUrl();
   const serverKey = convexServerKey();
-  if (
-    process.env.NODE_ENV === "production" &&
-    url &&
-    serverKey &&
-    isStorageEnabled()
-  ) {
+  if (process.env.NODE_ENV === "production" && url && serverKey && isLegacyDeletionEnabled()) {
     const client = new ConvexHttpClient(url);
     return new ConvexAdapter(
       {
-        mutation: (name, args) =>
-          client.mutation(name as never, args as never),
+        mutation: (name, args) => client.mutation(name as never, args as never),
       },
       serverKey,
       (payload) => {
@@ -88,8 +82,7 @@ export function getServerStorage(): StorageAdapter {
     const client = new ConvexHttpClient(url);
     return new ConvexAdapter(
       {
-        mutation: (name, args) =>
-          client.mutation(name as never, args as never),
+        mutation: (name, args) => client.mutation(name as never, args as never),
       },
       serverKey,
       (payload) => {
@@ -125,13 +118,11 @@ export async function completeWithRescore(
   if (!checked.ok) {
     throw new Error(checked.reason);
   }
-  return getServerStorage().saveCompletion(payload);
+  return getServerStorage().saveCompletion(payload, checked.scored);
 }
 
-export async function deleteStored(
-  sessionCode: string,
-): Promise<DeleteResult> {
-  assertStorageAvailable();
+export async function deleteStored(sessionCode: string): Promise<DeleteResult> {
+  if (!isLegacyDeletionEnabled()) throw new Error("storage_unavailable");
   return getServerStorage().deleteByCode(sessionCode);
 }
 

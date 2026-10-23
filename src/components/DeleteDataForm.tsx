@@ -7,6 +7,7 @@ import { createClientStorage } from "@/storage/client";
 export function DeleteDataForm() {
   const [code, setCode] = useState("");
   const [message, setMessage] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
 
   return (
     <form
@@ -14,14 +15,20 @@ export function DeleteDataForm() {
       className="flex flex-col gap-3 scroll-mt-8"
       onSubmit={(e) => {
         e.preventDefault();
+        if (pending) return;
+        setPending(true);
         setMessage(null);
         const adapter = createClientStorage({
           consentStore: true,
           ageConfirmed: true,
         });
-        void adapter.deleteByCode(code.trim()).then((result) => {
-          setMessage(result.deleted ? copyEn.deleteDone : copyEn.deleteNone);
-        });
+        void adapter
+          .deleteByCode(code.trim())
+          .then((result) =>
+            setMessage(result.deleted ? copyEn.deleteDone : copyEn.deleteNone),
+          )
+          .catch(() => setMessage(copyEn.deleteFailed))
+          .finally(() => setPending(false));
       }}
     >
       <h2 className="text-xl font-semibold" style={{ color: "var(--ink)" }}>
@@ -39,10 +46,12 @@ export function DeleteDataForm() {
           className="h-12 rounded-[10px] border px-3 font-mono uppercase tracking-wider"
           style={{ borderColor: "var(--line)", background: "#fff" }}
           value={code}
+          required
+          maxLength={32}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
         />
       </label>
-      <button type="submit" className="btn-secondary">
+      <button type="submit" className="btn-secondary" disabled={pending}>
         {copyEn.deleteSubmit}
       </button>
       {message ? (

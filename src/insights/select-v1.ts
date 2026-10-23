@@ -55,7 +55,10 @@ type Ranked = {
  *   in soft wording when that trait is less certain
  * - mid entries only when fewer than 2 traits are low/high
  */
-export function selectInsightsV1(traits: TraitScore[]): SelectedInsightsV1 {
+export function selectInsightsV1(
+  traits: TraitScore[],
+  { allowDrafts = process.env.NODE_ENV !== "production" } = {},
+): SelectedInsightsV1 {
   const core = traits.filter((t) =>
     (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
   );
@@ -63,7 +66,7 @@ export function selectInsightsV1(traits: TraitScore[]): SelectedInsightsV1 {
   const ranked: Ranked[] = [];
   for (const score of core) {
     const level = levelFromSlider(score.slider);
-    const entry = getInsightEntry(score.traitId as TraitId, level);
+    const entry = getInsightEntry(score.traitId as TraitId, level, { allowDrafts });
     if (!entry) continue;
     ranked.push({
       score,
@@ -73,13 +76,10 @@ export function selectInsightsV1(traits: TraitScore[]): SelectedInsightsV1 {
     });
   }
 
-  ranked.sort(
-    (a, b) => Math.abs(b.score.slider) - Math.abs(a.score.slider),
-  );
+  ranked.sort((a, b) => Math.abs(b.score.slider) - Math.abs(a.score.slider));
 
   const extremeCount = ranked.filter((r) => r.level !== "mid").length;
-  const pool =
-    extremeCount >= 2 ? ranked.filter((r) => r.level !== "mid") : ranked;
+  const pool = extremeCount >= 2 ? ranked.filter((r) => r.level !== "mid") : ranked;
 
   const strengths: SelectedStrengthV1[] = [];
   for (const r of pool) {
@@ -111,9 +111,7 @@ export function selectInsightsV1(traits: TraitScore[]): SelectedInsightsV1 {
     if (source) {
       watchOuts.push({
         entryId: source.entry.id,
-        watchOut: source.lessCertain
-          ? source.entry.watchOutSoft
-          : source.entry.watchOut,
+        watchOut: source.lessCertain ? source.entry.watchOutSoft : source.entry.watchOut,
         tips: source.entry.tips,
         soft: source.lessCertain,
       });
@@ -121,10 +119,7 @@ export function selectInsightsV1(traits: TraitScore[]): SelectedInsightsV1 {
   }
 
   const shownEntryIds = [
-    ...new Set([
-      ...strengths.map((s) => s.entryId),
-      ...watchOuts.map((w) => w.entryId),
-    ]),
+    ...new Set([...strengths.map((s) => s.entryId), ...watchOuts.map((w) => w.entryId)]),
   ];
 
   return {

@@ -5,6 +5,7 @@ export const INSIGHTS_VERSION = "insights-v1";
 export type InsightLevel = "low" | "mid" | "high";
 
 export type InsightEntryV1 = {
+  reviewStatus: "draft" | "reviewed";
   id: string;
   traitId: TraitId;
   level: InsightLevel;
@@ -31,6 +32,7 @@ function entry(
   tips: string[],
 ): InsightEntryV1 {
   return {
+    reviewStatus: "draft",
     id: `${traitId}-${level}`,
     traitId,
     level,
@@ -269,8 +271,12 @@ export const insightLibraryV1: InsightEntryV1[] = [
 export function getInsightEntry(
   traitId: TraitId,
   level: InsightLevel,
+  { allowDrafts = process.env.NODE_ENV !== "production" } = {},
 ): InsightEntryV1 | undefined {
   return insightLibraryV1.find(
-    (e) => e.traitId === traitId && e.level === level,
+    (e) =>
+      e.traitId === traitId &&
+      e.level === level &&
+      (allowDrafts || e.reviewStatus === "reviewed"),
   );
 }

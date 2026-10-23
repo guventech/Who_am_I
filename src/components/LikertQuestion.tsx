@@ -199,7 +199,7 @@ function LikertQuestionInner({
               className="min-h-12 rounded-[10px] border-2 px-4 py-3 text-left text-base font-medium transition"
               style={{
                 borderColor: selected ? "var(--accent)" : "var(--line)",
-                background: selected ? "#eef2ff" : "#fff",
+                background: selected ? "var(--accent-soft)" : "var(--card)",
                 color: "var(--ink)",
                 opacity: disabled && !selected ? 0.6 : 1,
               }}

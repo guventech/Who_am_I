@@ -6,8 +6,16 @@ import { v } from "convex/values";
  * Deploy with `npx convex dev` when EU region is confirmed.
  */
 export default defineSchema({
+  rateLimits: defineTable({
+    key: v.string(),
+    count: v.number(),
+    resetAt: v.number(),
+  })
+    .index("by_key", ["key"])
+    .index("by_resetAt", ["resetAt"]),
   sessions: defineTable({
     codeHash: v.string(),
+    completionFingerprint: v.optional(v.string()),
     modelVersion: v.string(),
     deviceClass: v.string(),
     startDay: v.string(),

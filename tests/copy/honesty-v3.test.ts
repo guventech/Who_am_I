@@ -15,13 +15,9 @@ describe("honesty and clarity copy v3", () => {
   });
 
   it("clarifies not for judging others, fine for self-reflection", () => {
-    expect(copyEn.notForJudgingOthers.toLowerCase()).toContain(
-      "own reflection",
-    );
+    expect(copyEn.notForJudgingOthers.toLowerCase()).toContain("own reflection");
     expect(copyEn.notForJudgingOthers.toLowerCase()).toContain("not for judging");
-    expect(copyEn.howAccurateBody.join(" ").toLowerCase()).toContain(
-      "not for judging",
-    );
+    expect(copyEn.howAccurateBody.join(" ").toLowerCase()).toContain("not for judging");
   });
 
   it("avoids average-person and usually-close retake claims", () => {
@@ -38,32 +34,24 @@ describe("honesty and clarity copy v3", () => {
     expect(copyEn.retakeLegend).toBe(
       "Shaded band: where a retake might land (early estimate)",
     );
-    expect(copyEn.scoresNote).toBe(
-      "Early version. Not yet checked with real people.",
-    );
+    expect(copyEn.scoresNote).toBe("Early version. Not yet checked with real people.");
   });
 
   it("uses accurate session vs server storage wording", () => {
-    expect(copyEn.nothingSavedUnless).toContain(
-      "Nothing is sent or stored on our side",
-    );
+    expect(copyEn.nothingSavedUnless).toContain("Nothing is sent or stored on our side");
     expect(copyEn.consentStorageNote).toBe(
       "Nothing is sent or stored on our side unless you say yes.",
     );
-    expect(copyEn.consentBody).not.toContain(
-      "Nothing is sent or stored on our side",
-    );
+    expect(copyEn.consentBody).not.toContain("Nothing is sent or stored on our side");
     expect(copyEn.privacyBody[0]).toContain("browser session");
-    expect(copyEn.privacyBody.join(" ")).toContain("privacy@who-am-i.app");
+    expect(copyEn.privacyBody.join(" ")).toContain("bircans.com");
   });
 
   it("says rough guide for self-reflection only on landing and results", () => {
     expect(copyEn.landingExpectation.toLowerCase()).toContain(
       "rough guide for self-reflection",
     );
-    expect(copyEn.resultLead.toLowerCase()).toContain(
-      "rough guide for self-reflection",
-    );
+    expect(copyEn.resultLead.toLowerCase()).toContain("rough guide for self-reflection");
     expect(copyEn.scoresNote.toLowerCase()).not.toContain(
       "rough guide for self-reflection",
     );

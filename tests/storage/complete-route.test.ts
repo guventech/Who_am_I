@@ -1,30 +1,10 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-
-describe("POST /api/storage/complete", () => {
-  afterEach(() => {
-    vi.unstubAllEnvs();
-    vi.resetModules();
-  });
-
-  it("returns 503 when storage is off in production", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("CONVEX_URL", "");
-    vi.stubEnv("CONVEX_SERVER_KEY", "");
-    vi.stubEnv("SESSION_CODE_PEPPER", "");
-
-    const { POST } = await import("@/app/api/storage/complete/route");
-    const res = await POST(
-      new Request("http://localhost/api/storage/complete", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          consentStore: true,
-          ageConfirmed: true,
-        }),
-      }),
-    );
-    expect(res.status).toBe(503);
-    const body = (await res.json()) as { error: string };
-    expect(body.error).toBe("storage_unavailable");
+import { describe, expect, it } from "vitest";
+import { POST as save } from "@/app/api/storage/complete/route";
+import { POST as feedback } from "@/app/api/storage/feedback/route";
+describe("retired write routes", () => {
+  it("permanently rejects new saves and feedback", async () => {
+    expect(save().status).toBe(410);
+    expect(await save().json()).toEqual({ error: "saving_removed" });
+    expect(feedback().status).toBe(410);
   });
 });

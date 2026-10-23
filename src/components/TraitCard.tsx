@@ -99,7 +99,7 @@ export function TraitCard({ traitId, score }: Props) {
 
       <div
         className="flex justify-between gap-4 text-sm"
-        style={{ color: "#3e4c59" }}
+        style={{ color: "var(--muted)" }}
       >
         <span className="max-w-[45%]">
           <b className="block" style={{ color: "var(--ink)" }}>

@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["./schema.ts", "./sessions.ts", "./rateLimit.ts", "./lib/**/*.ts"],
+  "exclude": ["./_generated"]
+}

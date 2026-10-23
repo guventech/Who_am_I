@@ -1,5 +1,6 @@
 import type { ScoredSession } from "@/engine/score";
-import { generateSessionCode, hashSessionCode } from "./session-code";
+import { completionSessionCode, hashSessionCode } from "./session-code";
+import { completionFingerprint } from "./completion-fingerprint";
 import type {
   CompletionPayload,
   DeleteResult,
@@ -17,6 +18,7 @@ export type MemorySessionRow = {
   createdAt: number;
   retakeOfId: string | null;
   feedback: FeedbackPayload | null;
+  completionFingerprint: string;
 };
 
 /** In-process store for local/dev/e2e when Convex is not configured. */
@@ -24,27 +26,41 @@ export class MemoryAdapter implements StorageAdapter {
   private sessions = new Map<string, MemorySessionRow>();
   private byHash = new Map<string, string>();
 
-  constructor(private readonly scoredByPayload: (p: CompletionPayload) => ScoredSession) {}
+  constructor(
+    private readonly scoredByPayload: (p: CompletionPayload) => ScoredSession,
+  ) {}
 
-  async saveCompletion(payload: CompletionPayload): Promise<SaveCompletionResult> {
-    const sessionCode = generateSessionCode();
+  async saveCompletion(
+    payload: CompletionPayload,
+    validatedScore?: ScoredSession,
+  ): Promise<SaveCompletionResult> {
+    const sessionCode = await completionSessionCode(payload.completionId);
     const codeHash = await hashSessionCode(sessionCode);
-    const id = `mem_${this.sessions.size + 1}_${Date.now()}`;
+    const fingerprint = await completionFingerprint(payload);
     let retakeOfId: string | null = null;
     if (payload.previousSessionCode) {
       const prevHash = await hashSessionCode(payload.previousSessionCode);
       const prevId = this.byHash.get(prevHash);
       if (prevId) retakeOfId = prevId;
     }
+    const existingId = this.byHash.get(codeHash);
+    if (existingId) {
+      if (this.sessions.get(existingId)?.completionFingerprint !== fingerprint) {
+        throw new Error("completion_conflict");
+      }
+      return { sessionCode };
+    }
+    const id = `mem_${this.sessions.size + 1}_${Date.now()}`;
     const row: MemorySessionRow = {
       id,
       codeHash,
       modelVersion: payload.modelVersionId,
       payload,
-      scored: this.scoredByPayload(payload),
+      scored: validatedScore ?? this.scoredByPayload(payload),
       createdAt: Date.now(),
       retakeOfId,
       feedback: null,
+      completionFingerprint: fingerprint,
     };
     this.sessions.set(id, row);
     this.byHash.set(codeHash, id);
@@ -78,10 +94,7 @@ export class MemoryAdapter implements StorageAdapter {
     return { deleted: true, sessionsRemoved: toRemove.size };
   }
 
-  async saveFeedback(
-    sessionCode: string,
-    feedback: FeedbackPayload,
-  ): Promise<void> {
+  async saveFeedback(sessionCode: string, feedback: FeedbackPayload): Promise<void> {
     const hash = await hashSessionCode(sessionCode);
     const id = this.byHash.get(hash);
     if (!id) throw new Error("session_not_found");

@@ -1,6 +1,7 @@
 import { createRng } from "@/engine/math";
 import { scoreSession, type ScoredSession } from "@/engine/score";
 import { FixedSelector } from "@/engine/select-fixed";
+import type { CompletionPayload } from "@/storage/types";
 import type {
   AnsweredItem,
   ItemBank,
@@ -11,6 +12,8 @@ import type {
 } from "@/engine/types";
 
 export type TestSession = SessionState & {
+  completionId: string;
+  storagePayload: CompletionPayload | null;
   completed: boolean;
   scored: ScoredSession | null;
   /** Set after a consented save; plaintext shown once. */
@@ -25,6 +28,8 @@ export type TestSession = SessionState & {
 
 export function createSession(seed = Date.now()): TestSession {
   return {
+    completionId: crypto.randomUUID(),
+    storagePayload: null,
     seed,
     answered: [],
     usedItemIds: [],

@@ -1,0 +1,18 @@
+# Keep credentials, private planning files, and local artifacts out of source uploads.
+.git
+.vercel
+.next
+node_modules
+.cursor
+.agents
+.codex
+.aws
+.env*
+WHO_AM_I_*.md
+*.pem
+test-results
+playwright-report
+blob-report
+playwright/.cache
+coverage
+*.tsbuildinfo

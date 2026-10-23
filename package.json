@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "next typegen && tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit && tsc -p convex/tsconfig.check.json",
+    "benchmark": "tsx scripts/benchmark-scoring.ts",
     "test": "vitest run",
     "e2e": "playwright test",
     "sim": "tsx scripts/sim.ts",
@@ -17,7 +18,6 @@
     "content:report": "tsx scripts/content-report.ts",
     "format": "prettier --write ."
   },
-
   "dependencies": {
     "convex": "^1.47.0",
     "next": "16.4.2",

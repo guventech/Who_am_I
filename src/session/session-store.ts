@@ -40,6 +40,8 @@ function normalizeSession(raw: TestSession): TestSession {
   return {
     ...createSession(raw.seed),
     ...raw,
+    completionId: raw.completionId ?? crypto.randomUUID(),
+    storagePayload: raw.storagePayload ?? null,
     sessionCode: raw.sessionCode ?? null,
     storageSaved: raw.storageSaved ?? false,
     storageError: raw.storageError ?? null,

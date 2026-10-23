@@ -7,8 +7,7 @@ async function columnBox(page: Page): Promise<{ border: number; content: number 
     els.map((el) => {
       const rect = el.getBoundingClientRect();
       const style = getComputedStyle(el);
-      const pad =
-        parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+      const pad = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
       return { border: rect.width, content: rect.width - pad };
     }),
   );
@@ -27,9 +26,7 @@ function expectDesktopColumn(box: { border: number; content: number }) {
 test.describe("layout and loading UX", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
-  test("content column is ~720px on landing, question, consent, and result", async ({
-    page,
-  }) => {
+  test("content column is ~720px on landing, question and result", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByTestId("content-column")).toBeVisible();
     expectDesktopColumn(await columnBox(page));
@@ -53,10 +50,6 @@ test.describe("layout and loading UX", () => {
         .click();
       await page.waitForTimeout(350);
     }
-    await expect(page).toHaveURL(/\/consent/, { timeout: 15_000 });
-    await expect(page.getByRole("heading", { name: copyEn.consentHeading })).toBeVisible();
-    expectDesktopColumn(await columnBox(page));
-    await page.getByTestId("consent-no").click();
     await expect(page).toHaveURL(/\/result/, { timeout: 15_000 });
     await expect(page.getByRole("heading", { name: copyEn.resultHeading })).toBeVisible();
     expectDesktopColumn(await columnBox(page));
@@ -77,21 +70,15 @@ test.describe("layout and loading UX", () => {
     expect(scroll.scrollWidth).toBeLessThanOrEqual(scroll.clientWidth + 1);
   });
 
-  test("answer click shows check and loading within 100ms", async ({
-    page,
-  }) => {
+  test("answer click shows check and loading within 100ms", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: copyEn.start }).click();
     await expect(page).toHaveURL(/\/test/, { timeout: 10_000 });
-    const testMain = page
-      .getByRole("main")
-      .filter({ hasText: "Question 1 of 10" });
+    const testMain = page.getByRole("main").filter({ hasText: "Question 1 of 10" });
     await expect(testMain).toBeVisible();
     await testMain.locator("[data-likert='4']").click();
     await page.waitForTimeout(100);
     await expect(testMain.getByTestId("likert-check")).toBeVisible();
-    await expect(testMain.getByTestId("loading-status")).toContainText(
-      /Loading/i,
-    );
+    await expect(testMain.getByTestId("loading-status")).toContainText(/Loading/i);
   });
 });
