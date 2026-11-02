@@ -25,6 +25,8 @@ test("answers and results never trigger storage requests, even with an old opt-i
   await expect(page.getByTestId("session-code")).toHaveCount(0);
   await expect(page.getByRole("link", { name: copyEn.tellUsFits })).toHaveCount(0);
   await page.reload();
-  await expect(page.getByRole("heading", { name: copyEn.resultHeading })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: copyEn.resultHeading, exact: true }),
+  ).toBeVisible();
   expect(calls).toEqual([]);
 });

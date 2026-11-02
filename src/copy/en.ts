@@ -14,6 +14,15 @@ export const copyEn = {
   youGet:
     "You get: your five traits, your strengths, what to watch out for, and simple tips.",
   start: "Start the test",
+  continueTest: "Continue your test",
+  continueDeeper: "Continue Go deeper",
+  viewResults: "View your results",
+  restartHeading: "Start a new test?",
+  restartWarning:
+    "Starting a new test will replace your current answers and results in this tab.",
+  restartExportHint: "Keep a copy of your results before you continue.",
+  restartConfirm: "Start a new test",
+  restartCancel: "Keep my current test",
   landingExpectation: "This is a rough guide for self-reflection, not a diagnosis.",
   howAccurateLink: "How accurate is this?",
   privacyLink: "Privacy",
@@ -80,8 +89,28 @@ export const copyEn = {
   colourHeading: "Colour summary",
   colourDisclaimer:
     "Colours simplify two of your sliders. They are not a validated typology. People are not their colour.",
-  colourBalanced: "Balanced, no dominant colour",
-  colourSecondary: "Secondary",
+  colourBalanced: "Balanced, no clear lean",
+  colourUnavailable: "Colour summary unavailable",
+  colourStrengthLabels: {
+    light: (colour: string) => `Light ${colour}, close to balanced`,
+    leaning: (colour: string) => `Leaning ${colour}`,
+    strong: (colour: string) => `Strong ${colour}`,
+  },
+  colourSecondary: (colour: string) => `with some ${colour}`,
+  colourNames: { red: "red", yellow: "yellow", green: "green", blue: "blue" },
+  colourDescriptions: {
+    red: "More outgoing and task-focused.",
+    yellow: "More outgoing and people-focused.",
+    green: "More reserved and people-focused.",
+    blue: "More reserved and task-focused.",
+  },
+  colourLightUncertainty:
+    "Your answers sit close to the middle, so this colour is a light lean, not a fixed type.",
+  colourBandUncertainty:
+    "Your colour could change if you take the test again. It is not a fixed type.",
+  colourBalancedUncertainty:
+    "Your answers sit close to the middle, so there is no clear colour lean.",
+  colourStrengthExplanation: "Strength describes how far your dot is from the middle.",
   colourLabels: {
     red: "Red: driven, decisive, direct",
     yellow: "Yellow: enthusiastic, sociable, persuasive",
@@ -104,6 +133,14 @@ export const copyEn = {
   cvLabel: "On your CV",
   copyResults: "Copy my results",
   copyResultsDone: "Copied",
+  keepResultsHeading: "Keep your results",
+  keepResultsHint:
+    "Closing this tab normally clears your results. Copy or download them to keep a copy.",
+  downloadResults: "Download results as text",
+  resultsFilename: "who-am-i-results.txt",
+  copyResultsFailed:
+    "We could not copy your results. Select the text below to copy it yourself, or download it.",
+  resultsTextLabel: "Your results as text",
   takeAgain: "Take the test again",
   tellUsFits: "Tell us if this fits you",
   missingResult: "No completed results on this device yet.",

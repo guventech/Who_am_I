@@ -33,17 +33,20 @@ test.describe("empty session failure states", () => {
     });
 
     await page.goto("/");
-    await page.getByRole("button", { name: copyEn.start }).click();
+    await page.getByRole("button", { name: copyEn.takeAgain, exact: true }).click();
+    await page.getByRole("button", { name: copyEn.restartConfirm, exact: true }).click();
     await expect(page.getByText("Question 1 of 10")).toBeVisible();
 
-    // Finish to results then take again
+    // Finish to results then explicitly confirm replacement.
     for (let i = 0; i < 10; i++) {
       await page.locator("[data-likert='3']").click();
       await page.waitForTimeout(320);
     }
     await expect(page).toHaveURL(/\/result/, { timeout: 15_000 });
-    await page.getByTestId("take-again").click();
-    await expect(page).toHaveURL(/\/$/);
+    await page.getByRole("button", { name: copyEn.takeAgain, exact: true }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.getByRole("button", { name: copyEn.restartConfirm, exact: true }).click();
+    await expect(page).toHaveURL(/\/test$/);
     await page.goto("/result");
     await expect(page.getByTestId("no-session")).toBeVisible();
   });

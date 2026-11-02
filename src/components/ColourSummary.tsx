@@ -1,25 +1,35 @@
 import { copyEn } from "@/copy/en";
-import {
-  colourSummary,
-  type ColourId,
-  type ColourSummaryResult,
-} from "@/lib/colourSummary";
+import { colourSummary, type ColourSummaryResult } from "@/lib/colourSummary";
+import { colourSummaryCopy } from "@/lib/colour-summary-copy";
 import type { TraitScore } from "@/engine/types";
 
-function labelFor(id: ColourId): string {
-  return copyEn.colourLabels[id];
-}
-
 function ColourBody({ result }: { result: ColourSummaryResult }) {
-  if (result.kind === "balanced") {
-    return <p style={{ color: "var(--ink)" }}>{copyEn.colourBalanced}</p>;
-  }
+  const text = colourSummaryCopy(result);
   return (
     <div className="flex flex-col gap-2">
-      <p style={{ color: "var(--ink)" }}>{labelFor(result.primary)}</p>
-      {result.secondary ? (
-        <p style={{ color: "var(--muted)" }}>
-          {copyEn.colourSecondary}: {labelFor(result.secondary)}
+      <p className="flex items-start gap-2 font-semibold" style={{ color: "var(--ink)" }}>
+        {result.kind === "coloured" ? (
+          <span
+            aria-hidden="true"
+            data-testid="colour-dot"
+            className="mt-1.5 inline-block h-3 w-3 shrink-0 rounded-full"
+            style={{
+              background: `var(--colour-${result.primary})`,
+              opacity: { light: 0.4, leaning: 0.7, strong: 1 }[result.strength],
+            }}
+          />
+        ) : null}
+        <span>{text.headline}</span>
+      </p>
+      {text.description ? <p>{text.description}</p> : null}
+      {text.uncertainty ? (
+        <p className="text-[15px]" style={{ color: "var(--muted)" }}>
+          {text.uncertainty}
+        </p>
+      ) : null}
+      {result.kind === "coloured" ? (
+        <p className="text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.colourStrengthExplanation}
         </p>
       ) : null}
     </div>

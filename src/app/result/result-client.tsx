@@ -10,15 +10,11 @@ import { TakeAgainButton } from "@/components/TakeAgainButton";
 import { TraitCard } from "@/components/TraitCard";
 import { isGoDeeperAvailable } from "@/config/go-deeper";
 import { ENABLE_COLOURS } from "@/config/flags";
-import {
-  getItemBank,
-  getItemTextEn,
-  getModelVersion,
-} from "@/content/client-content";
+import { getItemBank, getItemTextEn, getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/copy/en";
 import { CORE_TRAIT_IDS, type TraitId, type TraitScore } from "@/engine/types";
-import { formatResultsPlainText, selectInsightsV1 } from "@/insights/select-v1";
-import { isLessCertain, scoreToPhrase } from "@/lib/score-phrase";
+import { selectInsightsV1 } from "@/insights/select-v1";
+import { resultsText } from "@/lib/results-text";
 import {
   getServerSessionSnapshot,
   getSessionSnapshot,
@@ -80,16 +76,7 @@ function ResultBody({
   const hasH = shownTraits.some((t) => t.traitId === "H");
   const insights = selectInsightsV1(shownTraits, { allowDrafts });
 
-  const traitLines = shownTraits.map((score) => {
-    const id = score.traitId as TraitId;
-    const meta = copyEn.traits[id as keyof typeof copyEn.traits];
-    return {
-      title: meta?.title ?? id,
-      phrase: meta ? scoreToPhrase(score.slider, meta.left, meta.right) : "",
-      lessCertain: isLessCertain(score.retakeLow, score.retakeHigh),
-    };
-  });
-  const copyText = formatResultsPlainText(traitLines, insights);
+  const copyText = resultsText(shownTraits, { allowDrafts });
   const showGoDeeper = goDeeperAvailable && !hasH;
 
   return (
@@ -108,6 +95,16 @@ function ResultBody({
           {copyEn.flagNote}
         </p>
       ) : null}
+
+      <section className="mt-6" aria-labelledby="keep-results-heading">
+        <h2 id="keep-results-heading" className="text-lg font-semibold">
+          {copyEn.keepResultsHeading}
+        </h2>
+        <p className="mt-2 mb-3 text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.keepResultsHint}
+        </p>
+        <CopyInsightsButton text={copyText} />
+      </section>
 
       <h2 className="mt-10 text-[22px]" style={{ color: "var(--ink)" }}>
         {hasH ? copyEn.yourSixTraits : copyEn.yourFiveTraits}
@@ -222,16 +219,11 @@ function ResultBody({
       ) : null}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         {showGoDeeper ? (
-          <Link
-            href="/deeper"
-            className="btn-primary"
-            data-testid="go-deeper"
-          >
+          <Link href="/deeper" className="btn-primary" data-testid="go-deeper">
             {copyEn.goDeeperCta}
           </Link>
         ) : null}
-        <CopyInsightsButton text={copyText} />
-        <TakeAgainButton />
+        <TakeAgainButton text={copyText} />
       </div>
       {showGoDeeper ? (
         <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
