@@ -8,8 +8,8 @@ import {
 import { copyEn } from "../src/copy/en";
 
 describe("feature flags", () => {
-  it("keeps deferred features off", () => {
-    expect(ENABLE_COLOURS).toBe(false);
+  it("shows colours and keeps the other deferred features off", () => {
+    expect(ENABLE_COLOURS).toBe(true);
     expect(ENABLE_FREE_TEXT).toBe(false);
     expect(ENABLE_LLM_REWORD).toBe(false);
   });

@@ -2,13 +2,13 @@
 
 ## Axes 6–7 result layers — 2026-11-02
 
-Implemented on branch `feat/axes-6-7-result-layers`. Merged in PR #4 (commit da700ef). Not enabled in production by default.
+Implemented on branch `feat/axes-6-7-result-layers`. Merged in PR #4 (commit da700ef). Go deeper is not enabled in production by default.
 
 - **Axis 6 (Go deeper / Honesty-Humility):** result page shows a Go deeper CTA when env enables it; `/deeper` still 404s when gated off. After a finished deeper round, the sixth slider (Honesty-Humility) appears; core five stay visible. Short budget: **min 6 / max 10** deeper items, first **4** forced H (HH pool), then adaptive tightening. Draft H insights added (`reviewStatus: "draft"`). Production stays off unless `NEXT_PUBLIC_ENABLE_GO_DEEPER` / `ENABLE_GO_DEEPER` is set and H-H items verify.
-- **Axis 7 (colours):** SPEC §11 mapping in `src/lib/colourSummary.ts` + `ColourSummary` UI. `ENABLE_COLOURS` remains **false**; no colour block in the default UI.
+- **Axis 7 (colours):** SPEC §11 mapping in `src/lib/colourSummary.ts` + `ColourSummary` UI. `ENABLE_COLOURS` is **true**; the colour block shows in the default UI.
 - No new server saves. No accuracy numbers invented. CV/interview lines stay wording ideas.
 
-To try in a preview later: set go-deeper env on that deployment; optionally flip `ENABLE_COLOURS` in code for a colours preview (still requires Guven's yes for production).
+To try go deeper in a preview: set the go-deeper env on that deployment. Colours are on.
 
 ## Current scope: no new server saving — 2026-10-23
 
