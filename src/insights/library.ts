@@ -300,7 +300,7 @@ export const insightLibraryV1: InsightEntryV1[] = [
     "You value fairness and you do not need to look bigger than you are.",
     "You may value fairness and not need to look bigger than you are.",
     '"I would rather be trusted than look impressive. I corrected a number that favoured me."',
-    "Fair-minded and modest; builds trust by being straight.",
+    "Fair-minded and modest. Builds trust by being straight.",
     "You may undersell your real contribution.",
     "You may undersell what you really contributed.",
     [
