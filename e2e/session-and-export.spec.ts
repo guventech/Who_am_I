@@ -47,7 +47,7 @@ test("home keeps completed results and lets users return before restarting", asy
   await expect(dialog.getByRole("link", { name: copyEn.downloadResults })).toBeVisible();
   await expect(dialog.getByRole("button", { name: copyEn.restartCancel })).toBeFocused();
   await dialog.screenshot({
-    path: "artifacts/colour-leaning/restart-390.png",
+    path: test.info().outputPath("restart-390.png"),
     scale: "css",
   });
   const violations = (await new AxeBuilder({ page }).analyze()).violations;

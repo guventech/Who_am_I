@@ -5,6 +5,10 @@ export const copyEn = {
   brandReturn: "Back to Bircans",
   resultsLocalOnly:
     "Your results stay in this browser session. We do not save new answers or results on our servers.",
+  storageUnavailable:
+    "This browser cannot keep your progress through a refresh. You can still finish the test in this tab. Copy or download your results before leaving.",
+  storageInvalid:
+    "We could not restore this tab's saved progress. You can start a new test.",
   legacyDeleteLabel: "I saved data in an earlier version",
   prototypeBanner: "Early version. Your results are a rough guide.",
 
@@ -41,6 +45,8 @@ export const copyEn = {
   ] as const,
   answerHint:
     "Answer how you usually are, not how you want to be. There are no right or wrong answers.",
+  keyboardHint:
+    "Keyboard: press 1 to 5 to answer. You can also use Tab and the arrow keys, then Enter or Space to choose.",
   loading: "Loading...",
   loadingNext: "Loading next question...",
   workingResults: "Working out your results...",
@@ -66,10 +72,34 @@ export const copyEn = {
   consentDefault: "Nothing is sent or stored on our side unless you say yes at the end.",
   goDeeperDisabled: "Go deeper is not available yet.",
   goDeeperIntro:
-    "Continuing from question 11. Adds Honesty-Humility and narrows some of your ranges.",
+    "These extra questions add Honesty and humility and may change your results or ranges. You can pause and return to your original results at any time.",
   goDeeperCta: "Go deeper",
   goDeeperHint:
-    "About 10 more questions (from 11 onward). Adds Honesty-Humility and can narrow ranges.",
+    "About 10 more questions. Adds Honesty and humility and may change your results or ranges. Your original results stay available.",
+  backToResults: "Back to my results",
+  deeperPaused:
+    "These are your original results. Your extra answers are kept in this tab, so you can continue Go deeper when you are ready.",
+  deeperChangesHeading: "What changed after Go deeper",
+  deeperComparisonIntro:
+    "Compare your original and updated results below. Both rows use the same scale. Dots show your result. Bands show where a retake might land.",
+  deeperOriginal: "Original",
+  deeperUpdated: "Updated",
+  deeperNewTrait: "Added by Go deeper",
+  deeperTextChanges: "Read the changes in words",
+  deeperComparisonLabel: (title: string, before: string, after: string) =>
+    `${title}. Original: ${before}. Updated: ${after}.`,
+  comparisonScoreLabel: (phrase: string, low: string, high: string) =>
+    `${phrase}. Range: ${low} to ${high}`,
+  deeperAddedH: "We added Honesty and humility.",
+  deeperRangeWords: {
+    narrower: "narrower",
+    wider: "wider",
+    similar: "similar to before",
+  },
+  deeperTraitSimilar: (title: string, range: string) =>
+    `${title}: your description stayed the same. Your range is ${range}.`,
+  deeperTraitChanged: (title: string, phrase: string, range: string) =>
+    `${title}: your description now reads "${phrase}". Your range is ${range}.`,
   rangesAfterDeeper:
     "After the extra questions, some shaded bands are a bit narrower than before.",
   startAgain: "Take the test again",
@@ -77,6 +107,12 @@ export const copyEn = {
 
   // Results
   resultHeading: "Your results",
+  resultOverviewHeading: "A quick look",
+  oneActionHeading: "One thing to try",
+  oneActionHint: "Try this once this week and notice whether it helps.",
+  oneActionFallback:
+    "Notice one situation this week where your usual approach helps, and one where you try a different approach.",
+  wordingIdeas: "Interview and CV wording ideas",
   resultLead:
     "This is a rough guide for self-reflection. Use it to notice patterns in yourself, not to judge yourself or other people.",
   scoresNote: "Early version. Not yet checked with real people.",

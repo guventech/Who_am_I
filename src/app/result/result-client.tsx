@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import { ColourSummary } from "@/components/ColourSummary";
 import { CopyInsightsButton } from "@/components/CopyInsightsButton";
 import { LessCertainMark } from "@/components/LessCertainMark";
@@ -15,6 +15,10 @@ import { copyEn } from "@/copy/en";
 import { CORE_TRAIT_IDS, type TraitId, type TraitScore } from "@/engine/types";
 import { selectInsightsV1 } from "@/insights/select-v1";
 import { resultsText } from "@/lib/results-text";
+import { ResultOverview } from "@/components/ResultOverview";
+import { resultView } from "@/session/result-view";
+import { deeperChanges } from "@/lib/deeper-changes";
+import type { ScoredSession } from "@/engine/score";
 import {
   getServerSessionSnapshot,
   getSessionSnapshot,
@@ -40,13 +44,13 @@ export function ResultClient({ allowDrafts }: { allowDrafts: boolean }) {
     getSessionSnapshot,
     getServerSessionSnapshot,
   );
-  const missing = !session?.completed || !session.scored;
+  const view = useMemo(() => resultView(session, bank, coreModel), [session]);
 
   return (
     <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={coreModel.bankStatus} />
       <main data-testid="content-column" className="page flex-1 py-8 pb-16">
-        {missing ? (
+        {!view.scored ? (
           <div className="flex flex-col gap-4 py-16" data-testid="no-session">
             <h1 className="text-[28px]" style={{ color: "var(--ink)" }}>
               {copyEn.noSessionHeading}
@@ -57,7 +61,12 @@ export function ResultClient({ allowDrafts }: { allowDrafts: boolean }) {
             </Link>
           </div>
         ) : (
-          <ResultBody session={session!} allowDrafts={allowDrafts} />
+          <ResultBody
+            scored={view.scored}
+            original={view.original}
+            paused={view.paused}
+            allowDrafts={allowDrafts}
+          />
         )}
       </main>
     </div>
@@ -65,18 +74,22 @@ export function ResultClient({ allowDrafts }: { allowDrafts: boolean }) {
 }
 
 function ResultBody({
-  session,
+  scored,
+  original,
+  paused,
   allowDrafts,
 }: {
-  session: NonNullable<ReturnType<typeof getSessionSnapshot>>;
+  scored: ScoredSession;
+  original: ScoredSession | null;
+  paused: boolean;
   allowDrafts: boolean;
 }) {
-  const scored = session.scored!;
   const shownTraits = displayTraits(scored.traits);
   const hasH = shownTraits.some((t) => t.traitId === "H");
   const insights = selectInsightsV1(shownTraits, { allowDrafts });
 
-  const copyText = resultsText(shownTraits, { allowDrafts });
+  const changes = original && !paused ? deeperChanges(original.traits, shownTraits) : [];
+  const copyText = resultsText(shownTraits, { allowDrafts }, changes);
   const showGoDeeper = goDeeperAvailable && !hasH;
 
   return (
@@ -96,6 +109,26 @@ function ResultBody({
         </p>
       ) : null}
 
+      {paused ? (
+        <aside
+          className="mt-4 rounded-lg border p-4"
+          style={{ borderColor: "var(--line)" }}
+        >
+          <p>{copyEn.deeperPaused}</p>
+          {goDeeperAvailable ? (
+            <Link
+              href="/deeper"
+              className="btn-primary mt-3"
+              data-testid="continue-deeper"
+            >
+              {copyEn.continueDeeper}
+            </Link>
+          ) : null}
+        </aside>
+      ) : null}
+
+      <ResultOverview traits={shownTraits} insights={insights} />
+
       <section className="mt-6" aria-labelledby="keep-results-heading">
         <h2 id="keep-results-heading" className="text-lg font-semibold">
           {copyEn.keepResultsHeading}
@@ -112,9 +145,9 @@ function ResultBody({
       <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
         {copyEn.scoresNote}
       </p>
-      {hasH ? (
-        <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
-          {copyEn.rangesAfterDeeper}
+      {original && !paused ? (
+        <p className="mt-3 text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.deeperComparisonIntro}
         </p>
       ) : null}
       <div
@@ -137,9 +170,33 @@ function ResultBody({
             key={score.traitId}
             traitId={score.traitId as TraitId}
             score={score}
+            previous={
+              !paused
+                ? original?.traits.find((t) => t.traitId === score.traitId)
+                : undefined
+            }
+            added={Boolean(
+              original &&
+              !paused &&
+              score.traitId === "H" &&
+              !original.traits.some((t) => t.traitId === "H"),
+            )}
           />
         ))}
       </div>
+
+      {changes.length > 0 ? (
+        <details className="mt-6" data-testid="deeper-changes">
+          <summary className="cursor-pointer font-semibold">
+            {copyEn.deeperTextChanges}
+          </summary>
+          <ul className="mt-3 list-disc space-y-2 pl-5">
+            {changes.map((line) => (
+              <li key={line}>{line}</li>
+            ))}
+          </ul>
+        </details>
+      ) : null}
 
       {ENABLE_COLOURS ? <ColourSummary traits={shownTraits} /> : null}
 
@@ -150,9 +207,6 @@ function ResultBody({
           </h2>
           <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
             {copyEn.notForJudgingOthers}
-          </p>
-          <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
-            {copyEn.insightsNote}
           </p>
 
           <h3 className="mt-5 text-lg font-semibold">{copyEn.yourStrengths}</h3>
@@ -167,22 +221,30 @@ function ResultBody({
                   {s.strength}
                   {s.soft ? <LessCertainMark /> : null}
                 </h3>
-                <dl className="mt-2">
-                  <dt
-                    className="mt-2 text-[13px] font-bold uppercase tracking-wide"
-                    style={{ color: "var(--muted)" }}
-                  >
-                    {copyEn.interviewLabel}
-                  </dt>
-                  <dd className="mt-1">{s.interview}</dd>
-                  <dt
-                    className="mt-2 text-[13px] font-bold uppercase tracking-wide"
-                    style={{ color: "var(--muted)" }}
-                  >
-                    {copyEn.cvLabel}
-                  </dt>
-                  <dd className="mt-1">{s.cv}</dd>
-                </dl>
+                <details className="mt-3">
+                  <summary className="cursor-pointer text-[15px] font-medium">
+                    {copyEn.wordingIdeas}
+                  </summary>
+                  <p className="mt-2 text-sm" style={{ color: "var(--muted)" }}>
+                    {copyEn.insightsNote}
+                  </p>
+                  <dl className="mt-2">
+                    <dt
+                      className="mt-2 text-[13px] font-bold uppercase tracking-wide"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      {copyEn.interviewLabel}
+                    </dt>
+                    <dd className="mt-1">{s.interview}</dd>
+                    <dt
+                      className="mt-2 text-[13px] font-bold uppercase tracking-wide"
+                      style={{ color: "var(--muted)" }}
+                    >
+                      {copyEn.cvLabel}
+                    </dt>
+                    <dd className="mt-1">{s.cv}</dd>
+                  </dl>
+                </details>
               </div>
             ))}
           </div>
@@ -220,7 +282,7 @@ function ResultBody({
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
         {showGoDeeper ? (
           <Link href="/deeper" className="btn-primary" data-testid="go-deeper">
-            {copyEn.goDeeperCta}
+            {paused ? copyEn.continueDeeper : copyEn.goDeeperCta}
           </Link>
         ) : null}
         <TakeAgainButton text={copyText} />

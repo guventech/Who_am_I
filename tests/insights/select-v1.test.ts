@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { TraitScore } from "@/engine/types";
 import { INSIGHTS_VERSION, getInsightEntry } from "@/insights/library";
 import { formatResultsPlainText, selectInsightsV1 } from "@/insights/select-v1";
+import { scoreDirection, scoreToPhrase } from "@/lib/score-phrase";
 
 function score(
   traitId: TraitScore["traitId"],
@@ -27,6 +28,21 @@ function score(
 }
 
 describe("selectInsightsV1", () => {
+  it.each([-1, -0.6, -0.2, -0.199, 0, 0.199, 0.2, 0.4, 0.6, 1])(
+    "matches slider direction at %s without changing the score",
+    (slider) => {
+      const input = score("E", slider, -0.8, 0.8);
+      const before = structuredClone(input);
+      const level = scoreDirection(slider);
+      const result = selectInsightsV1([input]);
+      expect(result.strengths[0]?.entryId).toBe(`E-${level}`);
+      const phrase = scoreToPhrase(slider, "Reserved", "Outgoing");
+      if (level === "low") expect(phrase).toContain("reserved");
+      if (level === "mid") expect(phrase).toContain("middle");
+      if (level === "high") expect(phrase).toContain("outgoing");
+      expect(input).toEqual(before);
+    },
+  );
   it("matches the prompt example scores", () => {
     const traits = [
       score("E", 0.5, -0.45, 1.0), // width 1.45 → less certain
@@ -43,10 +59,7 @@ describe("selectInsightsV1", () => {
     ]);
     expect(selected.strengths[2]?.soft).toBe(true);
     expect(selected.strengths[2]?.strength.startsWith("You may")).toBe(true);
-    expect(selected.watchOuts.map((w) => w.entryId)).toEqual([
-      "A-high",
-      "C-high",
-    ]);
+    expect(selected.watchOuts.map((w) => w.entryId)).toEqual(["A-high", "C-high"]);
     expect(selected.watchOuts.every((w) => w.soft === false)).toBe(true);
   });
 

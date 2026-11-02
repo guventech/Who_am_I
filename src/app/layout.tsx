@@ -6,6 +6,7 @@ import { env } from "@/config/env";
 import { assertReleaseReady } from "@/config/release-readiness";
 import { insightLibraryV1 } from "@/insights/library";
 import "./globals.css";
+import { SessionStorageNotice } from "@/components/SessionStorageNotice";
 
 const display = Source_Serif_4({
   variable: "--font-display",
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         className="flex min-h-full flex-col font-[family-name:var(--font-body)]"
         style={{ fontFamily: "var(--font-body), system-ui, sans-serif" }}
       >
+        <SessionStorageNotice />
         {children}
         <footer
           className="border-t px-5 py-5 text-sm"
