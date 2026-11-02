@@ -7,10 +7,8 @@ test("old clients cannot save results or feedback", async ({ request }) => {
     expect(response.status()).toBe(410);
   }
 });
-test("old consent and feedback URLs redirect to local results", async ({ page }) => {
-  for (const route of ["consent", "feedback"]) {
-    await page.goto(`/${route}`);
-    await expect(page).toHaveURL(/\/result/);
-    await expect(page.getByTestId("no-session")).toBeVisible();
-  }
+test("old consent URL redirects to local results", async ({ page }) => {
+  await page.goto("/consent");
+  await expect(page).toHaveURL(/\/result/);
+  await expect(page.getByTestId("no-session")).toBeVisible();
 });

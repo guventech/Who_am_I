@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FeedbackLink } from "@/components/FeedbackLink";
 import { Geist, Source_Serif_4 } from "next/font/google";
 import { getModelVersion } from "@/content/client-content";
 import { copyEn } from "@/copy/en";
@@ -71,6 +72,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         >
           <div className="page flex flex-wrap items-center justify-between gap-3">
             <span>{copyEn.brandAttribution}</span>
+            <FeedbackLink className="text-[var(--accent)] underline-offset-4 hover:underline" />
             <a
               href="https://www.bircans.com/guven"
               style={{ color: "var(--accent)" }}

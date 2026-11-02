@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FeedbackLink } from "@/components/FeedbackLink";
 import { useMemo, useSyncExternalStore } from "react";
 import { ColourSummary } from "@/components/ColourSummary";
 import { CopyInsightsButton } from "@/components/CopyInsightsButton";
@@ -286,6 +287,7 @@ function ResultBody({
           </Link>
         ) : null}
         <TakeAgainButton text={copyText} />
+        <FeedbackLink className="btn-secondary" />
       </div>
       {showGoDeeper ? (
         <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>

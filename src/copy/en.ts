@@ -204,6 +204,8 @@ export const copyEn = {
     "Your answers and results stay in this browser session. We do not send them to a database or save new results on our servers.",
     "Closing this browser tab normally clears the session. If you want to keep your results, use Copy my results and save the text yourself.",
     "The website host still processes ordinary page requests to deliver the site and prevent misuse. Your quiz answers are not included in those requests.",
+    "If you choose Send feedback, the topic, comment and optional reply email you enter are sent through Resend to the project owner's inbox. Your quiz answers, scores and session code are not attached. Feedback is kept in that inbox and may also be retained by the email provider. We do not create a feedback database. Do not include sensitive personal information.",
+    "To limit repeat feedback, we use a daily hashed network identifier and a browser cookie that lasts up to 24 hours. The identifier sent to the email provider does not contain your raw IP address. People sharing a network may share the daily sending limit.",
     "If you saved data in an earlier version, your existing code can still be used to request deletion below. Previously saved answers retain their original 24-month deletion period.",
     "Who runs this: Guven Bircan, a personal Bircans project. Visit bircans.com for contact details.",
   ] as const,
@@ -217,6 +219,50 @@ export const copyEn = {
     "We could not delete your data. Check your code and connection, then try again.",
 
   // Feedback
+  feedbackSend: "Send feedback",
+  feedbackReturn: "Back to Who Am I",
+  feedbackFormIntro:
+    "After finishing the core test, tell us about a confusing question, your results, a bug or an idea. Please put everything in one message. Sending is limited to one message per day from the same browser or network.",
+  feedbackNeedCompleted:
+    "Finish the core test to share feedback. The optional Go deeper round is not required.",
+  feedbackPrivacy:
+    "Only what you enter in this form is sent by email to the project owner through Resend. Your quiz answers, scores and session code are not attached.",
+  feedbackTopicLabel: "What is your feedback about?",
+  feedbackTopicPlaceholder: "Choose a topic",
+  feedbackTopics: {
+    question: "A confusing question",
+    results: "Results do not fit",
+    bug: "A bug",
+    suggestion: "A suggestion",
+  },
+  feedbackCommentLabel: "Your feedback",
+  feedbackCommentHint:
+    "Up to 4,000 characters. Please leave out sensitive personal information.",
+  feedbackEmailLabel: "Your email address (optional)",
+  feedbackEmailHint:
+    "Include it only if you would like a reply. It is sent with your message.",
+  feedbackWebsiteLabel: "Website",
+  feedbackSending: "Sending your feedback...",
+  feedbackSent:
+    "Thank you. Feedback has already been sent today from this browser or network. You can send another message tomorrow.",
+  feedbackFailed:
+    "We could not send your feedback. Your message is still here. Please try again.",
+  feedbackInvalid:
+    "Check your topic, comment and optional email address, then try again.",
+  feedbackRateLimited:
+    "You have sent several messages recently. Your message is still here. Please wait 10 minutes before trying again.",
+  feedbackEmailSubject: (topic: string) => `Who Am I feedback: ${topic}`,
+  feedbackEmailBody: (topic: string, comment: string, email: string) =>
+    [
+      "Who Am I feedback",
+      `Topic: ${topic}`,
+      "",
+      comment,
+      "",
+      email ? `Reply email: ${email}` : "No reply email provided.",
+      "",
+      "No quiz answers, scores or session code are attached.",
+    ].join("\n"),
   feedbackBack: "← Your results",
   feedbackHeading: "Does this sound like you?",
   feedbackIntro:

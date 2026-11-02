@@ -12,6 +12,7 @@ import type {
 } from "@/engine/types";
 
 export type TestSession = SessionState & {
+  feedbackSentDay?: string;
   completionId: string;
   storagePayload: CompletionPayload | null;
   completed: boolean;

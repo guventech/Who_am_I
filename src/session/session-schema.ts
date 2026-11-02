@@ -47,6 +47,10 @@ export const sessionSchema = z
     round: z.enum(["core", "deeper"]).optional(),
     completionId: z.string().optional(),
     startDay: z.string().optional(),
+    feedbackSentDay: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .optional(),
     sessionCode: z.string().nullable().optional(),
     storageSaved: z.boolean().optional(),
     storageError: z.string().nullable().optional(),
