@@ -11,7 +11,7 @@ import {
   getItemBank,
   getItemTextEn,
 } from "@/content/client-content";
-import { copyEn } from "@/content/copy.en";
+import { copyEn, itemHints } from "@/copy/en";
 import { formatItemStem } from "@/lib/item-display";
 import type { ResponseValue } from "@/engine/types";
 import {
@@ -108,15 +108,12 @@ export function DeeperClient() {
 
   if (!available) {
     return (
-      <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
+      <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
         <PrototypeBanner bankStatus={deeperModel.bankStatus} />
-        <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-4 px-6 py-16">
-          <p className="text-lg text-slate-700">{copyEn.goDeeperDisabled}</p>
-          <Link
-            href="/result"
-            className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-          >
-            Back to result
+        <main className="page flex flex-1 flex-col justify-center gap-4 py-12">
+          <p style={{ color: "var(--ink)" }}>{copyEn.goDeeperDisabled}</p>
+          <Link href="/result" className="btn-secondary">
+            {copyEn.resultHeading}
           </Link>
         </main>
       </div>
@@ -125,14 +122,18 @@ export function DeeperClient() {
 
   if (!session || !isDeeperSession(session)) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
-        <main className="mx-auto flex max-w-lg flex-col gap-4 px-6 text-center">
-          <p className="text-slate-700">{copyEn.missingResult}</p>
-          <Link
-            href="/"
-            className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-          >
-            {copyEn.startAgain}
+      <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
+        <PrototypeBanner bankStatus={deeperModel.bankStatus} />
+        <main
+          className="page flex flex-1 flex-col justify-center gap-4 py-12"
+          data-testid="no-session"
+        >
+          <h1 className="text-[28px]" style={{ color: "var(--ink)" }}>
+            {copyEn.noSessionHeading}
+          </h1>
+          <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>
+          <Link href="/" className="btn-primary">
+            {copyEn.noSessionCta}
           </Link>
         </main>
       </div>
@@ -143,26 +144,43 @@ export function DeeperClient() {
   const itemId = currentDeeperItemId(deeper, bank, deeperModel);
   const rawText = itemId ? textEn[itemId] : null;
   const questionText = rawText ? formatItemStem(rawText) : null;
+  const hint = itemId ? itemHints[itemId] : undefined;
   const asked = deeper.answered.length - deeper.deeperStartCount;
   const total = deeperModel.config.DEEPER_BUDGET_MAX;
 
   if (!itemId || !questionText) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
-        <p className="text-slate-600">Preparing updated result…</p>
+      <div
+        className="flex flex-1 items-center justify-center"
+        style={{ background: "var(--bg)" }}
+      >
+        <p
+          role="status"
+          aria-live="polite"
+          className="loading-status"
+          data-testid="loading-status"
+        >
+          <span className="loading-spinner" aria-hidden />
+          {copyEn.workingResults}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
+    <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={deeperModel.bankStatus} />
-      <main className="mx-auto w-full max-w-lg flex-1 px-6 py-10">
-        <p className="mb-4 text-sm text-slate-600">{copyEn.goDeeperIntro}</p>
+      <main data-testid="content-column" className="page flex-1 py-10">
+        <p className="mb-6 text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.goDeeperIntro}
+        </p>
         <LikertQuestion
+          questionKey={itemId}
           questionText={questionText}
+          hint={hint}
           progressLabel={copyEn.progress(asked + 1, total)}
           progressPct={((asked + 1) / total) * 100}
+          showAnswerHint={asked === 0}
           onAnswer={handleAnswer}
           onBack={handleBack}
           canBack={asked > 0}
