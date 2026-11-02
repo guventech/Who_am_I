@@ -19,7 +19,7 @@ test("production browser worker completes the client-only quiz with branding and
   await expect(page).toHaveTitle("Who Am I? | Bircans");
   await expect(page.getByRole("link", { name: copyEn.brandReturn })).toHaveAttribute(
     "href",
-    "https://bircans.com",
+    "https://www.bircans.com/guven",
   );
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
   await page.screenshot({ path: test.info().outputPath("home.png"), fullPage: true });
