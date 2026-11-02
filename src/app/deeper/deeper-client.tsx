@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { LikertQuestion } from "@/components/LikertQuestion";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { isGoDeeperAvailable } from "@/config/go-deeper";
@@ -19,6 +25,7 @@ import {
   backDeeperOne,
   beginDeeperSession,
   currentDeeperItemId,
+  deeperAsked,
   isDeeperSession,
   type DeeperSession,
 } from "@/session/run-deeper";
@@ -33,10 +40,14 @@ const bank = getItemBank();
 const deeperModel = getDeeperModelVersion();
 const textEn = getItemTextEn();
 const available = isGoDeeperAvailable(bank, textEn);
+const MIN_LOADING_MS = 300;
 
 export function DeeperClient() {
   const router = useRouter();
   const shownAt = useRef(0);
+  const answering = useRef(false);
+  const [loadingLabel, setLoadingLabel] = useState<string | null>(null);
+  const [restoredValue, setRestoredValue] = useState<ResponseValue | null>(null);
 
   const session = useSyncExternalStore(
     subscribeSession,
@@ -76,7 +87,7 @@ export function DeeperClient() {
         return;
       }
       const n = Number(e.key);
-      if (n >= 1 && n <= 5) {
+      if (n >= 1 && n <= 5 && !loadingLabel) {
         e.preventDefault();
         handleAnswer(n as ResponseValue);
       }
@@ -84,24 +95,40 @@ export function DeeperClient() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only keyboard binding
-  }, []);
+  }, [loadingLabel]);
 
   function handleAnswer(value: ResponseValue) {
     const current = getSessionSnapshot();
-    if (!current || !isDeeperSession(current) || current.completed) return;
-    const rtMs = Math.max(0, Math.round(performance.now() - shownAt.current));
-    const next = answerDeeper(current, bank, deeperModel, value, rtMs);
-    saveSession(next);
-    if (next.completed) {
-      router.push("/result");
+    if (!current || !isDeeperSession(current) || current.completed || answering.current) {
       return;
     }
-    shownAt.current = performance.now();
+    answering.current = true;
+    const rtMs = Math.max(0, Math.round(performance.now() - shownAt.current));
+    setRestoredValue(null);
+    setLoadingLabel(copyEn.loading);
+
+    window.setTimeout(() => {
+      const next = answerDeeper(current, bank, deeperModel, value, rtMs);
+      saveSession(next);
+      if (next.completed) {
+        setLoadingLabel(copyEn.workingResults);
+        router.push("/result");
+        answering.current = false;
+        return;
+      }
+      setLoadingLabel(null);
+      answering.current = false;
+      shownAt.current = performance.now();
+    }, MIN_LOADING_MS);
   }
 
   function handleBack() {
+    if (loadingLabel) return;
     const current = getSessionSnapshot();
     if (!current || !isDeeperSession(current)) return;
+    if (current.answered.length <= current.deeperStartCount) return;
+    const last = current.answered[current.answered.length - 1]!;
+    setRestoredValue(last.value);
     saveSession(backDeeperOne(current));
     shownAt.current = performance.now();
   }
@@ -145,8 +172,10 @@ export function DeeperClient() {
   const rawText = itemId ? textEn[itemId] : null;
   const questionText = rawText ? formatItemStem(rawText) : null;
   const hint = itemId ? itemHints[itemId] : undefined;
-  const asked = deeper.answered.length - deeper.deeperStartCount;
-  const total = deeperModel.config.DEEPER_BUDGET_MAX;
+  const asked = deeperAsked(deeper);
+  const coreCount = deeper.deeperStartCount;
+  const total = coreCount + deeperModel.config.DEEPER_BUDGET_MAX;
+  const n = coreCount + asked + 1;
 
   if (!itemId || !questionText) {
     return (
@@ -161,7 +190,7 @@ export function DeeperClient() {
           data-testid="loading-status"
         >
           <span className="loading-spinner" aria-hidden />
-          {copyEn.workingResults}
+          {loadingLabel ?? copyEn.workingResults}
         </p>
       </div>
     );
@@ -178,9 +207,11 @@ export function DeeperClient() {
           questionKey={itemId}
           questionText={questionText}
           hint={hint}
-          progressLabel={copyEn.progress(asked + 1, total)}
-          progressPct={((asked + 1) / total) * 100}
+          progressLabel={copyEn.progress(n, total)}
+          progressPct={(n / total) * 100}
           showAnswerHint={asked === 0}
+          selectedValue={restoredValue}
+          loadingLabel={loadingLabel}
           onAnswer={handleAnswer}
           onBack={handleBack}
           canBack={asked > 0}

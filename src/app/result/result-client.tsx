@@ -115,6 +115,11 @@ function ResultBody({
       <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
         {copyEn.scoresNote}
       </p>
+      {hasH ? (
+        <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.rangesAfterDeeper}
+        </p>
+      ) : null}
       <div
         className="mt-3 flex flex-wrap items-center gap-4 text-sm"
         style={{ color: "var(--muted)" }}

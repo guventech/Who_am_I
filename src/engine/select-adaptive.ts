@@ -15,8 +15,15 @@ import type {
 } from "./types";
 import { modelTraitIds } from "./types";
 
-/** First N deeper items must be Honesty-Humility (short-form H floor). */
-export const DEEPER_H_FIRST_COUNT = 4;
+/**
+ * Short go-deeper schedule (budget ~10):
+ * 1) first DEEPER_H_FIRST_COUNT Honesty-Humility items
+ * 2) then DEEPER_TIGHTEN_SLOTS non-H items to narrow Big Five ranges
+ * 3) top up H until DEEPER_H_MIN_TOTAL if slots remain
+ */
+export const DEEPER_H_FIRST_COUNT = 2;
+export const DEEPER_TIGHTEN_SLOTS = 6;
+export const DEEPER_H_MIN_TOTAL = 4;
 
 export type AdaptiveSelectorOptions = {
   /** Total answered items at which selection stops (core = 10). */
@@ -28,11 +35,12 @@ export type AdaptiveSelectorOptions = {
    * (usually 10). Budget counts only new items when set with deeperRound.
    */
   deeperStartCount?: number;
-  /**
-   * Deeper only: force the first N picks to primaryTrait H.
-   * Default DEEPER_H_FIRST_COUNT.
-   */
+  /** Deeper only: force the first N picks to primaryTrait H. */
   deeperHFirstCount?: number;
+  /** Deeper only: non-H sharpening slots after the H opening. */
+  deeperTightenSlots?: number;
+  /** Deeper only: aim for at least this many H items by the end. */
+  deeperHMinTotal?: number;
 };
 
 export class AdaptiveSelector implements ItemSelector {
@@ -45,6 +53,8 @@ export class AdaptiveSelector implements ItemSelector {
       deeperRound: opts.deeperRound ?? false,
       deeperStartCount: opts.deeperStartCount,
       deeperHFirstCount: opts.deeperHFirstCount ?? DEEPER_H_FIRST_COUNT,
+      deeperTightenSlots: opts.deeperTightenSlots ?? DEEPER_TIGHTEN_SLOTS,
+      deeperHMinTotal: opts.deeperHMinTotal ?? DEEPER_H_MIN_TOTAL,
     };
   }
 
@@ -75,10 +85,24 @@ export class AdaptiveSelector implements ItemSelector {
       ? deeperCandidateItems(bank)
       : candidateItems(bank, cfg, explore);
 
-    // Short go-deeper: first N picks are Honesty-Humility markers.
+    // Short go-deeper: H open → Big Five tighten → H top-up.
     if (this.opts.deeperRound) {
       const hFirst = this.opts.deeperHFirstCount ?? DEEPER_H_FIRST_COUNT;
+      const tighten = this.opts.deeperTightenSlots ?? DEEPER_TIGHTEN_SLOTS;
+      const hMin = this.opts.deeperHMinTotal ?? DEEPER_H_MIN_TOTAL;
+      const startIdx = this.opts.deeperStartCount ?? 0;
+      let hAsked = 0;
+      for (let i = startIdx; i < state.answered.length; i++) {
+        const it = byId.get(state.answered[i]!.itemId);
+        if (it?.primaryTrait === "H") hAsked += 1;
+      }
       if (deeperAsked < hFirst) {
+        const hOnly = pool.filter((i) => i.primaryTrait === "H");
+        if (hOnly.length > 0) pool = hOnly;
+      } else if (deeperAsked < hFirst + tighten) {
+        const nonH = pool.filter((i) => i.primaryTrait !== "H");
+        if (nonH.length > 0) pool = nonH;
+      } else if (hAsked < hMin) {
         const hOnly = pool.filter((i) => i.primaryTrait === "H");
         if (hOnly.length > 0) pool = hOnly;
       }

@@ -32,14 +32,15 @@ test.describe("go deeper and colours (dev defaults)", () => {
     }
     await goDeeper.click();
     await expect(page).toHaveURL(/\/deeper/);
+    await expect(page.getByText("Question 11 of 20")).toBeVisible();
 
-    // Answer until redirected to results (budget 6–10).
+    // Answer until redirected to results (budget 6–10 extras).
     for (let i = 0; i < 12; i++) {
       if (page.url().includes("/result")) break;
       const likert = page.locator("[data-likert='3']");
       if ((await likert.count()) === 0) break;
       await likert.click();
-      await page.waitForTimeout(300);
+      await page.waitForTimeout(350);
     }
 
     await expect(page).toHaveURL(/\/result/, { timeout: 30_000 });

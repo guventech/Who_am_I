@@ -93,7 +93,7 @@ describe("go deeper", () => {
   );
 
   it(
-    "asks Honesty-Humility items first, then stays within short budget",
+    "opens with H, then Big Five tighten items, within short budget",
     () => {
       const bank = loadItemBank();
       const deeper = loadDeeperModelVersion();
@@ -106,7 +106,19 @@ describe("go deeper", () => {
       for (const a of firstH) {
         expect(itemById(bank, a.itemId).primaryTrait).toBe("H");
       }
+      const mid = result.deeperAnswered.slice(
+        DEEPER_H_FIRST_COUNT,
+        DEEPER_H_FIRST_COUNT + 3,
+      );
+      expect(mid.length).toBeGreaterThan(0);
+      expect(
+        mid.some((a) => itemById(bank, a.itemId).primaryTrait !== "H"),
+      ).toBe(true);
       expect(result.scored.traits.some((t) => t.traitId === "H")).toBe(true);
+      const hCount = result.deeperAnswered.filter(
+        (a) => itemById(bank, a.itemId).primaryTrait === "H",
+      ).length;
+      expect(hCount).toBeGreaterThanOrEqual(2);
     },
     120_000,
   );
