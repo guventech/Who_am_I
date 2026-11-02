@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { LikertQuestion } from "@/components/LikertQuestion";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { isGoDeeperAvailable } from "@/config/go-deeper";
@@ -11,7 +17,7 @@ import {
   getItemBank,
   getItemTextEn,
 } from "@/content/client-content";
-import { copyEn } from "@/content/copy.en";
+import { copyEn, itemHints } from "@/copy/en";
 import { formatItemStem } from "@/lib/item-display";
 import type { ResponseValue } from "@/engine/types";
 import {
@@ -19,6 +25,7 @@ import {
   backDeeperOne,
   beginDeeperSession,
   currentDeeperItemId,
+  deeperAsked,
   isDeeperSession,
   type DeeperSession,
 } from "@/session/run-deeper";
@@ -33,10 +40,14 @@ const bank = getItemBank();
 const deeperModel = getDeeperModelVersion();
 const textEn = getItemTextEn();
 const available = isGoDeeperAvailable(bank, textEn);
+const MIN_LOADING_MS = 300;
 
 export function DeeperClient() {
   const router = useRouter();
   const shownAt = useRef(0);
+  const answering = useRef(false);
+  const [loadingLabel, setLoadingLabel] = useState<string | null>(null);
+  const [restoredValue, setRestoredValue] = useState<ResponseValue | null>(null);
 
   const session = useSyncExternalStore(
     subscribeSession,
@@ -76,7 +87,7 @@ export function DeeperClient() {
         return;
       }
       const n = Number(e.key);
-      if (n >= 1 && n <= 5) {
+      if (n >= 1 && n <= 5 && !loadingLabel) {
         e.preventDefault();
         handleAnswer(n as ResponseValue);
       }
@@ -84,39 +95,52 @@ export function DeeperClient() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only keyboard binding
-  }, []);
+  }, [loadingLabel]);
 
   function handleAnswer(value: ResponseValue) {
     const current = getSessionSnapshot();
-    if (!current || !isDeeperSession(current) || current.completed) return;
-    const rtMs = Math.max(0, Math.round(performance.now() - shownAt.current));
-    const next = answerDeeper(current, bank, deeperModel, value, rtMs);
-    saveSession(next);
-    if (next.completed) {
-      router.push("/result");
+    if (!current || !isDeeperSession(current) || current.completed || answering.current) {
       return;
     }
-    shownAt.current = performance.now();
+    answering.current = true;
+    const rtMs = Math.max(0, Math.round(performance.now() - shownAt.current));
+    setRestoredValue(null);
+    setLoadingLabel(copyEn.loading);
+
+    window.setTimeout(() => {
+      const next = answerDeeper(current, bank, deeperModel, value, rtMs);
+      saveSession(next);
+      if (next.completed) {
+        setLoadingLabel(copyEn.workingResults);
+        router.push("/result");
+        answering.current = false;
+        return;
+      }
+      setLoadingLabel(null);
+      answering.current = false;
+      shownAt.current = performance.now();
+    }, MIN_LOADING_MS);
   }
 
   function handleBack() {
+    if (loadingLabel) return;
     const current = getSessionSnapshot();
     if (!current || !isDeeperSession(current)) return;
+    if (current.answered.length <= current.deeperStartCount) return;
+    const last = current.answered[current.answered.length - 1]!;
+    setRestoredValue(last.value);
     saveSession(backDeeperOne(current));
     shownAt.current = performance.now();
   }
 
   if (!available) {
     return (
-      <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
+      <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
         <PrototypeBanner bankStatus={deeperModel.bankStatus} />
-        <main className="mx-auto flex w-full max-w-lg flex-1 flex-col justify-center gap-4 px-6 py-16">
-          <p className="text-lg text-slate-700">{copyEn.goDeeperDisabled}</p>
-          <Link
-            href="/result"
-            className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-          >
-            Back to result
+        <main className="page flex flex-1 flex-col justify-center gap-4 py-12">
+          <p style={{ color: "var(--ink)" }}>{copyEn.goDeeperDisabled}</p>
+          <Link href="/result" className="btn-secondary">
+            {copyEn.resultHeading}
           </Link>
         </main>
       </div>
@@ -125,14 +149,18 @@ export function DeeperClient() {
 
   if (!session || !isDeeperSession(session)) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
-        <main className="mx-auto flex max-w-lg flex-col gap-4 px-6 text-center">
-          <p className="text-slate-700">{copyEn.missingResult}</p>
-          <Link
-            href="/"
-            className="text-sm font-medium text-slate-800 underline-offset-4 hover:underline"
-          >
-            {copyEn.startAgain}
+      <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
+        <PrototypeBanner bankStatus={deeperModel.bankStatus} />
+        <main
+          className="page flex flex-1 flex-col justify-center gap-4 py-12"
+          data-testid="no-session"
+        >
+          <h1 className="text-[28px]" style={{ color: "var(--ink)" }}>
+            {copyEn.noSessionHeading}
+          </h1>
+          <p style={{ color: "var(--ink)" }}>{copyEn.missingResult}</p>
+          <Link href="/" className="btn-primary">
+            {copyEn.noSessionCta}
           </Link>
         </main>
       </div>
@@ -143,26 +171,47 @@ export function DeeperClient() {
   const itemId = currentDeeperItemId(deeper, bank, deeperModel);
   const rawText = itemId ? textEn[itemId] : null;
   const questionText = rawText ? formatItemStem(rawText) : null;
-  const asked = deeper.answered.length - deeper.deeperStartCount;
-  const total = deeperModel.config.DEEPER_BUDGET_MAX;
+  const hint = itemId ? itemHints[itemId] : undefined;
+  const asked = deeperAsked(deeper);
+  const coreCount = deeper.deeperStartCount;
+  const total = coreCount + deeperModel.config.DEEPER_BUDGET_MAX;
+  const n = coreCount + asked + 1;
 
   if (!itemId || !questionText) {
     return (
-      <div className="flex flex-1 items-center justify-center bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
-        <p className="text-slate-600">Preparing updated result…</p>
+      <div
+        className="flex flex-1 items-center justify-center"
+        style={{ background: "var(--bg)" }}
+      >
+        <p
+          role="status"
+          aria-live="polite"
+          className="loading-status"
+          data-testid="loading-status"
+        >
+          <span className="loading-spinner" aria-hidden />
+          {loadingLabel ?? copyEn.workingResults}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-[radial-gradient(ellipse_at_top,_#f4f7fb_0%,_#e8eef5_45%,_#d9e2ec_100%)]">
+    <div className="flex w-full flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={deeperModel.bankStatus} />
-      <main className="mx-auto w-full max-w-lg flex-1 px-6 py-10">
-        <p className="mb-4 text-sm text-slate-600">{copyEn.goDeeperIntro}</p>
+      <main data-testid="content-column" className="page flex-1 py-10">
+        <p className="mb-6 text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.goDeeperIntro}
+        </p>
         <LikertQuestion
+          questionKey={itemId}
           questionText={questionText}
-          progressLabel={copyEn.progress(asked + 1, total)}
-          progressPct={((asked + 1) / total) * 100}
+          hint={hint}
+          progressLabel={copyEn.progress(n, total)}
+          progressPct={(n / total) * 100}
+          showAnswerHint={asked === 0}
+          selectedValue={restoredValue}
+          loadingLabel={loadingLabel}
           onAnswer={handleAnswer}
           onBack={handleBack}
           canBack={asked > 0}

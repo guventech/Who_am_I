@@ -46,7 +46,7 @@ function entry(
   };
 }
 
-/** Fixed insight library v1: 15 single-trait entries. */
+/** Fixed insight library v1: 18 single-trait entries (Big Five + H drafts). */
 export const insightLibraryV1: InsightEntryV1[] = [
   entry(
     "E",
@@ -264,6 +264,48 @@ export const insightLibraryV1: InsightEntryV1[] = [
       "Write new ideas in one list and pick only one per month.",
       "Finish one thing before you start the next.",
       'Ask "Is this useful now?" before you dive in.',
+    ],
+  ),
+  entry(
+    "H",
+    "low",
+    "You aim high and you are comfortable asking for recognition.",
+    "You may aim high and feel comfortable asking for recognition.",
+    '"I am clear about what I want. I asked for the lead role and explained why I fit it."',
+    "Ambitious and clear about recognition and status.",
+    "Others may see you as focused on yourself more than on fairness.",
+    "Others may see you as more focused on yourself than on fairness.",
+    [
+      "Name one way your win helps the team, not only you.",
+      "Share credit out loud when a result was shared work.",
+    ],
+  ),
+  entry(
+    "H",
+    "mid",
+    "You can push for yourself and still care about fair play.",
+    "You may push for yourself and still care about fair play.",
+    '"I negotiate for myself, and I also check that the deal feels fair to others."',
+    "Balances personal ambition with fair treatment of others.",
+    "People may not know which side you will favour when interests clash.",
+    "People may not know which side you favour when interests clash.",
+    [
+      "Say your rule out loud: what feels fair to you in this case.",
+      "Ask one other person how the deal looks from their side.",
+    ],
+  ),
+  entry(
+    "H",
+    "high",
+    "You value fairness and you do not need to look bigger than you are.",
+    "You may value fairness and not need to look bigger than you are.",
+    '"I would rather be trusted than look impressive. I corrected a number that favoured me."',
+    "Fair-minded and modest; builds trust by being straight.",
+    "You may undersell your real contribution.",
+    "You may undersell what you really contributed.",
+    [
+      "Write one clear line about what you did before a review meeting.",
+      "Accept praise once without brushing it off.",
     ],
   ),
 ];

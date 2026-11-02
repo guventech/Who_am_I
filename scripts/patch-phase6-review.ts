@@ -110,8 +110,8 @@ for (const item of bank.items) {
 
 function patchConfig(m: ModelVersion, opts: { sd: number; note?: string }) {
   m.config.FIXED_FIRST_ITEM_ID = "X01";
-  m.config.DEEPER_BUDGET_MIN = 12;
-  m.config.DEEPER_BUDGET_MAX = 20;
+  m.config.DEEPER_BUDGET_MIN = 6;
+  m.config.DEEPER_BUDGET_MAX = 10;
   m.config.DEEPER_SD_TARGET = opts.sd;
   m.itemHashes = hashes;
   // Loosen unclear threshold for uncalibrated bank (S7: sim-report 48% → aim <30%).

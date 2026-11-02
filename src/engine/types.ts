@@ -52,9 +52,9 @@ export type ModelConfig = {
   P_LEVEL_FIRM: number;
   LEVEL_CUT: number;
   DEEPER_SD_TARGET: number;
-  /** Min additional items before early SD stop (brief: 12–20). */
+  /** Min additional items before early SD stop (short mode: 6–10). */
   DEEPER_BUDGET_MIN: number;
-  /** Max additional items in the go-deeper round (brief: 12–20). */
+  /** Max additional items in the go-deeper round (short mode: 6–10). */
   DEEPER_BUDGET_MAX: number;
   /** Q1 is identical for every session (core round). */
   FIXED_FIRST_ITEM_ID: ItemId;

@@ -60,18 +60,19 @@ export function parseEnv(
     asNodeEnv(process.env.NODE_ENV) ??
     "production";
 
-  const goDeeperRaw =
-    raw?.NEXT_PUBLIC_ENABLE_GO_DEEPER ??
-    raw?.ENABLE_GO_DEEPER ??
-    process.env.NEXT_PUBLIC_ENABLE_GO_DEEPER ??
-    process.env.ENABLE_GO_DEEPER;
+  // When `raw` is passed (tests), do not fall back to process.env for flags.
+  const goDeeperRaw = raw
+    ? (raw.NEXT_PUBLIC_ENABLE_GO_DEEPER ?? raw.ENABLE_GO_DEEPER)
+    : (process.env.NEXT_PUBLIC_ENABLE_GO_DEEPER ?? process.env.ENABLE_GO_DEEPER);
 
   const parsed = envSchema.parse({
     NODE_ENV: nodeEnv,
-    ALLOW_UNCALIBRATED:
-      raw?.ALLOW_UNCALIBRATED ?? process.env.ALLOW_UNCALIBRATED,
-    ALLOW_DRAFT_CONTENT:
-      raw?.ALLOW_DRAFT_CONTENT ?? process.env.ALLOW_DRAFT_CONTENT,
+    ALLOW_UNCALIBRATED: raw
+      ? raw.ALLOW_UNCALIBRATED
+      : process.env.ALLOW_UNCALIBRATED,
+    ALLOW_DRAFT_CONTENT: raw
+      ? raw.ALLOW_DRAFT_CONTENT
+      : process.env.ALLOW_DRAFT_CONTENT,
     ENABLE_GO_DEEPER: goDeeperRaw,
   });
 

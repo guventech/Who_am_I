@@ -2,14 +2,21 @@
 
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
+import { ColourSummary } from "@/components/ColourSummary";
 import { CopyInsightsButton } from "@/components/CopyInsightsButton";
 import { LessCertainMark } from "@/components/LessCertainMark";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { TakeAgainButton } from "@/components/TakeAgainButton";
 import { TraitCard } from "@/components/TraitCard";
-import { getModelVersion } from "@/content/client-content";
+import { isGoDeeperAvailable } from "@/config/go-deeper";
+import { ENABLE_COLOURS } from "@/config/flags";
+import {
+  getItemBank,
+  getItemTextEn,
+  getModelVersion,
+} from "@/content/client-content";
 import { copyEn } from "@/copy/en";
-import { CORE_TRAIT_IDS, type TraitId } from "@/engine/types";
+import { CORE_TRAIT_IDS, type TraitId, type TraitScore } from "@/engine/types";
 import { formatResultsPlainText, selectInsightsV1 } from "@/insights/select-v1";
 import { isLessCertain, scoreToPhrase } from "@/lib/score-phrase";
 import {
@@ -19,6 +26,17 @@ import {
 } from "@/session/session-store";
 
 const coreModel = getModelVersion();
+const bank = getItemBank();
+const textEn = getItemTextEn();
+const goDeeperAvailable = isGoDeeperAvailable(bank, textEn);
+
+function displayTraits(traits: TraitScore[]): TraitScore[] {
+  const core = traits.filter((t) =>
+    (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
+  );
+  const h = traits.find((t) => t.traitId === "H");
+  return h ? [...core, h] : core;
+}
 
 export function ResultClient({ allowDrafts }: { allowDrafts: boolean }) {
   const session = useSyncExternalStore(
@@ -58,12 +76,11 @@ function ResultBody({
   allowDrafts: boolean;
 }) {
   const scored = session.scored!;
-  const coreTraits = scored.traits.filter((t) =>
-    (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
-  );
-  const insights = selectInsightsV1(coreTraits, { allowDrafts });
+  const shownTraits = displayTraits(scored.traits);
+  const hasH = shownTraits.some((t) => t.traitId === "H");
+  const insights = selectInsightsV1(shownTraits, { allowDrafts });
 
-  const traitLines = coreTraits.map((score) => {
+  const traitLines = shownTraits.map((score) => {
     const id = score.traitId as TraitId;
     const meta = copyEn.traits[id as keyof typeof copyEn.traits];
     return {
@@ -73,6 +90,7 @@ function ResultBody({
     };
   });
   const copyText = formatResultsPlainText(traitLines, insights);
+  const showGoDeeper = goDeeperAvailable && !hasH;
 
   return (
     <>
@@ -92,11 +110,16 @@ function ResultBody({
       ) : null}
 
       <h2 className="mt-10 text-[22px]" style={{ color: "var(--ink)" }}>
-        {copyEn.yourFiveTraits}
+        {hasH ? copyEn.yourSixTraits : copyEn.yourFiveTraits}
       </h2>
       <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
         {copyEn.scoresNote}
       </p>
+      {hasH ? (
+        <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.rangesAfterDeeper}
+        </p>
+      ) : null}
       <div
         className="mt-3 flex flex-wrap items-center gap-4 text-sm"
         style={{ color: "var(--muted)" }}
@@ -112,7 +135,7 @@ function ResultBody({
       </div>
 
       <div className="mt-3 flex flex-col gap-3">
-        {coreTraits.map((score) => (
+        {shownTraits.map((score) => (
           <TraitCard
             key={score.traitId}
             traitId={score.traitId as TraitId}
@@ -120,6 +143,8 @@ function ResultBody({
           />
         ))}
       </div>
+
+      {ENABLE_COLOURS ? <ColourSummary traits={shownTraits} /> : null}
 
       {insights.strengths.length > 0 ? (
         <>
@@ -196,9 +221,23 @@ function ResultBody({
         </>
       ) : null}
       <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+        {showGoDeeper ? (
+          <Link
+            href="/deeper"
+            className="btn-primary"
+            data-testid="go-deeper"
+          >
+            {copyEn.goDeeperCta}
+          </Link>
+        ) : null}
         <CopyInsightsButton text={copyText} />
         <TakeAgainButton />
       </div>
+      {showGoDeeper ? (
+        <p className="mt-2 text-[15px]" style={{ color: "var(--muted)" }}>
+          {copyEn.goDeeperHint}
+        </p>
+      ) : null}
 
       <footer className="mt-7 flex flex-wrap gap-4 text-[15px]">
         <Link href="/how-accurate" style={{ color: "var(--accent)" }}>

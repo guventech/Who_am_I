@@ -70,7 +70,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <div className="page flex flex-wrap items-center justify-between gap-3">
             <span>{copyEn.brandAttribution}</span>
             <a
-              href="https://bircans.com"
+              href="https://www.bircans.com/guven"
               style={{ color: "var(--accent)" }}
               className="underline-offset-4 hover:underline"
             >

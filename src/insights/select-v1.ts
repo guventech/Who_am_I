@@ -1,6 +1,5 @@
 import { copyEn } from "@/copy/en";
 import type { TraitId, TraitScore } from "@/engine/types";
-import { CORE_TRAIT_IDS } from "@/engine/types";
 import { isLessCertain } from "@/lib/score-phrase";
 import {
   getInsightEntry,
@@ -59,12 +58,10 @@ export function selectInsightsV1(
   traits: TraitScore[],
   { allowDrafts = process.env.NODE_ENV !== "production" } = {},
 ): SelectedInsightsV1 {
-  const core = traits.filter((t) =>
-    (CORE_TRAIT_IDS as readonly string[]).includes(t.traitId),
-  );
-
+  // Include any scored trait that has a library entry (core + H after deeper).
+  // Traits without scores (e.g. H when deeper was skipped) are never invented.
   const ranked: Ranked[] = [];
-  for (const score of core) {
+  for (const score of traits) {
     const level = levelFromSlider(score.slider);
     const entry = getInsightEntry(score.traitId as TraitId, level, { allowDrafts });
     if (!entry) continue;
