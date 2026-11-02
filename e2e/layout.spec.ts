@@ -51,7 +51,9 @@ test.describe("layout and loading UX", () => {
       await page.waitForTimeout(350);
     }
     await expect(page).toHaveURL(/\/result/, { timeout: 15_000 });
-    await expect(page.getByRole("heading", { name: copyEn.resultHeading })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: copyEn.resultHeading, exact: true }),
+    ).toBeVisible();
     expectDesktopColumn(await columnBox(page));
   });
 

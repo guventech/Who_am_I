@@ -1,6 +1,8 @@
 import { copyEn } from "@/copy/en";
 import type { TraitId, TraitScore } from "@/engine/types";
 import { isLessCertain } from "@/lib/score-phrase";
+import { colourSummaryCopy } from "@/lib/colour-summary-copy";
+import type { ColourSummaryResult } from "@/lib/colourSummary";
 import {
   getInsightEntry,
   INSIGHTS_VERSION,
@@ -134,6 +136,7 @@ export function formatResultsPlainText(
     lessCertain: boolean;
   }[],
   insights: SelectedInsightsV1,
+  colour?: ColourSummaryResult,
 ): string {
   const lines: string[] = [];
   lines.push("Who Am I? - Your results");
@@ -142,6 +145,14 @@ export function formatResultsPlainText(
   for (const t of traits) {
     const less = t.lessCertain ? ` ${copyEn.lessCertain}` : "";
     lines.push(`${t.title}: ${t.phrase}${less}`);
+  }
+  if (colour) {
+    const summary = colourSummaryCopy(colour);
+    lines.push("", copyEn.colourHeading, summary.headline);
+    if (summary.description) lines.push(summary.description);
+    if (summary.uncertainty) lines.push(summary.uncertainty);
+    if (colour.kind === "coloured") lines.push(copyEn.colourStrengthExplanation);
+    lines.push(copyEn.colourDisclaimer);
   }
   lines.push("");
   if (insights.strengths.length) {

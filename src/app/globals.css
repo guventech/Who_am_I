@@ -17,6 +17,10 @@
   --band: color-mix(in srgb, var(--accent) 25%, var(--card));
   --track: #efece5;
   --mid: #5f646b;
+  --colour-red: #c43d35;
+  --colour-yellow: #d6a600;
+  --colour-green: #35834b;
+  --colour-blue: #356eb5;
   --background: var(--bg);
   --foreground: var(--ink);
 }
@@ -86,6 +90,10 @@ h1 {
 .btn-secondary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.restart-dialog::backdrop {
+  background: #0006;
 }
 
 .page {

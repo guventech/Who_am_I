@@ -17,12 +17,18 @@ test.describe("core flow", () => {
     }
 
     await expect(page).toHaveURL(/\/result/, { timeout: 15_000 });
-    await expect(page.getByRole("heading", { name: copyEn.resultHeading })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: copyEn.resultHeading, exact: true }),
+    ).toBeVisible();
     await expect(
       page.getByRole("status").filter({ hasText: copyEn.prototypeBanner }),
     ).toBeVisible();
-    await expect(page.getByRole("heading", { name: copyEn.yourFiveTraits, exact: true })).toBeVisible();
-    await expect(page.getByRole("heading", { name: copyEn.yourStrengths, exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: copyEn.yourFiveTraits, exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: copyEn.yourStrengths, exact: true }),
+    ).toBeVisible();
     await expect(page.getByText(/Extraversion/)).toBeVisible();
   });
 
