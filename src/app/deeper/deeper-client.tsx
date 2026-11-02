@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useLayoutEffect, useRef, useState, useSyncExternalStore } from "react";
 import { LikertQuestion } from "@/components/LikertQuestion";
 import { PrototypeBanner } from "@/components/PrototypeBanner";
 import { isGoDeeperAvailable } from "@/config/go-deeper";
@@ -58,16 +52,13 @@ export function DeeperClient() {
   useLayoutEffect(() => {
     if (!available) return;
     const current = getSessionSnapshot();
-    if (!current?.completed || !current.scored) return;
-    if (isDeeperSession(current) && current.completed) {
-      router.replace("/result");
+    if (!current) return;
+    if (isDeeperSession(current)) {
+      if (current.completed) router.replace("/result");
+      else shownAt.current = performance.now();
       return;
     }
-    if (isDeeperSession(current) && !current.completed) {
-      shownAt.current = performance.now();
-      return;
-    }
-    if (current.round === "core" && current.completed) {
+    if (current.round === "core" && current.completed && current.scored) {
       const deeper = beginDeeperSession(current, bank, deeperModel);
       saveSession(deeper);
       if (deeper.completed) {
@@ -77,25 +68,6 @@ export function DeeperClient() {
       shownAt.current = performance.now();
     }
   }, [router]);
-
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement
-      ) {
-        return;
-      }
-      const n = Number(e.key);
-      if (n >= 1 && n <= 5 && !loadingLabel) {
-        e.preventDefault();
-        handleAnswer(n as ResponseValue);
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only keyboard binding
-  }, [loadingLabel]);
 
   function handleAnswer(value: ResponseValue) {
     const current = getSessionSnapshot();
@@ -108,6 +80,10 @@ export function DeeperClient() {
     setLoadingLabel(copyEn.loading);
 
     window.setTimeout(() => {
+      if (getSessionSnapshot()?.completionId !== current.completionId) {
+        answering.current = false;
+        return;
+      }
       const next = answerDeeper(current, bank, deeperModel, value, rtMs);
       saveSession(next);
       if (next.completed) {
@@ -216,6 +192,14 @@ export function DeeperClient() {
           onBack={handleBack}
           canBack={asked > 0}
         />
+        <button
+          type="button"
+          className="btn-secondary mt-6"
+          disabled={Boolean(loadingLabel)}
+          onClick={() => router.push("/result")}
+        >
+          {copyEn.backToResults}
+        </button>
       </main>
     </div>
   );

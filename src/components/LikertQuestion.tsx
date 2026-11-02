@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { copyEn } from "@/copy/en";
 import type { ResponseValue } from "@/engine/types";
 
@@ -63,8 +63,15 @@ function LikertQuestionInner({
   const [pending, setPending] = useState<ResponseValue | null>(null);
   const groupId = useId();
   const legendId = `${groupId}-legend`;
+  const progressId = `${groupId}-progress`;
+  const hintId = `${groupId}-hint`;
+  const heading = useRef<HTMLHeadingElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const disabled = Boolean(loadingLabel) || pending !== null;
+
+  useEffect(() => {
+    heading.current?.focus({ preventScroll: true });
+  }, []);
 
   function choose(value: ResponseValue) {
     if (disabled) return;
@@ -74,10 +81,7 @@ function LikertQuestionInner({
 
   const shownSelected = pending ?? selectedValue ?? null;
 
-  function onRadioKeyDown(
-    e: React.KeyboardEvent<HTMLButtonElement>,
-    index: number,
-  ) {
+  function onRadioKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, index: number) {
     if (disabled) return;
     let next = index;
     if (e.key === "ArrowDown" || e.key === "ArrowRight") {
@@ -103,9 +107,31 @@ function LikertQuestionInner({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div
+      className="flex flex-col gap-6"
+      onKeyDown={(event) => {
+        const target = event.target as HTMLElement;
+        if (
+          event.repeat ||
+          event.altKey ||
+          event.ctrlKey ||
+          event.metaKey ||
+          event.shiftKey ||
+          target.closest("input, textarea, select, [contenteditable='true']")
+        )
+          return;
+        if (/^[1-5]$/.test(event.key)) {
+          event.preventDefault();
+          choose(Number(event.key) as ResponseValue);
+        }
+      }}
+    >
       <div className="flex items-center justify-between gap-4">
-        <p className="text-sm font-medium" style={{ color: "var(--muted)" }}>
+        <p
+          id={progressId}
+          className="text-sm font-medium"
+          style={{ color: "var(--muted)" }}
+        >
           {progressLabel}
         </p>
         <button
@@ -125,6 +151,7 @@ function LikertQuestionInner({
         aria-hidden
       >
         <div
+          data-testid="question-progress"
           className="h-full rounded-full transition-[width] duration-300 ease-out"
           style={{
             width: `${Math.min(100, Math.max(0, progressPct))}%`,
@@ -134,6 +161,9 @@ function LikertQuestionInner({
       </div>
 
       <h1
+        ref={heading}
+        tabIndex={-1}
+        aria-describedby={hint ? `${progressId} ${hintId}` : progressId}
         id={legendId}
         className="text-2xl leading-snug tracking-tight sm:text-[28px]"
         style={{ color: "var(--ink)" }}
@@ -141,7 +171,7 @@ function LikertQuestionInner({
         {questionText}
       </h1>
       {hint ? (
-        <p className="-mt-3 text-sm" style={{ color: "var(--muted)" }}>
+        <p id={hintId} className="-mt-3 text-sm" style={{ color: "var(--muted)" }}>
           {hint}
         </p>
       ) : null}
@@ -163,11 +193,7 @@ function LikertQuestionInner({
         </p>
       ) : null}
 
-      <div
-        role="radiogroup"
-        aria-labelledby={legendId}
-        className="flex flex-col gap-2"
-      >
+      <div role="radiogroup" aria-labelledby={legendId} className="flex flex-col gap-2">
         {copyEn.likert.map((label, index) => {
           const value = (index + 1) as ResponseValue;
           const selected = shownSelected === value;
@@ -180,6 +206,7 @@ function LikertQuestionInner({
               type="button"
               role="radio"
               aria-checked={selected}
+              aria-keyshortcuts={String(value)}
               tabIndex={
                 disabled
                   ? -1
@@ -220,6 +247,9 @@ function LikertQuestionInner({
           );
         })}
       </div>
+      <p className="text-sm" style={{ color: "var(--muted)" }}>
+        {copyEn.keyboardHint}
+      </p>
     </div>
   );
 }

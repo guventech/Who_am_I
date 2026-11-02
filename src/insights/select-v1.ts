@@ -1,6 +1,6 @@
 import { copyEn } from "@/copy/en";
 import type { TraitId, TraitScore } from "@/engine/types";
-import { isLessCertain } from "@/lib/score-phrase";
+import { isLessCertain, scoreDirection } from "@/lib/score-phrase";
 import { colourSummaryCopy } from "@/lib/colour-summary-copy";
 import type { ColourSummaryResult } from "@/lib/colourSummary";
 import {
@@ -33,12 +33,6 @@ export type SelectedInsightsV1 = {
   watchOuts: SelectedWatchOutV1[];
 };
 
-function levelFromSlider(s: number): InsightLevel {
-  if (s < -0.4) return "low";
-  if (s > 0.4) return "high";
-  return "mid";
-}
-
 type Ranked = {
   score: TraitScore;
   level: InsightLevel;
@@ -48,7 +42,7 @@ type Ranked = {
 
 /**
  * Selection (copy/UI v2):
- * - level: low s < -0.4, mid -0.4..0.4, high > 0.4
+ * - presentation level matches the slider's direction threshold (0.2)
  * - rank by |s|
  * - up to 3 strengths (soft form + tag when less certain)
  * - up to 2 watch-outs from traits that are not less certain
@@ -64,7 +58,7 @@ export function selectInsightsV1(
   // Traits without scores (e.g. H when deeper was skipped) are never invented.
   const ranked: Ranked[] = [];
   for (const score of traits) {
-    const level = levelFromSlider(score.slider);
+    const level = scoreDirection(score.slider);
     const entry = getInsightEntry(score.traitId as TraitId, level, { allowDrafts });
     if (!entry) continue;
     ranked.push({

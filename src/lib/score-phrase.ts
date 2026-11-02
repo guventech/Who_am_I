@@ -5,6 +5,14 @@
  * Fast answers widen ranges (FLAG_BAND_FACTOR) and tag more, but not every trait.
  */
 export const LESS_CERTAIN_RANGE_WIDTH = 1.4;
+export const TRAIT_DIRECTION_THRESHOLD = 0.2;
+
+/** Presentation categories shared by slider descriptions and practical insights. */
+export function scoreDirection(s: number): "low" | "mid" | "high" {
+  if (s <= -TRAIT_DIRECTION_THRESHOLD) return "low";
+  if (s >= TRAIT_DIRECTION_THRESHOLD) return "high";
+  return "mid";
+}
 
 export function isLessCertain(rangeLow: number, rangeHigh: number): boolean {
   return rangeHigh - rangeLow > LESS_CERTAIN_RANGE_WIDTH;
@@ -36,16 +44,12 @@ function comparative(pole: string): string {
  * Map slider score s in [-1, 1] to plain words (no decimals, no population claim).
  * Uses natural comparatives ("Clearly calmer", never "more calm").
  */
-export function scoreToPhrase(
-  s: number,
-  leftPole: string,
-  rightPole: string,
-): string {
+export function scoreToPhrase(s: number, leftPole: string, rightPole: string): string {
   const left = comparative(leftPole);
   const right = comparative(rightPole);
   if (s <= -0.6) return `Clearly ${left}`;
-  if (s <= -0.2) return `A bit ${left}`;
-  if (s < 0.2) {
+  if (scoreDirection(s) === "low") return `A bit ${left}`;
+  if (scoreDirection(s) === "mid") {
     return "About in the middle. You can be both, depending on the situation";
   }
   if (s < 0.6) return `A bit ${right}`;
@@ -53,16 +57,12 @@ export function scoreToPhrase(
 }
 
 /** Range end in pole words for screen readers (not lower/higher). */
-export function scoreToRangeEnd(
-  s: number,
-  leftPole: string,
-  rightPole: string,
-): string {
+export function scoreToRangeEnd(s: number, leftPole: string, rightPole: string): string {
   const left = comparative(leftPole);
   const right = comparative(rightPole);
   if (s <= -0.6) return `clearly ${left}`;
-  if (s <= -0.2) return `a bit ${left}`;
-  if (s < 0.2) return "about the middle";
+  if (scoreDirection(s) === "low") return `a bit ${left}`;
+  if (scoreDirection(s) === "mid") return "about the middle";
   if (s < 0.6) return `a bit ${right}`;
   return `clearly ${right}`;
 }

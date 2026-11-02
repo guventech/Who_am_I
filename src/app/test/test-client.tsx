@@ -48,25 +48,6 @@ export function TestClient() {
     shownAt.current = performance.now();
   }, [session?.answered.length]);
 
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (
-        e.target instanceof HTMLInputElement ||
-        e.target instanceof HTMLTextAreaElement
-      ) {
-        return;
-      }
-      const n = Number(e.key);
-      if (n >= 1 && n <= 5 && !loadingLabel) {
-        e.preventDefault();
-        handleAnswer(n as ResponseValue);
-      }
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only keyboard binding
-  }, [loadingLabel]);
-
   function clearLongTimer() {
     if (longTimer.current != null) {
       window.clearTimeout(longTimer.current);

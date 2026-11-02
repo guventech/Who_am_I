@@ -1,7 +1,7 @@
 import { allTraitsMeetSdTarget } from "@/engine/deeper";
 import { createRunningPosterior, itemById, updateRunningPosterior } from "@/engine/grid";
 import { createRng } from "@/engine/math";
-import { scoreSession } from "@/engine/score";
+import { scoreSession, type ScoredSession } from "@/engine/score";
 import { AdaptiveSelector } from "@/engine/select-adaptive";
 import type {
   AnsweredItem,
@@ -18,6 +18,8 @@ export type DeeperSession = TestSession & {
   /** Answers from the core 10-item form (immutable for this round). */
   coreAnswered: AnsweredItem[];
   deeperStartCount: number;
+  /** Optional for compatibility with sessions saved before pause support. */
+  coreScored?: ScoredSession;
 };
 
 function posteriorFromAnswers(
@@ -52,6 +54,7 @@ export function beginDeeperSession(
     storagePayload: null,
     round: "deeper",
     coreAnswered: [...core.answered],
+    coreScored: structuredClone(core.scored),
     deeperStartCount: core.answered.length,
     // Always enter the deeper round; stop rule enforces DEEPER_BUDGET_MIN.
     completed: false,

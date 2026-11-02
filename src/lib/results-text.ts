@@ -5,7 +5,11 @@ import { formatResultsPlainText, selectInsightsV1 } from "@/insights/select-v1";
 import { colourSummary } from "@/lib/colourSummary";
 import { isLessCertain, scoreToPhrase } from "@/lib/score-phrase";
 
-export function resultsText(traits: TraitScore[], options?: { allowDrafts: boolean }) {
+export function resultsText(
+  traits: TraitScore[],
+  options?: { allowDrafts: boolean },
+  changes: string[] = [],
+) {
   const lines = traits.map((score) => {
     const meta = copyEn.traits[score.traitId];
     return {
@@ -14,9 +18,12 @@ export function resultsText(traits: TraitScore[], options?: { allowDrafts: boole
       lessCertain: isLessCertain(score.retakeLow, score.retakeHigh),
     };
   });
-  return formatResultsPlainText(
+  const text = formatResultsPlainText(
     lines,
     selectInsightsV1(traits, options),
     ENABLE_COLOURS ? colourSummary(traits) : undefined,
   );
+  return changes.length
+    ? `${text}\n${copyEn.deeperChangesHeading}\n${changes.map((line) => `- ${line}`).join("\n")}\n`
+    : text;
 }

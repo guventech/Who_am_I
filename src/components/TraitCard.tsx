@@ -1,22 +1,21 @@
 import { LessCertainMark } from "@/components/LessCertainMark";
+import { TraitComparison } from "@/components/TraitComparison";
 import { copyEn } from "@/copy/en";
 import type { TraitId, TraitScore } from "@/engine/types";
-import {
-  isLessCertain,
-  scoreToPhrase,
-  scoreToRangeEnd,
-} from "@/lib/score-phrase";
+import { isLessCertain, scoreToPhrase, scoreToRangeEnd } from "@/lib/score-phrase";
 
 type Props = {
   traitId: TraitId;
   score: TraitScore;
+  previous?: TraitScore;
+  added?: boolean;
 };
 
 function pct(v: number): number {
   return ((v + 1) / 2) * 100;
 }
 
-export function TraitCard({ traitId, score }: Props) {
+export function TraitCard({ traitId, score, previous, added }: Props) {
   const meta = copyEn.traits[traitId as keyof typeof copyEn.traits];
   if (!meta) return null;
 
@@ -49,71 +48,81 @@ export function TraitCard({ traitId, score }: Props) {
           </span>
         </h3>
       </div>
+      {added ? (
+        <p className="mt-2 text-sm font-semibold" style={{ color: "var(--accent)" }}>
+          {copyEn.deeperNewTrait}
+        </p>
+      ) : null}
       <p className="mt-1 font-semibold" style={{ color: "var(--ink)" }}>
-        {phrase}.
-        {less ? <LessCertainMark /> : null}
+        {phrase}.{less ? <LessCertainMark /> : null}
       </p>
 
-      <div
-        className="relative mt-3 mb-2 h-3 w-full rounded-md"
-        style={{ background: "var(--track)" }}
-        role="img"
-        aria-label={ariaLabel}
-      >
-        <div
-          className="absolute top-0 h-3 rounded-md"
-          style={{
-            left: `${left}%`,
-            width: `${Math.max(2, width)}%`,
-            background: "var(--band)",
-          }}
-          aria-hidden
-        />
-        <div
-          className="absolute"
-          style={{
-            left: "50%",
-            top: "-4px",
-            width: 2,
-            height: 20,
-            background: "var(--mid)",
-            transform: "translateX(-50%)",
-          }}
-          aria-hidden
-        />
-        <div
-          className="absolute rounded-full"
-          style={{
-            left: `${dot}%`,
-            top: -5,
-            width: 22,
-            height: 22,
-            marginLeft: -11,
-            background: "var(--accent)",
-            border: "3px solid #fff",
-            boxShadow: "0 1px 3px #0004",
-          }}
-          aria-hidden
-        />
-      </div>
+      {previous ? (
+        <TraitComparison before={previous} after={score} />
+      ) : (
+        <>
+          <div
+            className="relative mt-3 mb-2 h-3 w-full rounded-md"
+            style={{ background: "var(--track)" }}
+            role="img"
+            aria-label={ariaLabel}
+          >
+            <div
+              className="absolute top-0 h-3 rounded-md"
+              style={{
+                left: `${left}%`,
+                width: `${Math.max(2, width)}%`,
+                background: "var(--band)",
+              }}
+              aria-hidden
+            />
+            <div
+              className="absolute"
+              style={{
+                left: "50%",
+                top: "-4px",
+                width: 2,
+                height: 20,
+                background: "var(--mid)",
+                transform: "translateX(-50%)",
+              }}
+              aria-hidden
+            />
+            <div
+              className="absolute rounded-full"
+              style={{
+                left: `${dot}%`,
+                top: -5,
+                width: 22,
+                height: 22,
+                marginLeft: -11,
+                background: "var(--accent)",
+                border: "3px solid #fff",
+                boxShadow: "0 1px 3px #0004",
+              }}
+              aria-hidden
+            />
+          </div>
 
-      <div
-        className="flex justify-between gap-4 text-sm"
-        style={{ color: "var(--muted)" }}
-      >
-        <span className="max-w-[45%]">
-          <b className="block" style={{ color: "var(--ink)" }}>
-            {meta.left}
-          </b>
-          {meta.leftDesc}
-        </span>
-        <span className="max-w-[45%] text-right">
-          <b className="block" style={{ color: "var(--ink)" }}>
-            {meta.right}
-          </b>
-          {meta.rightDesc}
-        </span>
-      </div>
+          <div
+            className="flex justify-between gap-4 text-sm"
+            style={{ color: "var(--muted)" }}
+          >
+            <span className="max-w-[45%]">
+              <b className="block" style={{ color: "var(--ink)" }}>
+                {meta.left}
+              </b>
+              {meta.leftDesc}
+            </span>
+            <span className="max-w-[45%] text-right">
+              <b className="block" style={{ color: "var(--ink)" }}>
+                {meta.right}
+              </b>
+              {meta.rightDesc}
+            </span>
+          </div>
+        </>
+      )}
     </div>
   );
 }
