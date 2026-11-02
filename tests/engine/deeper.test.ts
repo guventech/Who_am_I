@@ -17,6 +17,7 @@ import { sessionFixedOrder } from "../../src/engine/select-fixed";
 import { itemById } from "../../src/engine/grid";
 import { sampleResponse } from "../../src/engine/grm";
 import type { AnsweredItem } from "../../src/engine/types";
+import { DEEPER_H_FIRST_COUNT } from "../../src/engine/select-adaptive";
 import { CORE_TRAIT_IDS, modelTraitIds } from "../../src/engine/types";
 
 function runCoreFixed(
@@ -55,7 +56,8 @@ describe("go deeper", () => {
     expect(modelTraitIds(deeper)).toEqual(["E", "A", "C", "ES", "O", "H"]);
     expect(deeper.priorCov).toHaveLength(36);
     expect(deeper.config.GRID_NODES_PER_DIM).toBe(7);
-    expect(deeper.config.DEEPER_BUDGET_MIN).toBe(12);
+    expect(deeper.config.DEEPER_BUDGET_MIN).toBe(6);
+    expect(deeper.config.DEEPER_BUDGET_MAX).toBe(10);
     cholesky(deeper.priorCov, 6); // PD check
   });
 
@@ -83,6 +85,28 @@ describe("go deeper", () => {
       expect(result.itemsAsked).toBeGreaterThanOrEqual(
         deeper.config.DEEPER_BUDGET_MIN,
       );
+      expect(result.itemsAsked).toBeLessThanOrEqual(
+        deeper.config.DEEPER_BUDGET_MAX,
+      );
+    },
+    120_000,
+  );
+
+  it(
+    "asks Honesty-Humility items first, then stays within short budget",
+    () => {
+      const bank = loadItemBank();
+      const deeper = loadDeeperModelVersion();
+      const core = runCoreFixed(13, [0.2, -0.1, 0.3, 0, -0.2]);
+      const result = runDeeperRound(bank, deeper, core, 13, () => 3);
+      expect(result.itemsAsked).toBeGreaterThanOrEqual(6);
+      expect(result.itemsAsked).toBeLessThanOrEqual(10);
+      const firstH = result.deeperAnswered.slice(0, DEEPER_H_FIRST_COUNT);
+      expect(firstH).toHaveLength(DEEPER_H_FIRST_COUNT);
+      for (const a of firstH) {
+        expect(itemById(bank, a.itemId).primaryTrait).toBe("H");
+      }
+      expect(result.scored.traits.some((t) => t.traitId === "H")).toBe(true);
     },
     120_000,
   );

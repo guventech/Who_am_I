@@ -1,5 +1,15 @@
 # Who Am I? — Build Report
 
+## Axes 6–7 result layers — 2026-11-02
+
+Implemented on branch `feat/axes-6-7-result-layers` (PR; not merged to production by default).
+
+- **Axis 6 (Go deeper / Honesty-Humility):** result page shows a Go deeper CTA when env enables it; `/deeper` still 404s when gated off. After a finished deeper round, the sixth slider (Honesty-Humility) appears; core five stay visible. Short budget: **min 6 / max 10** deeper items, first **4** forced H (HH pool), then adaptive tightening. Draft H insights added (`reviewStatus: "draft"`). Production stays off unless `NEXT_PUBLIC_ENABLE_GO_DEEPER` / `ENABLE_GO_DEEPER` is set and H-H items verify.
+- **Axis 7 (colours):** SPEC §11 mapping in `src/lib/colourSummary.ts` + `ColourSummary` UI. `ENABLE_COLOURS` remains **false**; no colour block in the default UI.
+- No new server saves. No accuracy numbers invented. CV/interview lines stay wording ideas.
+
+To try in a preview later: set go-deeper env on that deployment; optionally flip `ENABLE_COLOURS` in code for a colours preview (still requires Guven's yes for production).
+
 ## Current scope: no new server saving — 2026-10-23
 
 The owner chose a simpler product: questions → local results → optional copy. This supersedes the storage features described in the historical phases below.

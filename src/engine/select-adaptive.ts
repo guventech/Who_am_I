@@ -15,6 +15,9 @@ import type {
 } from "./types";
 import { modelTraitIds } from "./types";
 
+/** First N deeper items must be Honesty-Humility (short-form H floor). */
+export const DEEPER_H_FIRST_COUNT = 4;
+
 export type AdaptiveSelectorOptions = {
   /** Total answered items at which selection stops (core = 10). */
   budget: number;
@@ -25,6 +28,11 @@ export type AdaptiveSelectorOptions = {
    * (usually 10). Budget counts only new items when set with deeperRound.
    */
   deeperStartCount?: number;
+  /**
+   * Deeper only: force the first N picks to primaryTrait H.
+   * Default DEEPER_H_FIRST_COUNT.
+   */
+  deeperHFirstCount?: number;
 };
 
 export class AdaptiveSelector implements ItemSelector {
@@ -36,6 +44,7 @@ export class AdaptiveSelector implements ItemSelector {
       budget: opts.budget ?? 10,
       deeperRound: opts.deeperRound ?? false,
       deeperStartCount: opts.deeperStartCount,
+      deeperHFirstCount: opts.deeperHFirstCount ?? DEEPER_H_FIRST_COUNT,
     };
   }
 
@@ -62,9 +71,19 @@ export class AdaptiveSelector implements ItemSelector {
 
     const byId = new Map(bank.items.map((i) => [i.id, i]));
     const explore = cfg.bankStatus === "calibrated" && rng.next() < 0.1;
-    const pool = this.opts.deeperRound
+    let pool = this.opts.deeperRound
       ? deeperCandidateItems(bank)
       : candidateItems(bank, cfg, explore);
+
+    // Short go-deeper: first N picks are Honesty-Humility markers.
+    if (this.opts.deeperRound) {
+      const hFirst = this.opts.deeperHFirstCount ?? DEEPER_H_FIRST_COUNT;
+      if (deeperAsked < hFirst) {
+        const hOnly = pool.filter((i) => i.primaryTrait === "H");
+        if (hOnly.length > 0) pool = hOnly;
+      }
+    }
+
     const feasible = filterFeasible(
       pool,
       state,

@@ -56,7 +56,10 @@ export const copyEn = {
   consentRetake: "Retake later? Keep a session code so I can link a later run.",
   consentDefault: "Nothing is sent or stored on our side unless you say yes at the end.",
   goDeeperDisabled: "Go deeper is not available yet.",
-  goDeeperIntro: "A few more questions to make your ranges narrower.",
+  goDeeperIntro:
+    "About 10 more questions. Adds Honesty-Humility and may narrow some ranges.",
+  goDeeperCta: "Go deeper",
+  goDeeperHint: "About 10 more questions. Adds Honesty-Humility.",
   startAgain: "Take the test again",
   unclearTrait: "Your answers don't settle this one.",
 
@@ -70,6 +73,18 @@ export const copyEn = {
   saveUnconfirmed: "We could not confirm whether your answers were saved.",
   savedYes: "Your answers were saved without your name.",
   yourFiveTraits: "Your five traits",
+  yourSixTraits: "Your six traits",
+  colourHeading: "Colour summary",
+  colourDisclaimer:
+    "Colours simplify two of your sliders. They are not a validated typology. People are not their colour.",
+  colourBalanced: "Balanced, no dominant colour",
+  colourSecondary: "Secondary",
+  colourLabels: {
+    red: "Red: driven, decisive, direct",
+    yellow: "Yellow: enthusiastic, sociable, persuasive",
+    green: "Green: supportive, patient, harmonious",
+    blue: "Blue: precise, analytical, careful",
+  } as const,
   retakeLegend: "Shaded band: where a retake might land (early estimate)",
   middleLegend: "Middle line = the middle of the scale",
   lessCertain: "(less certain)",
@@ -190,6 +205,14 @@ export const copyEn = {
       leftDesc: "likes what is proven",
       right: "Curious",
       rightDesc: "likes new ideas",
+    },
+    H: {
+      title: "Honesty and humility",
+      science: "Honesty-Humility",
+      left: "Self-promoting",
+      leftDesc: "status-oriented",
+      right: "Modest",
+      rightDesc: "fairness-oriented",
     },
   },
 } as const;

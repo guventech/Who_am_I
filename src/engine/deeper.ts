@@ -1,7 +1,7 @@
 /**
  * Go-deeper round (§5.5): continue from the core posterior on a 6-trait
- * model version, budget 12–20 additional items, stop when every trait SD
- * ≤ DEEPER_SD_TARGET or the budget is spent.
+ * model version, short budget (about 6–10 additional items; H-first then
+ * tighten), stop when every trait SD ≤ DEEPER_SD_TARGET or the budget is spent.
  */
 import {
   createRunningPosterior,

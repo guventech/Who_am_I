@@ -41,9 +41,9 @@ function insertedMay(strength: string): string {
 
 describe("hand-written soft insight lines", () => {
   it("stores a soft strength and a soft watch-out on every trait level", () => {
-    expect(insightLibraryV1).toHaveLength(15);
+    expect(insightLibraryV1).toHaveLength(18);
     const keys = insightLibraryV1.map((e) => `${e.traitId}:${e.level}`);
-    expect(new Set(keys).size).toBe(15);
+    expect(new Set(keys).size).toBe(18);
     for (const entry of insightLibraryV1) {
       expect(entry.strengthSoft.startsWith("You may ")).toBe(true);
       expect(entry.strengthSoft.endsWith(".")).toBe(true);

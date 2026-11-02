@@ -4,8 +4,8 @@ import type { CompletionPayload } from "./types";
 
 const SLIDER_EPS = 0.05;
 const THETA_EPS = 0.15;
-/** Core 10 + go-deeper budget max 20. */
-const MAX_RESPONSES = 30;
+/** Core 10 + go-deeper budget max 10. */
+const MAX_RESPONSES = 20;
 
 export type RescoreOk = { ok: true; scored: ScoredSession };
 export type RescoreErr = { ok: false; reason: string };

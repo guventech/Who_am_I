@@ -28,7 +28,7 @@ export const completionPayloadSchema = z.object({
       }),
     )
     .min(10)
-    .max(30),
+    .max(20),
   clientScores: z
     .array(
       z.object({
