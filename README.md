@@ -7,7 +7,7 @@ The flow is simple: answer questions, see results, copy them if wanted. New answ
 ## Local development
 
 ```powershell
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 pnpm lint
 pnpm typecheck
@@ -17,6 +17,10 @@ pnpm benchmark
 ```
 
 Set `PLAYWRIGHT_CHANNEL=chrome` to test using an installed Chrome. The browser tests cover desktop and mobile, refresh, keyboard navigation, accessibility, and zero storage requests even when an old consent choice exists.
+
+Use the pnpm version pinned in `package.json`. pnpm 12 reads dependency overrides from `pnpm-workspace.yaml`, alongside the explicit build-script permissions. The `braces` minimum-version override is recorded there and in the lockfile; `package.json#pnpm` is no longer used. See [pnpm's override documentation](https://pnpm.io/settings/dependency-resolution#overrides).
+
+18 November 2026 configuration maintenance: pnpm recognises the relocated override, and structural checks confirm unchanged package resolutions/integrities and build permissions. Agent-run lint and type checking passed. The owner then verified `pnpm install --frozen-lockfile` in a normal terminal: 581 entries passed supply-chain policies and the lockfile was up to date under pnpm 12.14.0. The owner's `pnpm test` run passed all 202 tests across 48 files. This resolves the agent environment's earlier store-lock and child-process restrictions. Vite reported a future native-config-loader compatibility warning; it did not fail the tests. Build and browser checks were not rerun for this configuration-only change.
 
 ## Hosting
 
