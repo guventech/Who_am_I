@@ -64,6 +64,12 @@ export default function RootLayout({ children }: RootLayoutProps) {
         className="flex min-h-full flex-col font-[family-name:var(--font-body)]"
         style={{ fontFamily: "var(--font-body), system-ui, sans-serif" }}
       >
+        <nav className="page py-2" aria-label="Portfolio">
+          <a href="https://www.bircans.com/guven#tools" className="return-link">
+            <span aria-hidden="true">←</span>
+            {copyEn.brandReturn}
+          </a>
+        </nav>
         <SessionStorageNotice />
         {children}
         <footer
@@ -74,10 +80,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
             <span>{copyEn.brandAttribution}</span>
             <FeedbackLink className="text-[var(--accent)] underline-offset-4 hover:underline" />
             <a
-              href="https://www.bircans.com/guven"
+              href="https://www.bircans.com/guven#tools"
               style={{ color: "var(--accent)" }}
-              className="underline-offset-4 hover:underline"
+              className="return-link"
             >
+              <span aria-hidden="true">←</span>
               {copyEn.brandReturn}
             </a>
           </div>

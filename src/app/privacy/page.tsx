@@ -11,8 +11,9 @@ export default function PrivacyPage() {
     <div className="flex flex-1 flex-col" style={{ background: "var(--bg)" }}>
       <PrototypeBanner bankStatus={model.bankStatus} />
       <main className="mx-auto flex w-full max-w-[720px] flex-col gap-6 px-5 py-12">
-        <Link href="/" className="text-[15px]" style={{ color: "var(--accent)" }}>
-          ← {copyEn.brand}
+        <Link href="/" className="return-link self-start">
+          <span aria-hidden="true">←</span>
+          {copyEn.feedbackReturn}
         </Link>
         <h1 className="text-[32px]" style={{ color: "var(--ink)" }}>
           {copyEn.privacyHeading}

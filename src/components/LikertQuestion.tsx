@@ -138,9 +138,10 @@ function LikertQuestionInner({
           type="button"
           onClick={onBack}
           disabled={!canBack || disabled}
-          className="text-sm font-medium underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:opacity-40 disabled:no-underline"
+          className="return-link disabled:cursor-not-allowed disabled:opacity-40 disabled:no-underline"
           style={{ color: "var(--ink)" }}
         >
+          <span aria-hidden="true">←</span>
           {copyEn.back}
         </button>
       </div>
