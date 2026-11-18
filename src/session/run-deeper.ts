@@ -1,5 +1,5 @@
 import { allTraitsMeetSdTarget } from "@/engine/deeper";
-import { createRunningPosterior, itemById, updateRunningPosterior } from "@/engine/grid";
+import { scoreResponses } from "@/engine/grid";
 import { createRng } from "@/engine/math";
 import { scoreSession, type ScoredSession } from "@/engine/score";
 import { AdaptiveSelector } from "@/engine/select-adaptive";
@@ -8,7 +8,6 @@ import type {
   ItemBank,
   ItemId,
   ModelVersion,
-  PosteriorSummary,
   ResponseValue,
 } from "@/engine/types";
 import type { TestSession } from "./run-session";
@@ -21,18 +20,6 @@ export type DeeperSession = TestSession & {
   /** Optional for compatibility with sessions saved before pause support. */
   coreScored?: ScoredSession;
 };
-
-function posteriorFromAnswers(
-  bank: ItemBank,
-  deeperModel: ModelVersion,
-  answered: AnsweredItem[],
-): PosteriorSummary {
-  const running = createRunningPosterior(deeperModel);
-  for (const a of answered) {
-    updateRunningPosterior(running, itemById(bank, a.itemId), a.value);
-  }
-  return running.summary;
-}
 
 export function deeperAsked(session: DeeperSession): number {
   return session.answered.length - session.deeperStartCount;
@@ -77,7 +64,7 @@ export function currentDeeperItemId(
   const asked = deeperAsked(session);
   if (asked >= budget) return null;
 
-  const summary = posteriorFromAnswers(bank, deeperModel, session.answered);
+  const summary = scoreResponses(bank, deeperModel, session.answered);
   if (
     asked >= minBudget &&
     allTraitsMeetSdTarget(summary.sd, deeperModel.config.DEEPER_SD_TARGET)
@@ -127,7 +114,7 @@ export function answerDeeper(
 
   const minBudget = deeperModel.config.DEEPER_BUDGET_MIN;
   const maxBudget = deeperModel.config.DEEPER_BUDGET_MAX;
-  const summary = posteriorFromAnswers(bank, deeperModel, next.answered);
+  const summary = scoreResponses(bank, deeperModel, next.answered);
   const met = allTraitsMeetSdTarget(summary.sd, deeperModel.config.DEEPER_SD_TARGET);
   const asked = deeperAsked(next);
   // Brief: stop only after at least MIN items, or when MAX is spent.

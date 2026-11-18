@@ -4,12 +4,33 @@ import {
   scoreResponses,
   updateRunningPosterior,
 } from "../../src/engine/grid";
-import { loadItemBank, loadModelVersion } from "../../src/engine/load-content";
+import {
+  loadDeeperModelVersion,
+  loadItemBank,
+  loadModelVersion,
+} from "../../src/engine/load-content";
 import { createRng } from "../../src/engine/math";
 import { sampleResponse } from "../../src/engine/grm";
 import type { AnsweredItem } from "../../src/engine/types";
 
 describe("posterior EAP", () => {
+  it("batch replay retains the exact incremental six-trait posterior", () => {
+    const bank = loadItemBank();
+    const model = loadDeeperModelVersion();
+    const running = createRunningPosterior(model);
+    const items = bank.items.filter((item) => item.status === "active").slice(0, 2);
+    const answers: AnsweredItem[] = items.map((item, order) => ({
+      itemId: item.id,
+      value: order === 0 ? 2 : 4,
+      rtMs: 2000,
+      order,
+    }));
+    for (const [index, item] of items.entries()) {
+      updateRunningPosterior(running, item, answers[index]!.value);
+    }
+    expect(scoreResponses(bank, model, answers)).toEqual(running.summary);
+  });
+
   it("SD decreases as informative items are added", () => {
     const bank = loadItemBank();
     const model = loadModelVersion();

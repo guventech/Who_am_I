@@ -5,7 +5,8 @@ import { copyEn } from "@/copy/en";
 export default function FeedbackPage() {
   return (
     <main className="page flex-1 py-10">
-      <Link href="/" className="text-[15px]" style={{ color: "var(--accent)" }}>
+      <Link href="/" className="return-link">
+        <span aria-hidden="true">←</span>
         {copyEn.feedbackReturn}
       </Link>
       <h1 className="mt-6 text-[32px]">{copyEn.feedbackSend}</h1>

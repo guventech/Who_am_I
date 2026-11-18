@@ -2,7 +2,7 @@
 export const copyEn = {
   brand: "Who Am I?",
   brandAttribution: "A personal project by Guven Bircan",
-  brandReturn: "Back to Bircans",
+  brandReturn: "Tools I built",
   resultsLocalOnly:
     "Your results stay in this browser session. We do not save new answers or results on our servers.",
   storageUnavailable:
@@ -35,7 +35,7 @@ export const copyEn = {
 
   // Questions
   progress: (n: number, total: number) => `Question ${n} of ${total}`,
-  back: "← Back",
+  back: "Previous question",
   likert: [
     "Strongly disagree",
     "Disagree",
