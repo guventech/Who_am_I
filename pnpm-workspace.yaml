@@ -1,3 +1,6 @@
+overrides:
+  braces: '>=3.0.3'
+
 allowBuilds:
   esbuild: true
   sharp: false
